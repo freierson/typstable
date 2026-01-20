@@ -1,0 +1,26 @@
+---
+title: "Example 1"
+format: typst
+---
+
+```{r}
+library(typstable)
+tt(mtcars[1:5, 1:3]) |>
+  tt_column(mpg, align = "right") |>
+  tt_row(1, bold = TRUE) |>
+  tt_cell(2, 2, background = "yellow", content='12', colspan = 2, 
+          rowspan = 2,
+          align = 'center')
+```
+
+```{r}
+df <- data.frame(
+  col1 = c("First \\ Second", "Another"),
+  col2 = c(1, 2)
+)
+tt(df, escape = FALSE)
+```
+
+
+
+

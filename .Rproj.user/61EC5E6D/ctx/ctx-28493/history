@@ -1,0 +1,56 @@
+devtools::build_vignettes()
+devtools::build_vignettes()
+devtools::build_vignettes()
+devtools::build_vignettes()
+devtools::build_vignettes()
+devtools::build_vignettes()
+devtools::build_vignettes()
+devtools::build_vignettes()
+?tt_column
+?tt_column
+tt(mtcars[1:5, 1:3]) |>
+tt_column(mpg, align = "right")
+library(typstable)
+tt(mtcars[1:5, 1:3]) |>
+tt_column(everything(), align = "right") |>
+tt_row(1, bold = TRUE) |>
+tt_cell(2, 2, background = "yellow")
+?tt_cell
+library(typstable)
+tt(mtcars[1:5, 1:3]) |>
+tt_column(mpg, align = "right") |>
+tt_row(1, bold = TRUE) |>
+tt_cell(2, 2, background = "yellow", colspan=2)
+library(typstable)
+tt(mtcars[1:5, 1:3]) |>
+tt_column(mpg, align = "right") |>
+tt_row(1, bold = TRUE) |>
+tt_cell(2, 2, background = "yellow", colspan=1)
+library(typstable)
+tt(mtcars[1:5, 1:3]) |>
+tt_column(mpg, align = "right") |>
+tt_row(1, bold = TRUE) |>
+tt_cell(2, 2, background = "yellow", content='OKOK')
+?tt_cell
+library(typstable)
+tt(mtcars[1:5, 1:3]) |>
+tt_column(mpg, align = "right") |>
+tt_row(1, bold = TRUE) |>
+tt_cell(2, 2, background = "yellow", content='12', colspan = 2)
+library(typstable)
+tt(mtcars[1:5, 1:3]) |>
+tt_column(mpg, align = "right") |>
+tt_row(1, bold = TRUE) |>
+tt_cell(2, 2, background = "yellow", content='12', colspan = 2, align = 'center')
+library(typstable)
+tt(mtcars[1:5, 1:3]) |>
+tt_column(mpg, align = "right") |>
+tt_row(1, bold = TRUE) |>
+tt_cell(2, 2, background = "yellow", content='12', colspan = 2,
+rowspan = 2,
+align = 'center')
+df <- data.frame(
+col1 = c("First \\ Second", "Another"),
+col2 = c(1, 2)
+)
+tt(df, escape = FALSE)

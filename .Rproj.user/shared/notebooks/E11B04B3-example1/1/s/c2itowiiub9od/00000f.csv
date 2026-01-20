@@ -1,0 +1,24 @@
+"0","library(typstable)"
+"0","tt(mtcars[1:5, 1:3]) |>"
+"0","  tt_column(mpg, align = ""right"") |>"
+"0","  tt_row(1, bold = TRUE) |>"
+"0","  tt_cell(2, 2, background = ""yellow"", content='12', colspan = 2, "
+"0","          rowspan = 2,"
+"0","          align = 'center')"
+"1","#table(
+  columns: (1fr, 1fr, 1fr),
+  align: (right, left, left),
+  stroke: none,
+  table.hline(stroke: 1pt),
+  [mpg], [cyl], [disp],
+  table.hline(stroke: 0.5pt),
+  [*21*], [*6*], [*160*],
+  [21], table.cell(colspan: 2, rowspan: 2, align: center, fill: yellow)[12], [160],
+  [22.8], [4], [108],
+  [21.4], [6], [258],
+  [18.7], [8], [360],
+  table.hline(stroke: 1pt)
+)"
+"1"," "
+"1","
+"

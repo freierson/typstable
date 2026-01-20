@@ -1,0 +1,8 @@
+# Vignette build outputs
+doc/
+Meta/
+vignettes/*.html
+vignettes/*.pdf
+vignettes/*_files/
+/doc/
+/Meta/
