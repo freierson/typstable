@@ -35,5 +35,6 @@ tbl <- tt(cars, cols = c(.rownames, all_of(style_cols))) |>
 
 ## Learn more
 
-See the [Get started](articles/typstable.html) vignette for full
-documentation.
+See the [Get
+started](https://freierson.github.io/typstable/articles/typstable.html)
+vignette for full documentation.

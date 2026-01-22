@@ -11,6 +11,11 @@ knitr::opts_chunk$set(
 
 # typstable
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/freierson/typstable/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/freierson/typstable/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/freierson/typstable/graph/badge.svg)](https://app.codecov.io/gh/freierson/typstable)
+<!-- badges: end -->
+
 The purpose of typstable /ˈtaɪps.tə.bᵊl/ is to produce publication-ready tables
 for Quarto documents targeting the Typst format. Typst is a modern, open-source,
 markup-based typesetting system that provides an alternative to LaTeX for
@@ -111,4 +116,4 @@ knitr::include_graphics("man/figures/readme-example.svg")
 
 ## Learn more
 
-See the [Get started](articles/typstable.html) vignette for full documentation.
+See the [Get started](https://freierson.github.io/typstable/articles/typstable.html) vignette for full documentation.
