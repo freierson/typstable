@@ -12,17 +12,24 @@
 #' @param color Text color.
 #' @param background Background fill color.
 #' @param line Logical. Add horizontal line below the header (default TRUE).
+#' @param gap Width of visual gap between header groups (e.g., "10pt", "0.5em").
+#'   When specified, empty columns are inserted between groups. Default "10pt".
+#'   Use NULL to disable gaps.
 #'
 #' @return The modified `typst_table` object.
 #'
 #' @examples
 #' # Group columns under headers
-#' tt(mtcars[1:5, 1:6]) |>
+#' tt(mtcars[1:5, 1:6], rownames = FALSE) |>
 #'   tt_header_above(c("Performance" = 3, "Design" = 3))
 #'
 #' # Leave some columns ungrouped
-#' tt(mtcars[1:5, 1:6]) |>
+#' tt(mtcars[1:5, 1:6], rownames = FALSE) |>
 #'   tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3))
+#'
+#' # Disable gaps between groups
+#' tt(mtcars[1:5, 1:6], rownames = FALSE) |>
+#'   tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3), gap = NULL)
 #'
 #' @export
 tt_header_above <- function(table,
@@ -31,7 +38,8 @@ tt_header_above <- function(table,
                             align = "center",
                             color = NULL,
                             background = NULL,
-                            line = TRUE) {
+                            line = TRUE,
+                            gap = "10pt") {
   .check_typst_table(table)
   table <- .copy_table(table)
 
@@ -59,7 +67,8 @@ tt_header_above <- function(table,
     align = align,
     color = color,
     background = background,
-    line = line
+    line = line,
+    gap = gap
   )
 
   # Prepend to headers_above (most recent goes first)

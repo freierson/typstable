@@ -1,16 +1,19 @@
 Package: typstable
-Title: Create Typst Tables from Data Frames
+Title: Better Typst Tables in R
 Version: 0.1.0
+URL: https://freierson.github.io/typstable/, https://github.com/freierson/typstable
+BugReports: https://github.com/freierson/typstable/issues
 Authors@R:
-    person("Filip", "", , email = "author@example.com", role = c("aut", "cre"))
-Description: Generate Typst table markup from tibbles and data.frames with
-    kableExtra-like styling capabilities. Supports column/row/cell formatting,
-    data-driven styling, math equations, and seamless Quarto integration.
-License: MIT + file LICENSE
+    person("Filip", "Reierson", , email = "filip.reierson@gmail.com", 
+    role = c("aut", "cre"), comment = c(ORCID="0009-0003-2393-5810"))
+Description: Create Typst table markup from data frames for use in Quarto documents.               
+      Features a pipe-friendly interface for column, row, and cell styling with support for                  
+      grouped headers, data-driven formatting, and math equations.
+License: GPL (>= 3)
 Depends: R (>= 4.1.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports:
     rlang (>= 1.0.0),
     tidyselect

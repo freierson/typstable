@@ -21,6 +21,7 @@ Widths are converted to Typst fr (fractional) units."></head><body>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/freierson/typstable/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -30,7 +31,7 @@ Widths are converted to Typst fr (fractional) units."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Set proportional column widths</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/freierson/typstable/blob/HEAD/R/tt.R" class="external-link"><code>R/tt.R</code></a></small>
       <div class="d-none name"><code>tt_widths.Rd</code></div>
     </div>
 
@@ -70,7 +71,7 @@ named by column. Values represent relative proportions.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Equal widths</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">tt_widths</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">tt_widths</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
@@ -86,7 +87,7 @@ named by column. Values represent relative proportions.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Proportional widths (25%, 50%, 25%)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">tt_widths</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">tt_widths</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 2fr, 1fr),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
@@ -102,7 +103,7 @@ named by column. Values represent relative proportions.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Named columns</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">tt_widths</span><span class="op">(</span>mpg <span class="op">=</span> <span class="fl">1</span>, cyl <span class="op">=</span> <span class="fl">2</span>, disp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">tt_widths</span><span class="op">(</span>mpg <span class="op">=</span> <span class="fl">1</span>, cyl <span class="op">=</span> <span class="fl">2</span>, disp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 2fr, 1fr),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
@@ -124,7 +125,7 @@ named by column. Values represent relative proportions.</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Filip.</p>
+  <p>Developed by <a href="https://github.com/freierson" class="external-link">Filip Reierson</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

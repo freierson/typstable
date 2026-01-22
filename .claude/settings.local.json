@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(R CMD build:*)",
+      "Bash(R CMD check:*)",
+      "Bash(Rscript:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}

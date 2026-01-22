@@ -34,11 +34,11 @@
 #'
 #' @examples
 #' # Right-align and bold a numeric column
-#' tt(mtcars[1:5, 1:3]) |>
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 #'   tt_column(mpg, align = "right", bold = TRUE)
 #'
 #' # Style multiple columns at once
-#' tt(mtcars[1:5, 1:3]) |>
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 #'   tt_column(c(mpg, disp), align = "right", color = "blue")
 #'
 #' @export

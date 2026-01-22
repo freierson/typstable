@@ -1,0 +1,114 @@
+---
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# typstable
+
+The purpose of typstable /ˈtaɪps.tə.bᵊl/ is to produce publication-ready tables
+for Quarto documents targeting the Typst format. Typst is a modern, open-source,
+markup-based typesetting system that provides an alternative to LaTeX for
+rendering PDF documents. This package allows R users to create Typst tables with elaborate formatting.
+
+## Installation
+
+```r
+# Install from GitHub
+pak::pak("freierson/typstable")
+```
+
+## Example
+
+```{r data-prep, echo=FALSE, message=FALSE}
+library(typstable)
+library(dplyr)
+library(scales)
+
+# Columns to style
+style_cols <- c("mpg", "qsec", "cyl", "disp", "hp", "wt")
+
+# Prepare data
+cars <- mtcars |>
+  mutate(
+    name = rownames(mtcars),
+    brand = gsub(" .*", "", name),
+    # Remove brand prefix from name
+    name = gsub("^\\w+\\s*", "", name)
+  ) |>
+  filter(brand %in% c("Mazda", "Merc", "Toyota", "Fiat")) |>
+  # Fix "Merc" to "Mercedes"
+  mutate(brand = if_else(brand == "Merc", "Mercedes", brand))
+
+# Step 1: Create quantile columns using across
+cars <- cars |>
+  mutate(across(
+    all_of(style_cols),
+    ~ percent_rank(.x),
+    .names = "quantile_{.col}"
+  ))
+
+# Step 2: Apply color scale to quantile columns using across
+color_scale <- col_numeric(palette = "Blues", domain = c(0, 1))
+cars <- cars |>
+  mutate(across(
+    starts_with("quantile_"),
+    ~ color_scale(.x),
+    .names = "bg_{sub('quantile_', '', .col)}"
+  ))
+
+# Step 3: Create text color columns (white for top 25% quantile)
+cars <- cars |>
+  mutate(across(
+    starts_with("quantile_"),
+    ~ if_else(.x >= 0.75, "white", NA_character_),
+    .names = "color_{sub('quantile_', '', .col)}"
+  ))
+
+# Compute group index
+group_idx <- table(cars$brand)[unique(cars$brand)]
+```
+
+```{r example, message=FALSE, eval=FALSE}
+# Create table with data-driven styling
+tbl <- tt(cars, cols = c(.rownames, all_of(style_cols))) |>
+  tt_style(header_separate = TRUE) |>
+  tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4)) |>
+  tt_column(mpg, color = color_mpg, background = bg_mpg) |>
+  tt_column(qsec, color = color_qsec, background = bg_qsec) |>
+  tt_column(cyl, color = color_cyl, background = bg_cyl) |>
+  tt_column(disp, color = color_disp, background = bg_disp) |>
+  tt_column(hp, color = color_hp, background = bg_hp) |>
+  tt_column(wt, color = color_wt, background = bg_wt) |>
+  tt_pack_rows(index = group_idx) |>
+  tt_column(1, width = "20%")
+```
+
+```{r table-build, echo=FALSE, message=FALSE}
+# Create table with data-driven styling
+tbl <- tt(cars, cols = c(.rownames, all_of(style_cols))) |>
+  tt_style(header_separate = TRUE) |>
+  tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4)) |>
+  tt_column(mpg, color = color_mpg, background = bg_mpg) |>
+  tt_column(qsec, color = color_qsec, background = bg_qsec) |>
+  tt_column(cyl, color = color_cyl, background = bg_cyl) |>
+  tt_column(disp, color = color_disp, background = bg_disp) |>
+  tt_column(hp, color = color_hp, background = bg_hp) |>
+  tt_column(wt, color = color_wt, background = bg_wt) |>
+  tt_pack_rows(index = group_idx) |>
+  tt_column(1, width = "20%")
+```
+
+```{r output, echo=FALSE, results="asis", out.width="100%"}
+tt_save(tbl, "man/figures/readme-example.svg", width = "6.5in")
+knitr::include_graphics("man/figures/readme-example.svg")
+```
+
+## Learn more
+
+See the [Get started](articles/typstable.html) vignette for full documentation.

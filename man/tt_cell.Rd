@@ -50,11 +50,11 @@ cell appearance including spanning multiple rows or columns.
 }
 \examples{
 # Highlight a specific cell
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_cell(1, 1, background = "yellow", bold = TRUE)
 
 # Cell spanning multiple columns
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_cell(1, 1, colspan = 2, content = "Combined")
 
 }

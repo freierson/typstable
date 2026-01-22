@@ -8,7 +8,7 @@
 #' @return A character string containing Typst table markup.
 #'
 #' @examples
-#' code <- tt(mtcars[1:3, 1:3]) |> tt_render()
+#' code <- tt(mtcars[1:3, 1:3], rownames = FALSE) |> tt_render()
 #' cat(code)
 #'
 #' @export
@@ -67,18 +67,37 @@ tt_render <- function(table) {
 .render_table_args <- function(table) {
   args <- character()
 
-  # Columns (widths)
-  col_spec <- paste0("(", paste(table$col_widths, collapse = ", "), ")")
+  # Get gap info for inserting empty columns between header groups
+
+  gap_info <- .get_gap_info(table)
+
+  # Columns (widths) - insert gap columns if needed
+  col_widths <- table$col_widths
+  col_align <- table$col_align
+
+  if (gap_info$has_gaps) {
+    # Insert gap columns at the specified positions
+    # Work backwards to preserve indices
+    for (i in rev(seq_along(gap_info$positions))) {
+      pos <- gap_info$positions[i]
+      width <- gap_info$widths[i]
+      # Insert after position 'pos' (R is 1-indexed)
+      col_widths <- append(col_widths, width, after = pos)
+      col_align <- append(col_align, "center", after = pos)
+    }
+  }
+
+  col_spec <- paste0("(", paste(col_widths, collapse = ", "), ")")
   args <- c(args, paste0("columns: ", col_spec))
 
   # Alignment
-  if (!all(table$col_align == "left")) {
-    if (length(unique(table$col_align)) == 1) {
+  if (!all(col_align == "left")) {
+    if (length(unique(col_align)) == 1) {
       # Single alignment for all
-      args <- c(args, paste0("align: ", table$col_align[1]))
+      args <- c(args, paste0("align: ", col_align[1]))
     } else {
       # Per-column alignment
-      align_spec <- paste0("(", paste(table$col_align, collapse = ", "), ")")
+      align_spec <- paste0("(", paste(col_align, collapse = ", "), ")")
       args <- c(args, paste0("align: ", align_spec))
     }
   }
@@ -111,16 +130,9 @@ tt_render <- function(table) {
     gutter <- .to_typst_length(table$row_gutter)
     args <- c(args, paste0("row-gutter: ", gutter))
   }
-  # Check if we need column-gutter for multi-group header lines
-  needs_header_gap <- any(vapply(table$headers_above, function(h) {
-    isTRUE(h$line) && length(h$header) > 1
-  }, logical(1)))
   if (!is.null(table$column_gutter)) {
     gutter <- .to_typst_length(table$column_gutter)
     args <- c(args, paste0("column-gutter: ", gutter))
-  } else if (needs_header_gap) {
-    # Add small gutter for visual gaps between header group lines
-    args <- c(args, "column-gutter: 10pt")
   }
 
   paste(args, collapse = ",\n  ")
@@ -169,7 +181,12 @@ tt_render <- function(table) {
   # Get header styling (row 0)
   header_style <- table$row_styles[["0"]]
 
-  vapply(seq_along(table$col_names), function(i) {
+  # Get gap info
+  gap_info <- .get_gap_info(table)
+
+  cells <- character()
+
+  for (i in seq_along(table$col_names)) {
     content <- table$col_names[i]
 
     # Escape if needed
@@ -177,8 +194,13 @@ tt_render <- function(table) {
       content <- .escape_typst(content)
     }
 
-    # Get column style
+    # Get column style (filter out data-driven attributes for header row)
     col_style <- table$col_styles[[table$display_cols[i]]]
+    if (!is.null(col_style)) {
+      # Remove data-driven attributes (*_col) as they don't apply to header cells
+      data_driven <- c("background_col", "color_col", "bold_col", "italic_col", "font_size_col")
+      col_style <- col_style[!names(col_style) %in% data_driven]
+    }
 
     # Merge styles: header row style + column style
     style <- .merge_styles(header_style, col_style)
@@ -190,14 +212,24 @@ tt_render <- function(table) {
       style <- .merge_styles(style, cell_style)
     }
 
-    .render_cell(content, style, table, row = 0, col = i)
-  }, character(1))
+    cells <- c(cells, .render_cell(content, style, table, row = 0, col = i))
+
+    # Insert empty gap cell if this column is followed by a gap
+    if (gap_info$has_gaps && i %in% gap_info$positions) {
+      cells <- c(cells, "[]")
+    }
+  }
+
+  cells
 }
 
 #' Render headers_above cells (returns vector of cell strings)
 #' @noRd
 .render_headers_above_cells <- function(table) {
   if (length(table$headers_above) == 0) return(character())
+
+  # Get gap info
+  gap_info <- .get_gap_info(table)
 
   # Collect all cells from all headers_above rows
   all_cells <- character()
@@ -206,6 +238,9 @@ tt_render <- function(table) {
     row_cells <- character()
     # Use cell borders for gaps when multiple groups with line=TRUE
     use_cell_borders <- isTRUE(header_spec$line) && length(header_spec$header) > 1
+
+    # Check if this header_spec is the one that defines gaps
+    this_has_gaps <- !is.null(header_spec$gap) && length(header_spec$header) > 1
 
     for (i in seq_along(header_spec$header)) {
       span <- header_spec$header[i]
@@ -228,21 +263,22 @@ tt_render <- function(table) {
         background = header_spec$background
       )
 
-      content <- .format_text(label, bold = style$bold)
+      content <- .format_text(label, bold = style[["bold"]])
 
       # Build cell arguments
       cell_args <- character()
       if (span > 1) {
         cell_args <- c(cell_args, paste0("colspan: ", span))
       }
-      if (!is.null(style$align)) {
-        cell_args <- c(cell_args, paste0("align: ", .to_typst_align(style$align)))
+      if (!is.null(style[["align"]])) {
+        cell_args <- c(cell_args, paste0("align: ", .to_typst_align(style[["align"]])))
       }
-      if (!is.null(style$background)) {
-        cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(style$background)))
+      if (!is.null(style[["background"]])) {
+        cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(style[["background"]])))
       }
-      if (use_cell_borders) {
+      if (use_cell_borders && trimws(label) != "") {
         # Add bottom border to create lines with gaps between groups
+        # Skip for empty/whitespace-only labels to create visual gap
         cell_args <- c(cell_args, "stroke: (bottom: 0.5pt)")
       }
 
@@ -250,6 +286,11 @@ tt_render <- function(table) {
         row_cells <- c(row_cells, paste0("table.cell(", paste(cell_args, collapse = ", "), ")[", content, "]"))
       } else {
         row_cells <- c(row_cells, paste0("[", content, "]"))
+      }
+
+      # Insert empty gap cell after each group except the last (if this header defines gaps)
+      if (this_has_gaps && i < length(header_spec$header)) {
+        row_cells <- c(row_cells, "[]")
       }
     }
 
@@ -272,8 +313,11 @@ tt_render <- function(table) {
   # Get row groups for indentation
   row_groups <- .get_row_group_info(table)
 
+  # Get gap info
+  gap_info <- .get_gap_info(table)
+
   for (i in seq_len(table$nrow)) {
-    row_cells <- character(table$ncol)
+    row_cells <- character()
 
     # Get row styling
     row_style <- table$row_styles[[as.character(i)]]
@@ -314,7 +358,12 @@ tt_render <- function(table) {
         style <- .merge_styles(style, cell_style)
       }
 
-      row_cells[j] <- .render_cell(content, style, table, row = i, col = j)
+      row_cells <- c(row_cells, .render_cell(content, style, table, row = i, col = j))
+
+      # Insert empty gap cell if this column is followed by a gap
+      if (gap_info$has_gaps && j %in% gap_info$positions) {
+        row_cells <- c(row_cells, "[]")
+      }
     }
 
     # Combine cells for this row
@@ -352,16 +401,17 @@ tt_render <- function(table) {
   }
 
   # Check if we need table.cell wrapper (for fill, colspan, rowspan, align)
-  needs_wrapper <- !is.null(style$background) ||
-                   !is.null(style$colspan) && style$colspan > 1 ||
-                   !is.null(style$rowspan) && style$rowspan > 1 ||
-                   !is.null(style$cell_align)
+  # Use [[]] to avoid partial matching (e.g., $background matching $background_col)
+  needs_wrapper <- !is.null(style[["background"]]) ||
+                   !is.null(style[["colspan"]]) && style[["colspan"]] > 1 ||
+                   !is.null(style[["rowspan"]]) && style[["rowspan"]] > 1 ||
+                   !is.null(style[["cell_align"]])
 
   # Apply text formatting
   formatted <- content
-  if (!is.null(style$content)) {
+  if (!is.null(style[["content"]])) {
     # Override content
-    formatted <- style$content
+    formatted <- style[["content"]]
     if (table$escape) {
       formatted <- .escape_typst(formatted)
     }
@@ -369,26 +419,26 @@ tt_render <- function(table) {
 
   formatted <- .format_text(
     formatted,
-    bold = style$bold,
-    italic = style$italic,
-    color = style$color,
-    size = style$font_size
+    bold = style[["bold"]],
+    italic = style[["italic"]],
+    color = style[["color"]],
+    size = style[["font_size"]]
   )
 
   if (needs_wrapper) {
     cell_args <- character()
 
-    if (!is.null(style$colspan) && style$colspan > 1) {
-      cell_args <- c(cell_args, paste0("colspan: ", style$colspan))
+    if (!is.null(style[["colspan"]]) && style[["colspan"]] > 1) {
+      cell_args <- c(cell_args, paste0("colspan: ", style[["colspan"]]))
     }
-    if (!is.null(style$rowspan) && style$rowspan > 1) {
-      cell_args <- c(cell_args, paste0("rowspan: ", style$rowspan))
+    if (!is.null(style[["rowspan"]]) && style[["rowspan"]] > 1) {
+      cell_args <- c(cell_args, paste0("rowspan: ", style[["rowspan"]]))
     }
-    if (!is.null(style$cell_align)) {
-      cell_args <- c(cell_args, paste0("align: ", .to_typst_align(style$cell_align)))
+    if (!is.null(style[["cell_align"]])) {
+      cell_args <- c(cell_args, paste0("align: ", .to_typst_align(style[["cell_align"]])))
     }
-    if (!is.null(style$background)) {
-      cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(style$background)))
+    if (!is.null(style[["background"]])) {
+      cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(style[["background"]])))
     }
 
     paste0("table.cell(", paste(cell_args, collapse = ", "), ")[", formatted, "]")
@@ -521,8 +571,10 @@ tt_render <- function(table) {
     label <- paste0("*", label, "*")
   }
 
-  # Span all columns
-  paste0("table.cell(colspan: ", table$ncol, ")[", label, "]")
+  # Span all columns (including gap columns)
+  gap_info <- .get_gap_info(table)
+  total_cols <- gap_info$total_cols
+  paste0("table.cell(colspan: ", total_cols, ")[", label, "]")
 }
 
 #' Get hline at position

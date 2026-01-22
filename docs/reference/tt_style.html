@@ -21,6 +21,7 @@ fill (background), striped rows, and spacing."></head><body>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/freierson/typstable/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -30,7 +31,7 @@ fill (background), striped rows, and spacing."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Style overall table appearance</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/freierson/typstable/blob/HEAD/R/tt_style.R" class="external-link"><code>R/tt_style.R</code></a></small>
       <div class="d-none name"><code>tt_style.Rd</code></div>
     </div>
 
@@ -110,7 +111,7 @@ for different padding on each side.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Add borders and striped rows</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_style</span><span class="op">(</span>stroke <span class="op">=</span> <span class="cn">TRUE</span>, striped <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
@@ -125,7 +126,7 @@ for different padding on each side.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom border color and padding</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_style</span><span class="op">(</span>stroke <span class="op">=</span> <span class="st">"gray"</span>, inset <span class="op">=</span> <span class="st">"8pt"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
@@ -140,7 +141,7 @@ for different padding on each side.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Header separator line</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_style</span><span class="op">(</span>header_separate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
@@ -168,7 +169,7 @@ for different padding on each side.</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Filip.</p>
+  <p>Developed by <a href="https://github.com/freierson" class="external-link">Filip Reierson</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

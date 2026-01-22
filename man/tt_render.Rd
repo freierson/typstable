@@ -17,7 +17,7 @@ Generates Typst code from a \code{typst_table} object. This is called automatica
 by \code{print()} and \code{knit_print()}, but can also be called directly.
 }
 \examples{
-code <- tt(mtcars[1:3, 1:3]) |> tt_render()
+code <- tt(mtcars[1:3, 1:3], rownames = FALSE) |> tt_render()
 cat(code)
 
 }

@@ -66,18 +66,18 @@ for both (the default) creates a page that fits the table content exactly.
 \examples{
 \dontrun{
 # Save as SVG (requires Typst CLI)
-tt(mtcars[1:5, 1:3]) |> tt_save("table.svg")
+tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_save("table.svg")
 
 # Save as PNG with higher resolution
-tt(mtcars[1:5, 1:3]) |> tt_save("table.png", ppi = 300)
+tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_save("table.png", ppi = 300)
 
 # Save as PDF with specific page size
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_style(stroke = TRUE) |>
   tt_save("table.pdf", width = "6in", height = "4in")
 
 # Save Typst source (no CLI required)
-tt(mtcars[1:5, 1:3]) |> tt_save("table.typ")
+tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_save("table.typ")
 }
 
 }

@@ -27,15 +27,15 @@ Adds a horizontal line at a specific position in the table.
 }
 \examples{
 # Add line below header
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_hline(1)
 
 # Add colored line
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_hline(1, stroke = "blue")
 
 # Partial line spanning some columns
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_hline(1, start = 0, end = 2)
 
 }

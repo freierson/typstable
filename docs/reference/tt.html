@@ -25,6 +25,7 @@ the table appearance."></head><body>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/freierson/typstable/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -34,7 +35,7 @@ the table appearance."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Create a Typst table</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/freierson/typstable/blob/HEAD/R/tt.R" class="external-link"><code>R/tt.R</code></a></small>
       <div class="d-none name"><code>tt.Rd</code></div>
     </div>
 
@@ -55,7 +56,8 @@ the table appearance.</p>
 <span>  align <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  caption <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  escape <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  escape <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  rownames <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -100,6 +102,12 @@ of alignments. Valid values: "left"/"l", "center"/"c", "right"/"r".</p></dd>
 <dd><p>Logical. If TRUE (default), escapes Typst special characters.
 Math content in <code>$...$</code> is always preserved. Use <code>\$</code> for literal dollar signs.</p></dd>
 
+
+<dt id="arg-rownames">rownames<a class="anchor" aria-label="anchor" href="#arg-rownames"></a></dt>
+<dd><p>Controls row name handling: TRUE (default) includes row names
+as the first column with an empty header, FALSE excludes row names, or a
+string to use as the column header for row names.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -108,24 +116,24 @@ Math content in <code>$...$</code> is always preserved. Use <code>\$</code> for 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Basic table</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Basic table (includes row names by default)</span></span></span>
 <span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr, 1fr),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [], [mpg], [cyl], [disp],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [22.8], [4], [108],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [21.4], [6], [258],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [18.7], [8], [360],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Mazda RX4], [21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Mazda RX4 Wag], [21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Datsun 710], [22.8], [4], [108],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Hornet 4 Drive], [21.4], [6], [258],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Hornet Sportabout], [18.7], [8], [360],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Select specific columns</span></span></span>
-<span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">cyl</span>, <span class="va">hp</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Select specific columns (excludes row names)</span></span></span>
+<span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">cyl</span>, <span class="va">hp</span><span class="op">)</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
@@ -168,7 +176,7 @@ Math content in <code>$...$</code> is always preserved. Use <code>\$</code> for 
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom column names</span></span></span>
-<span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Miles/Gallon"</span>, <span class="st">"Cylinders"</span>, <span class="st">"Horsepower"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Miles/Gallon"</span>, <span class="st">"Cylinders"</span>, <span class="st">"Horsepower"</span><span class="op">)</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
@@ -186,17 +194,17 @@ Math content in <code>$...$</code> is always preserved. Use <code>\$</code> for 
 <span class="r-in"><span><span class="co"># Right-align numeric columns</span></span></span>
 <span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, align <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr, 1fr),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   align: right,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [], [mpg], [cyl], [disp],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [22.8], [4], [108],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [21.4], [6], [258],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [18.7], [8], [360],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Mazda RX4], [21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Mazda RX4 Wag], [21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Datsun 710], [22.8], [4], [108],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Hornet 4 Drive], [21.4], [6], [258],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [Hornet Sportabout], [18.7], [8], [360],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
@@ -207,7 +215,7 @@ Math content in <code>$...$</code> is always preserved. Use <code>\$</code> for 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Filip.</p>
+  <p>Developed by <a href="https://github.com/freierson" class="external-link">Filip Reierson</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

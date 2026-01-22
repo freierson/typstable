@@ -6,9 +6,10 @@
 \usage{
 tt_pack_rows(
   table,
-  group_label,
-  start_row,
-  end_row,
+  group_label = NULL,
+  start_row = NULL,
+  end_row = NULL,
+  index = NULL,
   indent = TRUE,
   bold_label = TRUE
 )
@@ -16,11 +17,16 @@ tt_pack_rows(
 \arguments{
 \item{table}{A \code{typst_table} object.}
 
-\item{group_label}{The label text for the group.}
+\item{group_label}{The label text for the group (used with \code{start_row}/\code{end_row}).}
 
 \item{start_row}{First row number in the group (1-indexed).}
 
 \item{end_row}{Last row number in the group.}
+
+\item{index}{A named numeric vector for multiple groups (kableExtra style).
+Names are group labels, values are row counts.
+Example: \code{c("Group A" = 3, "Group B" = 5)} creates two groups where
+"Group A" covers rows 1-3 and "Group B" covers rows 4-8.}
 
 \item{indent}{Logical. Indent rows in the group (default TRUE).}
 
@@ -35,8 +41,12 @@ Useful for creating visual sections in the table.
 }
 \examples{
 # Group rows with a label
-tt(mtcars[1:10, 1:3]) |>
+tt(mtcars[1:10, 1:3], rownames = FALSE) |>
   tt_pack_rows("4 Cylinders", 1, 5) |>
   tt_pack_rows("6 Cylinders", 6, 10)
+
+# Using index parameter (kableExtra style)
+tt(mtcars[1:10, 1:3], rownames = FALSE) |>
+  tt_pack_rows(index = c("4 Cylinders" = 5, "6 Cylinders" = 5))
 
 }

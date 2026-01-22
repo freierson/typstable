@@ -1,2 +1,8 @@
+url: https://freierson.github.io/typstable/
+
 template:
   bootstrap: 5
+
+authors:
+  Filip Reierson:
+    href: https://github.com/freierson

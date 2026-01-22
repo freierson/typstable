@@ -252,6 +252,57 @@
   }
 }
 
+#' Get gap column information from headers_above
+#'
+#' Analyzes headers_above specifications to determine where gap columns
+#' should be inserted between header groups.
+#'
+#' @param table A typst_table object
+#' @return A list with:
+#'   - has_gaps: logical, whether any gaps are needed
+#'   - positions: integer vector of original column indices after which to insert gaps
+#'   - widths: character vector of gap widths (same length as positions)
+#'   - total_cols: total number of columns including gaps
+#' @noRd
+.get_gap_info <- function(table) {
+  result <- list(
+    has_gaps = FALSE,
+    positions = integer(0),
+    widths = character(0),
+    total_cols = table$ncol
+  )
+
+  if (length(table$headers_above) == 0) {
+    return(result)
+  }
+
+  # Look for first header_above with gap specified and multiple groups
+  for (header_spec in table$headers_above) {
+    if (!is.null(header_spec$gap) && length(header_spec$header) > 1) {
+      gap_width <- .to_typst_length(header_spec$gap)
+
+      # Calculate positions where gaps should be inserted
+      # Gaps go between groups (after each group except the last)
+      positions <- integer(0)
+      cumsum_cols <- cumsum(header_spec$header)
+
+      # Insert gap after each group boundary except the last
+      for (i in seq_len(length(cumsum_cols) - 1)) {
+        positions <- c(positions, cumsum_cols[i])
+      }
+
+      result$has_gaps <- TRUE
+      result$positions <- positions
+      result$widths <- rep(gap_width, length(positions))
+      result$total_cols <- table$ncol + length(positions)
+
+      break  # Only use first header with gaps
+    }
+  }
+
+  result
+}
+
 #' Deep copy a typst_table object
 #'
 #' Creates a deep copy to avoid modifying the original when piping.

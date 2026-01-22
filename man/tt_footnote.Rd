@@ -24,11 +24,11 @@ and symbol-marked notes.
 }
 \examples{
 # Add a general note
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_footnote(general = "Source: Motor Trend magazine, 1974.")
 
 # Add numbered footnotes
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_footnote(number = c("Miles per gallon", "Number of cylinders"))
 
 }

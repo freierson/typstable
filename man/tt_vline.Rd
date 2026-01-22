@@ -25,11 +25,11 @@ Adds a vertical line at a specific position in the table.
 }
 \examples{
 # Add line after first column
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_vline(1)
 
 # Add partial vertical line (data rows only)
-tt(mtcars[1:5, 1:3]) |>
+tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_vline(1, start = 1)
 
 }

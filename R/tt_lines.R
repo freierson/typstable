@@ -14,15 +14,15 @@
 #'
 #' @examples
 #' # Add line below header
-#' tt(mtcars[1:5, 1:3]) |>
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 #'   tt_hline(1)
 #'
 #' # Add colored line
-#' tt(mtcars[1:5, 1:3]) |>
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 #'   tt_hline(1, stroke = "blue")
 #'
 #' # Partial line spanning some columns
-#' tt(mtcars[1:5, 1:3]) |>
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 #'   tt_hline(1, start = 0, end = 2)
 #'
 #' @export
@@ -73,11 +73,11 @@ tt_hline <- function(table,
 #'
 #' @examples
 #' # Add line after first column
-#' tt(mtcars[1:5, 1:3]) |>
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 #'   tt_vline(1)
 #'
 #' # Add partial vertical line (data rows only)
-#' tt(mtcars[1:5, 1:3]) |>
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 #'   tt_vline(1, start = 1)
 #'
 #' @export

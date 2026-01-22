@@ -21,6 +21,7 @@ data-driven formatting where styling parameters reference other columns."></head
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/freierson/typstable/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -30,7 +31,7 @@ data-driven formatting where styling parameters reference other columns."></head
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Style specific columns</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/freierson/typstable/blob/HEAD/R/tt_column.R" class="external-link"><code>R/tt_column.R</code></a></small>
       <div class="d-none name"><code>tt_column.Rd</code></div>
     </div>
 
@@ -129,7 +130,7 @@ data-driven formatting where styling parameters reference other columns.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Right-align and bold a numeric column</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_column</span><span class="op">(</span><span class="va">mpg</span>, align <span class="op">=</span> <span class="st">"right"</span>, bold <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
@@ -147,7 +148,7 @@ data-driven formatting where styling parameters reference other columns.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Style multiple columns at once</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_column</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">disp</span><span class="op">)</span>, align <span class="op">=</span> <span class="st">"right"</span>, color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
@@ -171,7 +172,7 @@ data-driven formatting where styling parameters reference other columns.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Filip.</p>
+  <p>Developed by <a href="https://github.com/freierson" class="external-link">Filip Reierson</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

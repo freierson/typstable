@@ -25,12 +25,12 @@ Widths are relative proportions, not absolute values. For example,
 }
 \examples{
 # Equal widths
-tt(mtcars[1:5, 1:3]) |> tt_widths(1, 1, 1)
+tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_widths(1, 1, 1)
 
 # Proportional widths (25\%, 50\%, 25\%)
-tt(mtcars[1:5, 1:3]) |> tt_widths(1, 2, 1)
+tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_widths(1, 2, 1)
 
 # Named columns
-tt(mtcars[1:5, 1:3]) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
+tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
 
 }

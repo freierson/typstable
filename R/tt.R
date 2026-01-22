@@ -19,18 +19,21 @@
 #' @param label Optional label for cross-referencing (e.g., "tbl-results").
 #' @param escape Logical. If TRUE (default), escapes Typst special characters.
 #'   Math content in `$...$` is always preserved. Use `\$` for literal dollar signs.
+#' @param rownames Controls row name handling: TRUE (default) includes row names
+#'   as the first column with an empty header, FALSE excludes row names, or a
+#'   string to use as the column header for row names.
 #'
 #' @return A `typst_table` object that can be further styled and rendered.
 #'
 #' @examples
-#' # Basic table
+#' # Basic table (includes row names by default)
 #' tt(mtcars[1:5, 1:3])
 #'
-#' # Select specific columns
-#' tt(mtcars, cols = c(mpg, cyl, hp))
+#' # Select specific columns (excludes row names)
+#' tt(mtcars, cols = c(mpg, cyl, hp), rownames = FALSE)
 #'
 #' # Custom column names
-#' tt(mtcars[1:5, 1:3], col_names = c("Miles/Gallon", "Cylinders", "Horsepower"))
+#' tt(mtcars[1:5, 1:3], col_names = c("Miles/Gallon", "Cylinders", "Horsepower"), rownames = FALSE)
 #'
 #' # Right-align numeric columns
 #' tt(mtcars[1:5, 1:3], align = "right")
@@ -43,10 +46,28 @@ tt <- function(data,
                align = NULL,
                caption = NULL,
                label = NULL,
-               escape = TRUE) {
+               escape = TRUE,
+               rownames = TRUE) {
   # Validate input
   if (!is.data.frame(data)) {
     rlang::abort("`data` must be a data.frame or tibble")
+  }
+
+  # Handle rownames parameter
+  rownames_display_name <- NULL
+  if (!isFALSE(rownames)) {
+    # Determine display name for rownames column
+    rownames_display_name <- if (isTRUE(rownames)) "" else as.character(rownames)
+
+    # Get rownames and prepend as first column
+    rn <- rownames(data)
+    if (is.null(rn)) rn <- as.character(seq_len(nrow(data)))
+
+    # Use internal placeholder name (R doesn't allow empty column names)
+    data <- cbind(
+      stats::setNames(data.frame(rn, stringsAsFactors = FALSE), ".rownames"),
+      data
+    )
   }
 
   # Store original data for data-driven formatting
@@ -63,6 +84,10 @@ tt <- function(data,
   # Set column names
   if (is.null(col_names)) {
     col_names <- display_cols
+    # Replace .rownames placeholder with actual display name
+    if (!is.null(rownames_display_name)) {
+      col_names[col_names == ".rownames"] <- rownames_display_name
+    }
   } else {
     if (length(col_names) != length(display_cols)) {
       rlang::abort(paste0(
@@ -160,13 +185,13 @@ tt <- function(data,
 #'
 #' @examples
 #' # Equal widths
-#' tt(mtcars[1:5, 1:3]) |> tt_widths(1, 1, 1)
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_widths(1, 1, 1)
 #'
 #' # Proportional widths (25%, 50%, 25%)
-#' tt(mtcars[1:5, 1:3]) |> tt_widths(1, 2, 1)
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_widths(1, 2, 1)
 #'
 #' # Named columns
-#' tt(mtcars[1:5, 1:3]) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
+#' tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
 #'
 #' @export
 tt_widths <- function(table, ...) {

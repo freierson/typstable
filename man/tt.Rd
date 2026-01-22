@@ -12,7 +12,8 @@ tt(
   align = NULL,
   caption = NULL,
   label = NULL,
-  escape = TRUE
+  escape = TRUE,
+  rownames = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,10 @@ of alignments. Valid values: "left"/"l", "center"/"c", "right"/"r".}
 
 \item{escape}{Logical. If TRUE (default), escapes Typst special characters.
 Math content in \verb{$...$} is always preserved. Use \verb{\\$} for literal dollar signs.}
+
+\item{rownames}{Controls row name handling: TRUE (default) includes row names
+as the first column with an empty header, FALSE excludes row names, or a
+string to use as the column header for row names.}
 }
 \value{
 A \code{typst_table} object that can be further styled and rendered.
@@ -48,14 +53,14 @@ rendered to Typst markup. Use pipe-friendly styling functions like
 the table appearance.
 }
 \examples{
-# Basic table
+# Basic table (includes row names by default)
 tt(mtcars[1:5, 1:3])
 
-# Select specific columns
-tt(mtcars, cols = c(mpg, cyl, hp))
+# Select specific columns (excludes row names)
+tt(mtcars, cols = c(mpg, cyl, hp), rownames = FALSE)
 
 # Custom column names
-tt(mtcars[1:5, 1:3], col_names = c("Miles/Gallon", "Cylinders", "Horsepower"))
+tt(mtcars[1:5, 1:3], col_names = c("Miles/Gallon", "Cylinders", "Horsepower"), rownames = FALSE)
 
 # Right-align numeric columns
 tt(mtcars[1:5, 1:3], align = "right")
