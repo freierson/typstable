@@ -1,5 +1,5 @@
 
-# [typstable](https://freierson.github.io/typstable/) <img src="https://raw.githubusercontent.com/rstudio/hex-stickers/refs/heads/main/PNG/tibble.png" width="160" align="right" alt="hex sticker"/>
+# [typstable](https://freierson.github.io/typstable/) <img src="" width="160" align="right" alt="hex sticker"/>
 
 <div id="badges">
 
