@@ -7,3 +7,4 @@ vignettes/*_files/
 /doc/
 /Meta/
 .Rproj.user
+.claude/
