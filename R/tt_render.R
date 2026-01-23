@@ -198,7 +198,7 @@ tt_render <- function(table) {
     col_style <- table$col_styles[[table$display_cols[i]]]
     if (!is.null(col_style)) {
       # Remove data-driven attributes (*_col) as they don't apply to header cells
-      data_driven <- c("background_col", "color_col", "bold_col", "italic_col", "font_size_col")
+      data_driven <- c("background_col", "color_col", "bold_col", "italic_col", "font_size_col", "rotate_col")
       col_style <- col_style[!names(col_style) %in% data_driven]
     }
 
@@ -422,7 +422,8 @@ tt_render <- function(table) {
     bold = style[["bold"]],
     italic = style[["italic"]],
     color = style[["color"]],
-    size = style[["font_size"]]
+    size = style[["font_size"]],
+    rotate = style[["rotate"]]
   )
 
   if (needs_wrapper) {
@@ -458,7 +459,7 @@ tt_render <- function(table) {
   # Check for data-driven attributes
   resolved <- col_style
 
-  for (attr in c("background", "color", "bold", "italic", "font_size")) {
+  for (attr in c("background", "color", "bold", "italic", "font_size", "rotate")) {
     col_ref <- col_style[[paste0(attr, "_col")]]
     if (!is.null(col_ref)) {
       # Look up value in original data

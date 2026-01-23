@@ -13,6 +13,7 @@ tt_row(
   background = NULL,
   align = NULL,
   font_size = NULL,
+  rotate = NULL,
   hline_above = NULL,
   hline_below = NULL
 )
@@ -34,6 +35,8 @@ tt_row(
 \item{align}{Row alignment override.}
 
 \item{font_size}{Font size.}
+
+\item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}).}
 
 \item{hline_above}{Add horizontal line above the row. Can be \code{TRUE} for default
 line or a stroke specification.}

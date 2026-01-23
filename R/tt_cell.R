@@ -11,6 +11,8 @@
 #' @param color Text color.
 #' @param background Background fill color.
 #' @param align Cell alignment.
+#' @param font_size Font size.
+#' @param rotate Rotation angle (e.g., `"90deg"`, `90`, `"1.5rad"`).
 #' @param colspan Number of columns to span (default 1).
 #' @param rowspan Number of rows to span (default 1).
 #' @param content Optional content to replace cell value.
@@ -35,6 +37,8 @@ tt_cell <- function(table,
                     color = NULL,
                     background = NULL,
                     align = NULL,
+                    font_size = NULL,
+                    rotate = NULL,
                     colspan = 1,
                     rowspan = 1,
                     content = NULL) {
@@ -68,6 +72,8 @@ tt_cell <- function(table,
   if (!is.null(color)) style$color <- color
   if (!is.null(background)) style$background <- background
   if (!is.null(align)) style$cell_align <- .to_typst_align(align)
+  if (!is.null(font_size)) style$font_size <- font_size
+  if (!is.null(rotate)) style$rotate <- rotate
   if (!is.null(content)) style$content <- content
   if (colspan > 1) style$colspan <- colspan
   if (rowspan > 1) style$rowspan <- rowspan

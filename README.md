@@ -39,7 +39,7 @@ tbl <- tt(cars, cols = c(.rownames, all_of(style_cols))) |>
   tt_column(1, width = "20%")
 ```
 
-<img src="man/figures/readme-example.svg" width="100%" />
+<img src="man/figures/readme-example.svg" alt="" width="100%" />
 
 ## Learn more
 

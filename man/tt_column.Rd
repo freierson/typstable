@@ -15,7 +15,8 @@ tt_column(
   background = NULL,
   border_left = NULL,
   border_right = NULL,
-  font_size = NULL
+  font_size = NULL,
+  rotate = NULL
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ tt_column(
 \item{border_right}{Right border specification.}
 
 \item{font_size}{Font size (e.g., \code{"10pt"}, \code{"0.9em"}). Can be a column name.}
+
+\item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}). Can be a column name.}
 }
 \value{
 The modified \code{typst_table} object.

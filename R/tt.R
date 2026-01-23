@@ -18,7 +18,6 @@
 #' @param caption Optional table caption (displayed above table).
 #' @param label Optional label for cross-referencing (e.g., "tbl-results").
 #' @param escape Logical. If TRUE (default), escapes Typst special characters.
-#'   Math content in `$...$` is always preserved. Use `\$` for literal dollar signs.
 #' @param rownames Controls row name handling: TRUE (default) includes row names
 #'   as the first column with an empty header, FALSE excludes row names, or a
 #'   string to use as the column header for row names.

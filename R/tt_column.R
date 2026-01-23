@@ -15,6 +15,7 @@
 #' @param border_left Left border specification (e.g., `TRUE`, `"1pt + gray"`).
 #' @param border_right Right border specification.
 #' @param font_size Font size (e.g., `"10pt"`, `"0.9em"`). Can be a column name.
+#' @param rotate Rotation angle (e.g., `"90deg"`, `90`, `"1.5rad"`). Can be a column name.
 #'
 #' @return The modified `typst_table` object.
 #'
@@ -52,7 +53,8 @@ tt_column <- function(table,
                       background = NULL,
                       border_left = NULL,
                       border_right = NULL,
-                      font_size = NULL) {
+                      font_size = NULL,
+                      rotate = NULL) {
   .check_typst_table(table)
   table <- .copy_table(table)
 
@@ -72,6 +74,7 @@ tt_column <- function(table,
   color_quo <- rlang::enquo(color)
   background_quo <- rlang::enquo(background)
   font_size_quo <- rlang::enquo(font_size)
+  rotate_quo <- rlang::enquo(rotate)
 
   # Apply style to each selected column
   for (col_name in selected_cols) {
@@ -157,6 +160,20 @@ tt_column <- function(table,
         }
       } else {
         style$font_size <- rlang::eval_tidy(font_size_quo)
+      }
+    }
+
+    # Handle rotate (static or data-driven)
+    if (!rlang::quo_is_null(rotate_quo)) {
+      if (.is_column_ref(rotate_quo)) {
+        ref_col <- .get_column_name(rotate_quo)
+        if (ref_col %in% names(table$original_data)) {
+          style$rotate_col <- ref_col
+        } else {
+          rlang::warn(paste0("Column '", ref_col, "' not found for rotate"))
+        }
+      } else {
+        style$rotate <- rlang::eval_tidy(rotate_quo)
       }
     }
 

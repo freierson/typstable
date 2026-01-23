@@ -36,8 +36,7 @@ of alignments. Valid values: "left"/"l", "center"/"c", "right"/"r".}
 
 \item{label}{Optional label for cross-referencing (e.g., "tbl-results").}
 
-\item{escape}{Logical. If TRUE (default), escapes Typst special characters.
-Math content in \verb{$...$} is always preserved. Use \verb{\\$} for literal dollar signs.}
+\item{escape}{Logical. If TRUE (default), escapes Typst special characters.}
 
 \item{rownames}{Controls row name handling: TRUE (default) includes row names
 as the first column with an empty header, FALSE excludes row names, or a

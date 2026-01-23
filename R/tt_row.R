@@ -11,6 +11,7 @@
 #' @param background Background fill color.
 #' @param align Row alignment override.
 #' @param font_size Font size.
+#' @param rotate Rotation angle (e.g., `"90deg"`, `90`, `"1.5rad"`).
 #' @param hline_above Add horizontal line above the row. Can be `TRUE` for default
 #'   line or a stroke specification.
 #' @param hline_below Add horizontal line below the row.
@@ -39,6 +40,7 @@ tt_row <- function(table,
                    background = NULL,
                    align = NULL,
                    font_size = NULL,
+                   rotate = NULL,
                    hline_above = NULL,
                    hline_below = NULL) {
   .check_typst_table(table)
@@ -73,6 +75,7 @@ tt_row <- function(table,
     if (!is.null(background)) style$background <- background
     if (!is.null(align)) style$cell_align <- .to_typst_align(align)
     if (!is.null(font_size)) style$font_size <- font_size
+    if (!is.null(rotate)) style$rotate <- rotate
 
     table$row_styles[[row_key]] <- style
 

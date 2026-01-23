@@ -157,6 +157,42 @@
   return("left")
 }
 
+#' Convert angle specification to Typst format
+#'
+#' Validates and converts angle values to Typst angle syntax.
+#'
+#' @param angle Angle specification: number (assumed degrees), or string with unit
+#'              (deg, rad, grad, turn)
+#' @return Typst angle string
+#' @noRd
+.to_typst_angle <- function(angle) {
+  if (is.null(angle)) return(NULL)
+
+  # Handle vectors
+  if (length(angle) > 1) {
+    return(vapply(angle, .to_typst_angle, character(1), USE.NAMES = FALSE))
+  }
+
+  # Handle NA
+  if (is.na(angle)) return(NA_character_)
+
+  # Numeric: assume degrees
+  if (is.numeric(angle)) {
+    return(paste0(angle, "deg"))
+  }
+
+  # String with unit - validate format
+  valid_units <- c("deg", "rad", "grad", "turn")
+  pattern <- paste0("^-?[0-9]*\\.?[0-9]+(", paste(valid_units, collapse = "|"), ")$")
+
+  if (grepl(pattern, angle)) {
+    return(angle)
+  }
+
+  rlang::warn(paste0("Invalid angle '", angle, "', using 0deg"))
+  return("0deg")
+}
+
 #' Convert stroke specification to Typst format
 #'
 #' @param stroke Stroke specification: TRUE (1pt + black), color, or width + color
@@ -210,10 +246,11 @@
 #' @param italic Logical, make italic
 #' @param color Text color
 #' @param size Font size
+#' @param rotate Rotation angle
 #' @return Formatted Typst string
 #' @noRd
 .format_text <- function(content, bold = FALSE, italic = FALSE,
-                         color = NULL, size = NULL) {
+                         color = NULL, size = NULL, rotate = NULL) {
   result <- content
 
   # Apply text() wrapper if color or size specified
@@ -234,6 +271,14 @@
   }
   if (isTRUE(italic)) {
     result <- paste0("_", result, "_")
+  }
+
+  # Apply rotation as outermost wrapper (after bold/italic)
+  if (!is.null(rotate)) {
+    angle <- .to_typst_angle(rotate)
+    if (!is.na(angle) && angle != "0deg") {
+      result <- paste0("#rotate(", angle, ", reflow: true)[", result, "]")
+    }
   }
 
   result

@@ -13,6 +13,8 @@ tt_cell(
   color = NULL,
   background = NULL,
   align = NULL,
+  font_size = NULL,
+  rotate = NULL,
   colspan = 1,
   rowspan = 1,
   content = NULL
@@ -34,6 +36,10 @@ tt_cell(
 \item{background}{Background fill color.}
 
 \item{align}{Cell alignment.}
+
+\item{font_size}{Font size.}
+
+\item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}).}
 
 \item{colspan}{Number of columns to span (default 1).}
 

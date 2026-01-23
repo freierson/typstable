@@ -110,3 +110,33 @@ test_that("tt_vline adds vertical lines", {
   expect_length(tbl$vlines, 1)
   expect_equal(tbl$vlines[[1]]$x, 1L)
 })
+
+test_that("tt_column rotation works with static and data-driven values", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  # Static numeric rotation
+  tbl <- tt(df, rownames = FALSE) |> tt_column(a, rotate = 90)
+  expect_equal(tbl$col_styles$a$rotate, 90)
+
+  # Static string rotation
+  tbl2 <- tt(df, rownames = FALSE) |> tt_column(a, rotate = "45deg")
+  expect_equal(tbl2$col_styles$a$rotate, "45deg")
+
+  # Data-driven rotation
+  df2 <- data.frame(label = c("A", "B"), value = 1:2, angle = c("0deg", "90deg"))
+  tbl3 <- tt(df2, cols = c(label, value), rownames = FALSE) |>
+    tt_column(label, rotate = angle)
+  expect_equal(tbl3$col_styles$label$rotate_col, "angle")
+})
+
+test_that("tt_row and tt_cell rotation works", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  # Row rotation
+  tbl <- tt(df, rownames = FALSE) |> tt_row(0, rotate = "90deg")
+  expect_equal(tbl$row_styles[["0"]]$rotate, "90deg")
+
+  # Cell rotation
+  tbl2 <- tt(df, rownames = FALSE) |> tt_cell(1, 1, rotate = "-45deg")
+  expect_equal(tbl2$cell_styles[["1_1"]]$rotate, "-45deg")
+})
