@@ -9,7 +9,6 @@ Authors@R:
 Description: Create Typst table markup from data frames for use in Quarto documents.               
       Features a pipe-friendly interface for column, row, and cell styling with support for                  
       grouped headers, data-driven formatting, and math equations.
-License: GPL (>= 3)
 Depends: R (>= 4.1.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -26,3 +25,4 @@ Suggests:
     pkgdown
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+License: GPL-3

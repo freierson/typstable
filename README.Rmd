@@ -1,5 +1,10 @@
 ---
-output: github_document
+output:
+  github_document:
+    html_preview: true
+home:
+  sidebar:
+    structure: [links, license, community, citation, authors, dev]
 ---
 
 ```{r, include = FALSE}
@@ -9,12 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# typstable
+# [typstable](https://freierson.github.io/typstable/) <img src="https://raw.githubusercontent.com/rstudio/hex-stickers/refs/heads/main/PNG/tibble.png" width="160" align="right" alt="hex sticker"/>
 
-<!-- badges: start -->
+<div id="badges">
 [![R-CMD-check](https://github.com/freierson/typstable/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/freierson/typstable/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/freierson/typstable/graph/badge.svg)](https://app.codecov.io/gh/freierson/typstable)
-<!-- badges: end -->
+</div>
 
 The purpose of typstable /ˈtaɪps.tə.bᵊl/ is to produce publication-ready tables
 for Quarto documents targeting the Typst format. Typst is a modern, open-source,

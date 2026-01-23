@@ -1,5 +1,13 @@
 
-# typstable
+# [typstable](https://freierson.github.io/typstable/) <img src="https://raw.githubusercontent.com/rstudio/hex-stickers/refs/heads/main/PNG/tibble.png" width="160" align="right" alt="hex sticker"/>
+
+<div id="badges">
+
+[![R-CMD-check](https://github.com/freierson/typstable/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/freierson/typstable/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/freierson/typstable/graph/badge.svg)](https://app.codecov.io/gh/freierson/typstable)
+
+</div>
 
 The purpose of typstable /ˈtaɪps.tə.bᵊl/ is to produce publication-ready
 tables for Quarto documents targeting the Typst format. Typst is a

@@ -2,10 +2,7 @@ url: https://freierson.github.io/typstable/
 
 template:
   bootstrap: 5
-
-development:
-  mode: auto
-
+  
 home:
   links:
   - text: Report a bug
