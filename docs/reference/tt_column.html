@@ -54,7 +54,8 @@ data-driven formatting where styling parameters reference other columns.</p>
 <span>  border_left <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  border_right <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  font_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  rotate <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  rotate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warn"</span>, <span class="st">"ignore"</span>, <span class="st">"error"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -79,20 +80,21 @@ data-driven formatting where styling parameters reference other columns.</p>
 
 
 <dt id="arg-bold">bold<a class="anchor" aria-label="anchor" href="#arg-bold"></a></dt>
-<dd><p>Logical or column name. If logical, applies to all rows. If column name
-(unquoted), uses that column's values (coerced to logical) for per-row bold.</p></dd>
+<dd><p>Logical, column name, or pattern string. If logical, applies to all rows.
+If column name (unquoted), uses that column's values. If pattern containing <code>{col}</code>
+(e.g., <code>"bold_{col}"</code>), expands to column name per styled column.</p></dd>
 
 
 <dt id="arg-italic">italic<a class="anchor" aria-label="anchor" href="#arg-italic"></a></dt>
-<dd><p>Logical or column name. Same behavior as <code>bold</code>.</p></dd>
+<dd><p>Logical, column name, or pattern string. Same behavior as <code>bold</code>.</p></dd>
 
 
 <dt id="arg-color">color<a class="anchor" aria-label="anchor" href="#arg-color"></a></dt>
-<dd><p>Text color. Can be a color value or column name for per-row colors.</p></dd>
+<dd><p>Text color. Can be a color value, column name, or pattern string.</p></dd>
 
 
 <dt id="arg-background">background<a class="anchor" aria-label="anchor" href="#arg-background"></a></dt>
-<dd><p>Background fill color. Can be a color value or column name.</p></dd>
+<dd><p>Background fill color. Can be a color value, column name, or pattern string.</p></dd>
 
 
 <dt id="arg-border-left">border_left<a class="anchor" aria-label="anchor" href="#arg-border-left"></a></dt>
@@ -104,11 +106,16 @@ data-driven formatting where styling parameters reference other columns.</p>
 
 
 <dt id="arg-font-size">font_size<a class="anchor" aria-label="anchor" href="#arg-font-size"></a></dt>
-<dd><p>Font size (e.g., <code>"10pt"</code>, <code>"0.9em"</code>). Can be a column name.</p></dd>
+<dd><p>Font size (e.g., <code>"10pt"</code>, <code>"0.9em"</code>). Can be a column name or pattern string.</p></dd>
 
 
 <dt id="arg-rotate">rotate<a class="anchor" aria-label="anchor" href="#arg-rotate"></a></dt>
-<dd><p>Rotation angle (e.g., <code>"90deg"</code>, <code>90</code>, <code>"1.5rad"</code>). Can be a column name.</p></dd>
+<dd><p>Rotation angle (e.g., <code>"90deg"</code>, <code>90</code>, <code>"1.5rad"</code>). Can be a column name or pattern string.</p></dd>
+
+
+<dt id="arg--missing">.missing<a class="anchor" aria-label="anchor" href="#arg--missing"></a></dt>
+<dd><p>How to handle missing pattern columns: <code>"warn"</code> (default) emits a warning,
+<code>"ignore"</code> silently skips, <code>"error"</code> stops execution.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -128,6 +135,19 @@ data-driven formatting where styling parameters reference other columns.</p>
 <span>  <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">name</span>, <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">value</span>, background <span class="op">=</span> <span class="va">bg_color</span><span class="op">)</span></span></code></pre><p></p></div>
 <p>The <code>bg_color</code> column is hidden from display but used for styling.</p>
+</div>
+
+<div class="section">
+<h3 id="pattern-based-styling">Pattern-based styling<a class="anchor" aria-label="anchor" href="#pattern-based-styling"></a></h3>
+
+
+<p>When styling multiple columns with a naming convention, use <code>{col}</code> patterns
+to automatically expand column references:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="co"># Instead of repetitive calls:</span></span>
+<span><span class="va">data</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">qsec</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"color_{col}"</span>, background <span class="op">=</span> <span class="st">"bg_{col}"</span><span class="op">)</span></span></code></pre><p></p></div>
+<p>For column <code>mpg</code>, this looks for <code>color_mpg</code> and <code>bg_mpg</code> in the data.</p>
 </div>
 
     </div>
@@ -167,6 +187,26 @@ data-driven formatting where styling parameters reference other columns.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#text(fill: blue)[22.8]], [4], [#text(fill: blue)[108]],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#text(fill: blue)[21.4]], [6], [#text(fill: blue)[258]],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#text(fill: blue)[18.7]], [8], [#text(fill: blue)[360]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Pattern-based styling (column-specific style columns)</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  a <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, b <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">6</span>,</span></span>
+<span class="r-in"><span>  color_a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  color_b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"gray"</span>, <span class="st">"white"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">df</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">tt_column</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">b</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"color_{col}"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [a], [b],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#text(fill: red)[1]], [#text(fill: black)[4]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#text(fill: green)[2]], [#text(fill: gray)[5]],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#text(fill: blue)[3]], [#text(fill: white)[6]],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>

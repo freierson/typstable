@@ -56,8 +56,7 @@
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Install from GitHub</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"freierson/typstable"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"freierson/typstable"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -67,20 +66,10 @@
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tt.html">tt</a></span><span class="op">(</span><span class="va">cars</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">.rownames</span>, <span class="fu">all_of</span><span class="op">(</span><span class="va">style_cols</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_style.html">tt_style</a></span><span class="op">(</span>header_separate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_header_above.html">tt_header_above</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">" "</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"Performance"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"Characteristics"</span> <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">mpg</span>, color <span class="op">=</span> <span class="va">color_mpg</span>, background <span class="op">=</span> <span class="va">bg_mpg</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">qsec</span>, color <span class="op">=</span> <span class="va">color_qsec</span>, background <span class="op">=</span> <span class="va">bg_qsec</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">cyl</span>, color <span class="op">=</span> <span class="va">color_cyl</span>, background <span class="op">=</span> <span class="va">bg_cyl</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">disp</span>, color <span class="op">=</span> <span class="va">color_disp</span>, background <span class="op">=</span> <span class="va">bg_disp</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">hp</span>, color <span class="op">=</span> <span class="va">color_hp</span>, background <span class="op">=</span> <span class="va">bg_hp</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">wt</span>, color <span class="op">=</span> <span class="va">color_wt</span>, background <span class="op">=</span> <span class="va">bg_wt</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_pack_rows.html">tt_pack_rows</a></span><span class="op">(</span>index <span class="op">=</span> <span class="va">group_idx</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, color <span class="op">=</span> <span class="st">"color_{col}"</span>, background <span class="op">=</span> <span class="st">"bg_{col}"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/tt_pack_rows.html">tt_pack_rows</a></span><span class="op">(</span>index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">cars</span><span class="op">$</span><span class="va">brand</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fl">1</span>, width <span class="op">=</span> <span class="st">"20%"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/readme-example.svg" alt="" width="100%"></p>
-</div>
-<div class="section level2">
-<h2 id="learn-more">Learn more<a class="anchor" aria-label="anchor" href="#learn-more"></a>
-</h2>
-<p>See the <a href="https://freierson.github.io/typstable/articles/typstable.html">Get started</a> vignette for full documentation.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

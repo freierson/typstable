@@ -16,7 +16,8 @@ tt_column(
   border_left = NULL,
   border_right = NULL,
   font_size = NULL,
-  rotate = NULL
+  rotate = NULL,
+  .missing = c("warn", "ignore", "error")
 )
 }
 \arguments{
@@ -28,22 +29,26 @@ tt_column(
 
 \item{align}{Column alignment: \code{"left"}, \code{"center"}, \code{"right"}.}
 
-\item{bold}{Logical or column name. If logical, applies to all rows. If column name
-(unquoted), uses that column's values (coerced to logical) for per-row bold.}
+\item{bold}{Logical, column name, or pattern string. If logical, applies to all rows.
+If column name (unquoted), uses that column's values. If pattern containing \code{{col}}
+(e.g., \code{"bold_{col}"}), expands to column name per styled column.}
 
-\item{italic}{Logical or column name. Same behavior as \code{bold}.}
+\item{italic}{Logical, column name, or pattern string. Same behavior as \code{bold}.}
 
-\item{color}{Text color. Can be a color value or column name for per-row colors.}
+\item{color}{Text color. Can be a color value, column name, or pattern string.}
 
-\item{background}{Background fill color. Can be a color value or column name.}
+\item{background}{Background fill color. Can be a color value, column name, or pattern string.}
 
 \item{border_left}{Left border specification (e.g., \code{TRUE}, \code{"1pt + gray"}).}
 
 \item{border_right}{Right border specification.}
 
-\item{font_size}{Font size (e.g., \code{"10pt"}, \code{"0.9em"}). Can be a column name.}
+\item{font_size}{Font size (e.g., \code{"10pt"}, \code{"0.9em"}). Can be a column name or pattern string.}
 
-\item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}). Can be a column name.}
+\item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}). Can be a column name or pattern string.}
+
+\item{.missing}{How to handle missing pattern columns: \code{"warn"} (default) emits a warning,
+\code{"ignore"} silently skips, \code{"error"} stops execution.}
 }
 \value{
 The modified \code{typst_table} object.
@@ -65,6 +70,20 @@ Style parameters can reference columns in the original data for per-row values:
 
 The \code{bg_color} column is hidden from display but used for styling.
 }
+
+\subsection{Pattern-based styling}{
+
+When styling multiple columns with a naming convention, use \code{{col}} patterns
+to automatically expand column references:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# Instead of repetitive calls:
+data |>
+  tt(cols = c(mpg, qsec)) |>
+  tt_column(everything(), color = "color_\{col\}", background = "bg_\{col\}")
+}\if{html}{\out{</div>}}
+
+For column \code{mpg}, this looks for \code{color_mpg} and \code{bg_mpg} in the data.
+}
 }
 \examples{
 # Right-align and bold a numeric column
@@ -74,5 +93,14 @@ tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 # Style multiple columns at once
 tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_column(c(mpg, disp), align = "right", color = "blue")
+
+# Pattern-based styling (column-specific style columns)
+df <- data.frame(
+  a = 1:3, b = 4:6,
+  color_a = c("red", "green", "blue"),
+  color_b = c("black", "gray", "white")
+)
+tt(df, cols = c(a, b), rownames = FALSE) |>
+  tt_column(c(a, b), color = "color_{col}")
 
 }

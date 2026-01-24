@@ -140,3 +140,139 @@ test_that("tt_row and tt_cell rotation works", {
   tbl2 <- tt(df, rownames = FALSE) |> tt_cell(1, 1, rotate = "-45deg")
   expect_equal(tbl2$cell_styles[["1_1"]]$rotate, "-45deg")
 })
+
+# Pattern-based styling tests
+
+test_that("tt_column pattern expansion works for color", {
+  df <- data.frame(
+    a = 1:3, b = 4:6,
+    color_a = c("red", "green", "blue"),
+    color_b = c("black", "gray", "white")
+  )
+
+  tbl <- tt(df, cols = c(a, b), rownames = FALSE) |>
+    tt_column(c(a, b), color = "color_{col}")
+
+  expect_equal(tbl$col_styles$a$color_col, "color_a")
+  expect_equal(tbl$col_styles$b$color_col, "color_b")
+})
+
+test_that("tt_column pattern expansion works for background", {
+  df <- data.frame(
+    x = 1:3, y = 4:6,
+    bg_x = c("yellow", "orange", "pink"),
+    bg_y = c("cyan", "magenta", "lime")
+  )
+
+  tbl <- tt(df, cols = c(x, y), rownames = FALSE) |>
+    tt_column(c(x, y), background = "bg_{col}")
+
+  expect_equal(tbl$col_styles$x$background_col, "bg_x")
+  expect_equal(tbl$col_styles$y$background_col, "bg_y")
+})
+
+test_that("tt_column pattern expansion works for multiple style attributes", {
+  df <- data.frame(
+    val = 1:3,
+    color_val = c("red", "green", "blue"),
+    bg_val = c("white", "gray", "black"),
+    bold_val = c(TRUE, FALSE, TRUE)
+  )
+
+  tbl <- tt(df, cols = val, rownames = FALSE) |>
+    tt_column(val, color = "color_{col}", background = "bg_{col}", bold = "bold_{col}")
+
+  expect_equal(tbl$col_styles$val$color_col, "color_val")
+  expect_equal(tbl$col_styles$val$background_col, "bg_val")
+  expect_equal(tbl$col_styles$val$bold_col, "bold_val")
+})
+
+test_that("tt_column .missing = 'ignore' silently skips missing columns", {
+
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  # Should not produce warning with .missing = "ignore"
+  expect_silent({
+    tbl <- tt(df, rownames = FALSE) |>
+      tt_column(a, color = "color_{col}", .missing = "ignore")
+  })
+
+  # color_col should not be set since color_a doesn't exist
+  expect_null(tbl$col_styles$a$color_col)
+})
+
+test_that("tt_column .missing = 'warn' produces warning for missing columns", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  expect_warning(
+    tt(df, rownames = FALSE) |>
+      tt_column(a, color = "color_{col}", .missing = "warn"),
+    "Column 'color_a' not found"
+  )
+})
+
+test_that("tt_column .missing = 'error' stops for missing columns", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  expect_error(
+    tt(df, rownames = FALSE) |>
+      tt_column(a, color = "color_{col}", .missing = "error"),
+    "Column 'color_a' not found"
+  )
+})
+
+test_that("tt_column mixed pattern, static, and column ref in same call", {
+  df <- data.frame(
+    a = 1:3, b = 4:6,
+    color_a = c("red", "green", "blue"),
+    my_bg = c("white", "gray", "black")
+  )
+
+  tbl <- tt(df, cols = c(a, b), rownames = FALSE) |>
+    tt_column(a, color = "color_{col}", background = my_bg, bold = TRUE)
+
+  # Pattern should expand
+
+  expect_equal(tbl$col_styles$a$color_col, "color_a")
+  # Column ref should work
+  expect_equal(tbl$col_styles$a$background_col, "my_bg")
+  # Static should work
+  expect_true(tbl$col_styles$a$bold)
+})
+
+test_that("tt_column string without {col} is treated as static value", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  tbl <- tt(df, rownames = FALSE) |>
+    tt_column(a, color = "blue")
+
+  # Should be static color, not a column reference
+  expect_equal(tbl$col_styles$a$color, "blue")
+  expect_null(tbl$col_styles$a$color_col)
+})
+
+test_that("tt_column pattern works with font_size and rotate", {
+  df <- data.frame(
+    a = 1:3,
+    size_a = c("10pt", "12pt", "14pt"),
+    angle_a = c("0deg", "45deg", "90deg")
+  )
+
+  tbl <- tt(df, cols = a, rownames = FALSE) |>
+    tt_column(a, font_size = "size_{col}", rotate = "angle_{col}")
+
+  expect_equal(tbl$col_styles$a$font_size_col, "size_a")
+  expect_equal(tbl$col_styles$a$rotate_col, "angle_a")
+})
+
+test_that("tt_column pattern works with italic", {
+  df <- data.frame(
+    a = 1:3,
+    italic_a = c(TRUE, FALSE, TRUE)
+  )
+
+  tbl <- tt(df, cols = a, rownames = FALSE) |>
+    tt_column(a, italic = "italic_{col}")
+
+  expect_equal(tbl$col_styles$a$italic_col, "italic_a")
+})

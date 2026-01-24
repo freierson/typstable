@@ -5,6 +5,7 @@ output:
 home:
   sidebar:
     structure: [links, license, community, citation, authors, dev]
+citation: true
 ---
 
 ```{r, include = FALSE}
@@ -29,7 +30,6 @@ rendering PDF documents. This package allows R users to create Typst tables with
 ## Installation
 
 ```r
-# Install from GitHub
 pak::pak("freierson/typstable")
 ```
 
@@ -79,9 +79,6 @@ cars <- cars |>
     ~ if_else(.x >= 0.75, "white", NA_character_),
     .names = "color_{sub('quantile_', '', .col)}"
   ))
-
-# Compute group index
-group_idx <- table(cars$brand)[unique(cars$brand)]
 ```
 
 ```{r example, message=FALSE, eval=FALSE}
@@ -89,13 +86,8 @@ group_idx <- table(cars$brand)[unique(cars$brand)]
 tbl <- tt(cars, cols = c(.rownames, all_of(style_cols))) |>
   tt_style(header_separate = TRUE) |>
   tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4)) |>
-  tt_column(mpg, color = color_mpg, background = bg_mpg) |>
-  tt_column(qsec, color = color_qsec, background = bg_qsec) |>
-  tt_column(cyl, color = color_cyl, background = bg_cyl) |>
-  tt_column(disp, color = color_disp, background = bg_disp) |>
-  tt_column(hp, color = color_hp, background = bg_hp) |>
-  tt_column(wt, color = color_wt, background = bg_wt) |>
-  tt_pack_rows(index = group_idx) |>
+  tt_column(-1, color = "color_{col}", background = "bg_{col}") |>
+  tt_pack_rows(index = table(cars$brand)) |>
   tt_column(1, width = "20%")
 ```
 
@@ -104,13 +96,8 @@ tbl <- tt(cars, cols = c(.rownames, all_of(style_cols))) |>
 tbl <- tt(cars, cols = c(.rownames, all_of(style_cols))) |>
   tt_style(header_separate = TRUE) |>
   tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4)) |>
-  tt_column(mpg, color = color_mpg, background = bg_mpg) |>
-  tt_column(qsec, color = color_qsec, background = bg_qsec) |>
-  tt_column(cyl, color = color_cyl, background = bg_cyl) |>
-  tt_column(disp, color = color_disp, background = bg_disp) |>
-  tt_column(hp, color = color_hp, background = bg_hp) |>
-  tt_column(wt, color = color_wt, background = bg_wt) |>
-  tt_pack_rows(index = group_idx) |>
+  tt_column(c(mpg, qsec, cyl, disp, hp, wt), color = "color_{col}", background = "bg_{col}") |>
+  tt_pack_rows(index = table(cars$brand)) |>
   tt_column(1, width = "20%")
 ```
 
@@ -119,6 +106,3 @@ tt_save(tbl, "man/figures/readme-example.svg", width = "6.5in")
 knitr::include_graphics("man/figures/readme-example.svg")
 ```
 
-## Learn more
-
-See the [Get started](https://freierson.github.io/typstable/articles/typstable.html) vignette for full documentation.

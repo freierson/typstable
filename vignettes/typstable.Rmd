@@ -5,6 +5,7 @@ vignette: >
   %\VignetteIndexEntry{Introduction to typstable}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+citation: true
 ---
 
 ```{r setup, include = FALSE}

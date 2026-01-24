@@ -224,6 +224,42 @@
   rlang::quo_is_symbol(x)
 }
 
+#' Check if a value is a style pattern containing {col}
+#'
+#' @param x A value to check
+#' @return Logical
+#' @noRd
+.is_style_pattern <- function(x) {
+  is.character(x) && length(x) == 1 && grepl("{col}", x, fixed = TRUE)
+}
+
+#' Expand a style pattern by replacing {col} with column name
+#'
+#' @param pattern Pattern string containing {col}
+#' @param col_name Column name to substitute
+#' @return Expanded string
+#' @noRd
+.expand_style_pattern <- function(pattern, col_name) {
+  gsub("{col}", col_name, pattern, fixed = TRUE)
+}
+
+#' Handle missing style column based on mode
+#'
+#' @param ref_col Name of the referenced column that was not found
+#' @param display_col Name of the column being styled
+#' @param attr_name Name of the style attribute (e.g., "color", "background")
+#' @param missing_mode One of "warn", "ignore", or "error"
+#' @noRd
+.handle_missing_style_col <- function(ref_col, display_col, attr_name, missing_mode) {
+  msg <- paste0("Column '", ref_col, "' not found for ", attr_name,
+                " styling of column '", display_col, "'")
+  switch(match.arg(missing_mode, c("warn", "ignore", "error")),
+    ignore = invisible(NULL),
+    warn = rlang::warn(msg),
+    error = rlang::abort(msg)
+  )
+}
+
 #' Get column name from a quosure
 #'
 #' @param x A quosure
