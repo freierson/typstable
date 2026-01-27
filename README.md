@@ -1,5 +1,5 @@
 
-# [typstable](https://freierson.github.io/typstable/) <img src="" width="160" align="right" alt="hex sticker"/>
+# typstable <img src="man/figures/logo.svg" align="right" height="139" alt="" />
 
 <div id="badges">
 
@@ -18,7 +18,7 @@ users to create Typst tables with elaborate formatting.
 ## Installation
 
 ``` r
-pak::pak("freierson/typstable")
+install.package("typstable")
 ```
 
 ## Example
@@ -33,4 +33,22 @@ tbl <- tt(cars, cols = c(.rownames, all_of(style_cols))) |>
   tt_column(1, width = "20%")
 ```
 
-<img src="man/figures/readme-example.svg" alt="" width="100%" />
+<img src="man/figures/readme-example.svg" width="100%" />
+
+<!-- ## Citation -->
+
+<!-- To cite typstable in publications, use: -->
+
+<!-- ```{r citation, echo=FALSE, results='asis'} -->
+
+<!-- cit <- citation("typstable") -->
+
+<!-- print(cit, style = 'text') -->
+
+<!-- cat('\n```\n') -->
+
+<!-- print(cit, style = 'bibtex') -->
+
+<!-- cat('\n```\n') -->
+
+<!-- ``` -->

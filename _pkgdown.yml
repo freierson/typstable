@@ -3,11 +3,6 @@ url: https://freierson.github.io/typstable/
 template:
   bootstrap: 5
   
-home:
-  links:
-  - text: Report a bug
-    href: https://github.com/freierson/typstable/issues
-
 authors:
   Filip Reierson:
     href: https://github.com/freierson

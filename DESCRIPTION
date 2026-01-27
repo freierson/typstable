@@ -26,3 +26,4 @@ Suggests:
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 License: GPL-3
+Date: 2026-01-26

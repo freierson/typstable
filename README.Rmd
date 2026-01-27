@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# [typstable](https://freierson.github.io/typstable/) <img src="" width="160" align="right" alt="hex sticker"/>
+# typstable <img src="man/figures/logo.svg" align="right" height="139" alt="" />
 
 <div id="badges">
 [![R-CMD-check](https://github.com/freierson/typstable/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/freierson/typstable/actions/workflows/R-CMD-check.yaml)
@@ -30,7 +30,7 @@ rendering PDF documents. This package allows R users to create Typst tables with
 ## Installation
 
 ```r
-pak::pak("freierson/typstable")
+install.package("typstable")
 ```
 
 ## Example
@@ -105,4 +105,14 @@ tbl <- tt(cars, cols = c(.rownames, all_of(style_cols))) |>
 tt_save(tbl, "man/figures/readme-example.svg", width = "6.5in")
 knitr::include_graphics("man/figures/readme-example.svg")
 ```
+
+<!-- ## Citation -->
+<!-- To cite typstable in publications, use: -->
+<!-- ```{r citation, echo=FALSE, results='asis'} -->
+<!-- cit <- citation("typstable") -->
+<!-- print(cit, style = 'text') -->
+<!-- cat('\n```\n') -->
+<!-- print(cit, style = 'bibtex') -->
+<!-- cat('\n```\n') -->
+<!-- ``` -->
 
