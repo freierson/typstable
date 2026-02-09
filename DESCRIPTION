@@ -6,9 +6,7 @@ BugReports: https://github.com/freierson/typstable/issues
 Authors@R:
     person("Filip", "Reierson", , email = "filip.reierson@gmail.com", 
     role = c("aut", "cre"), comment = c(ORCID="0009-0003-2393-5810"))
-Description: Create Typst table markup from data frames for use in Quarto documents.               
-      Features a pipe-friendly interface for column, row, and cell styling with support for                  
-      grouped headers, data-driven formatting, and math equations.
+Description: Create Typst table markup from data frames for use in Quarto documents. Features a pipe-friendly interface for column, row, and cell styling with support for grouped headers, grouped rows, and data-driven formatting.
 Depends: R (>= 4.1.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -21,8 +19,7 @@ Suggests:
     knitr,
     rmarkdown,
     tibble,
-    dplyr,
-    pkgdown
+    dplyr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 License: GPL-3

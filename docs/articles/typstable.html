@@ -115,10 +115,11 @@ targeted using tidyselect syntax.</p>
 <div class="section level2">
 <h2 id="column-widths">Column Widths<a class="anchor" aria-label="anchor" href="#column-widths"></a>
 </h2>
-<p>Control column widths with <code><a href="../reference/tt_widths.html">tt_widths()</a></code>.</p>
+<p>Control relative column widths with <code><a href="../reference/tt_widths.html">tt_widths()</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, preamble <span class="op">=</span> <span class="va">sans_font</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_style.html">tt_style</a></span><span class="op">(</span>stroke <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/tt_style.html">tt_style</a></span><span class="op">(</span>stroke <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tt_widths.html">tt_widths</a></span><span class="op">(</span>.rownames<span class="op">=</span><span class="fl">8</span>,mpg<span class="op">=</span><span class="fl">1</span>,cyl<span class="op">=</span><span class="fl">1</span>,disp<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figures/table-4.svg" alt="" width="100%"></p>
 </div>
 <div class="section level2">

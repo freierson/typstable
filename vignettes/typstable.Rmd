@@ -98,12 +98,12 @@ render_table(tbl)
 
 ## Column Widths
 
-Control column widths with `tt_widths()`.
+Control relative column widths with `tt_widths()`.
 
 ```{r}
 tbl <- tt(mtcars[1:5, 1:3], preamble = sans_font) |>
-  tt_style(stroke = TRUE)
-
+  tt_style(stroke = TRUE) |>
+  tt_widths(.rownames=8,mpg=1,cyl=1,disp=1)
 ```
 
 ```{r echo = FALSE, results = "asis"}
