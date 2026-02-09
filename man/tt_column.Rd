@@ -12,11 +12,13 @@ tt_column(
   bold = NULL,
   italic = NULL,
   color = NULL,
-  background = NULL,
+  fill = NULL,
   border_left = NULL,
   border_right = NULL,
   font_size = NULL,
   rotate = NULL,
+  inset = NULL,
+  stroke = NULL,
   .missing = c("warn", "ignore", "error")
 )
 }
@@ -37,7 +39,7 @@ If column name (unquoted), uses that column's values. If pattern containing \cod
 
 \item{color}{Text color. Can be a color value, column name, or pattern string.}
 
-\item{background}{Background fill color. Can be a color value, column name, or pattern string.}
+\item{fill}{Fill color. Can be a color value, column name, or pattern string.}
 
 \item{border_left}{Left border specification (e.g., \code{TRUE}, \code{"1pt + gray"}).}
 
@@ -46,6 +48,12 @@ If column name (unquoted), uses that column's values. If pattern containing \cod
 \item{font_size}{Font size (e.g., \code{"10pt"}, \code{"0.9em"}). Can be a column name or pattern string.}
 
 \item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}). Can be a column name or pattern string.}
+
+\item{inset}{Cell padding (e.g., \code{"10pt"}, \code{"5pt 8pt"}). Can be a column name or pattern string.}
+
+\item{stroke}{Stroke (border) specification for the cell(s). Can be \code{TRUE} for
+default 1pt black, a color, a Typst stroke spec like \code{"2pt + blue"}, or a
+Typst dictionary like \code{"(bottom: 1pt)"}. Can also be a column name or pattern string.}
 
 \item{.missing}{How to handle missing pattern columns: \code{"warn"} (default) emits a warning,
 \code{"ignore"} silently skips, \code{"error"} stops execution.}
@@ -65,7 +73,7 @@ Style parameters can reference columns in the original data for per-row values:
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{data |>
   mutate(bg_color = ifelse(value > 100, "red", "white")) |>
   tt(cols = c(name, value)) |>
-  tt_column(value, background = bg_color)
+  tt_column(value, fill = bg_color)
 }\if{html}{\out{</div>}}
 
 The \code{bg_color} column is hidden from display but used for styling.
@@ -79,7 +87,7 @@ to automatically expand column references:
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{# Instead of repetitive calls:
 data |>
   tt(cols = c(mpg, qsec)) |>
-  tt_column(everything(), color = "color_\{col\}", background = "bg_\{col\}")
+  tt_column(everything(), color = "color_\{col\}", fill = "bg_\{col\}")
 }\if{html}{\out{</div>}}
 
 For column \code{mpg}, this looks for \code{color_mpg} and \code{bg_mpg} in the data.

@@ -44,10 +44,12 @@
 <span>  bold <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  italic <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  align <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  font_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rotate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stroke <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hline_above <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hline_below <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -63,7 +65,9 @@
 
 <dt id="arg-row">row<a class="anchor" aria-label="anchor" href="#arg-row"></a></dt>
 <dd><p>Integer vector of row numbers to style. Use 0 for the header row,
-1 to n for data rows.</p></dd>
+1 to n for data rows. Use negative indices to target <code><a href="tt_header_above.html">tt_header_above()</a></code> rows:
+-1 is the innermost header_above (closest to the main header), -2 is the next
+row up, etc.</p></dd>
 
 
 <dt id="arg-bold">bold<a class="anchor" aria-label="anchor" href="#arg-bold"></a></dt>
@@ -78,8 +82,8 @@
 <dd><p>Text color.</p></dd>
 
 
-<dt id="arg-background">background<a class="anchor" aria-label="anchor" href="#arg-background"></a></dt>
-<dd><p>Background fill color.</p></dd>
+<dt id="arg-fill">fill<a class="anchor" aria-label="anchor" href="#arg-fill"></a></dt>
+<dd><p>Fill color.</p></dd>
 
 
 <dt id="arg-align">align<a class="anchor" aria-label="anchor" href="#arg-align"></a></dt>
@@ -92,6 +96,16 @@
 
 <dt id="arg-rotate">rotate<a class="anchor" aria-label="anchor" href="#arg-rotate"></a></dt>
 <dd><p>Rotation angle (e.g., <code>"90deg"</code>, <code>90</code>, <code>"1.5rad"</code>).</p></dd>
+
+
+<dt id="arg-inset">inset<a class="anchor" aria-label="anchor" href="#arg-inset"></a></dt>
+<dd><p>Cell padding (e.g., <code>"10pt"</code>, <code>"5pt 8pt"</code>).</p></dd>
+
+
+<dt id="arg-stroke">stroke<a class="anchor" aria-label="anchor" href="#arg-stroke"></a></dt>
+<dd><p>Stroke (border) specification for the cell(s). Can be <code>TRUE</code> for
+default 1pt black, a color, a Typst stroke spec like <code>"2pt + blue"</code>, or a
+Typst dictionary like <code>"(bottom: 1pt)"</code>.</p></dd>
 
 
 <dt id="arg-hline-above">hline_above<a class="anchor" aria-label="anchor" href="#arg-hline-above"></a></dt>
@@ -112,7 +126,7 @@ line or a stroke specification.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Style header row</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">tt_row</span><span class="op">(</span><span class="fl">0</span>, bold <span class="op">=</span> <span class="cn">TRUE</span>, background <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">tt_row</span><span class="op">(</span><span class="fl">0</span>, bold <span class="op">=</span> <span class="cn">TRUE</span>, fill <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
@@ -129,7 +143,7 @@ line or a stroke specification.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Highlight specific rows</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">tt_row</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span>, background <span class="op">=</span> <span class="st">"#ffffcc"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">tt_row</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"#ffffcc"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>

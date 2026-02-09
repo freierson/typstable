@@ -10,7 +10,14 @@
 #' @param bold Logical. Make header text bold (default TRUE).
 #' @param align Header alignment (default "center").
 #' @param color Text color.
-#' @param background Background fill color.
+#' @param fill Fill color.
+#' @param italic Logical. Make header text italic.
+#' @param font_size Font size.
+#' @param rotate Rotation angle (e.g., `"90deg"`, `90`, `"1.5rad"`).
+#' @param inset Cell padding (e.g., `"10pt"`, `"5pt 8pt"`).
+#' @param stroke Stroke (border) specification for the header cell(s). Can be `TRUE`
+#'   for default 1pt black, a color, a Typst stroke spec like `"2pt + blue"`, or a
+#'   Typst dictionary like `"(bottom: 1pt)"`.
 #' @param line Logical. Add horizontal line below the header (default TRUE).
 #' @param gap Width of visual gap between header groups (e.g., "10pt", "0.5em").
 #'   When specified, empty columns are inserted between groups. Default "10pt".
@@ -37,7 +44,12 @@ tt_header_above <- function(table,
                             bold = TRUE,
                             align = "center",
                             color = NULL,
-                            background = NULL,
+                            fill = NULL,
+                            italic = NULL,
+                            font_size = NULL,
+                            rotate = NULL,
+                            inset = NULL,
+                            stroke = NULL,
                             line = TRUE,
                             gap = "10pt") {
   .check_typst_table(table)
@@ -66,7 +78,12 @@ tt_header_above <- function(table,
     bold = bold,
     align = align,
     color = color,
-    background = background,
+    fill = fill,
+    italic = italic,
+    font_size = font_size,
+    rotate = rotate,
+    inset = inset,
+    stroke = stroke,
     line = line,
     gap = gap
   )

@@ -1,13 +1,14 @@
 #' Style overall table appearance
 #'
 #' Sets global styling properties for the entire table including stroke (borders),
-#' fill (background), striped rows, and spacing.
+#' fill, striped rows, and spacing.
 #'
 #' @param table A `typst_table` object.
 #' @param stroke Stroke (border) specification: `TRUE` for default 1pt black borders,
 #'   a color name/hex for 1pt borders in that color, or a Typst stroke specification
-#'   like `"2pt + blue"`.
-#' @param fill Background fill color for the entire table.
+#'   like `"2pt + blue"`. When stroke is set, gap columns and separator lines from
+#'   `tt_header_above()` are automatically suppressed.
+#' @param fill Fill color for the entire table.
 #' @param striped Logical. If `TRUE`, alternates row background colors for readability.
 #' @param inset Cell padding. Can be a single value (e.g., `"5pt"`) or named vector
 #'   for different padding on each side.
@@ -15,8 +16,6 @@
 #' @param column_gutter Horizontal spacing between columns.
 #' @param position Table position on page: `"auto"`, `"left"`, `"center"`, `"right"`.
 #' @param full_width Logical. If `TRUE`, table spans full page width.
-#' @param header_separate Logical. If `TRUE`, adds a horizontal line below the header row.
-#'
 #' @return The modified `typst_table` object.
 #'
 #' @examples
@@ -28,10 +27,6 @@
 #' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 #'   tt_style(stroke = "gray", inset = "8pt")
 #'
-#' # Header separator line
-#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
-#'   tt_style(header_separate = TRUE)
-#'
 #' @export
 tt_style <- function(table,
                      stroke = NULL,
@@ -41,8 +36,7 @@ tt_style <- function(table,
                      row_gutter = NULL,
                      column_gutter = NULL,
                      position = NULL,
-                     full_width = FALSE,
-                     header_separate = NULL) {
+                     full_width = FALSE) {
   .check_typst_table(table)
   table <- .copy_table(table)
 
@@ -83,10 +77,6 @@ tt_style <- function(table,
 
   if (!is.null(full_width)) {
     table$full_width <- full_width
-  }
-
-  if (!is.null(header_separate)) {
-    table$header_separate <- header_separate
   }
 
   table

@@ -11,9 +11,9 @@ tt_vline(table, x, start = NULL, end = NULL, stroke = TRUE)
 
 \item{x}{Position of the line (0 = before first column, 1 = after first column, etc.).}
 
-\item{start}{Starting row for partial line (0-indexed, 0 = header).}
+\item{start}{Starting row for partial line (0-indexed, inclusive, 0 = header).}
 
-\item{end}{Ending row for partial line.}
+\item{end}{Ending row for partial line (0-indexed, inclusive).}
 
 \item{stroke}{Line style: \code{TRUE} for default, color name, or full stroke spec.}
 }

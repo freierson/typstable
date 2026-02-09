@@ -7,7 +7,7 @@
 #' @param group_label The label text for the group (used with `start_row`/`end_row`).
 #' @param start_row First row number in the group (1-indexed).
 #' @param end_row Last row number in the group.
-#' @param index A named numeric vector for multiple groups (kableExtra style).
+#' @param index A named numeric vector for multiple groups (alternative style).
 #'   Names are group labels, values are row counts.
 #'   Example: `c("Group A" = 3, "Group B" = 5)` creates two groups where
 #'   "Group A" covers rows 1-3 and "Group B" covers rows 4-8.
@@ -22,7 +22,7 @@
 #'   tt_pack_rows("4 Cylinders", 1, 5) |>
 #'   tt_pack_rows("6 Cylinders", 6, 10)
 #'
-#' # Using index parameter (kableExtra style)
+#' # Using index parameter (alternative style)
 #' tt(mtcars[1:10, 1:3], rownames = FALSE) |>
 #'   tt_pack_rows(index = c("4 Cylinders" = 5, "6 Cylinders" = 5))
 #'
@@ -37,7 +37,7 @@ tt_pack_rows <- function(table,
   .check_typst_table(table)
   table <- .copy_table(table)
 
-  # Handle index parameter (kableExtra style)
+  # Handle index parameter (alternative style)
   if (!is.null(index)) {
     if (!is.numeric(index) || is.null(names(index))) {
       rlang::abort("`index` must be a named numeric vector")

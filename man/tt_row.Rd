@@ -10,10 +10,12 @@ tt_row(
   bold = NULL,
   italic = NULL,
   color = NULL,
-  background = NULL,
+  fill = NULL,
   align = NULL,
   font_size = NULL,
   rotate = NULL,
+  inset = NULL,
+  stroke = NULL,
   hline_above = NULL,
   hline_below = NULL
 )
@@ -22,7 +24,9 @@ tt_row(
 \item{table}{A \code{typst_table} object.}
 
 \item{row}{Integer vector of row numbers to style. Use 0 for the header row,
-1 to n for data rows.}
+1 to n for data rows. Use negative indices to target \code{tt_header_above()} rows:
+-1 is the innermost header_above (closest to the main header), -2 is the next
+row up, etc.}
 
 \item{bold}{Logical. Make text bold.}
 
@@ -30,13 +34,19 @@ tt_row(
 
 \item{color}{Text color.}
 
-\item{background}{Background fill color.}
+\item{fill}{Fill color.}
 
 \item{align}{Row alignment override.}
 
 \item{font_size}{Font size.}
 
 \item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}).}
+
+\item{inset}{Cell padding (e.g., \code{"10pt"}, \code{"5pt 8pt"}).}
+
+\item{stroke}{Stroke (border) specification for the cell(s). Can be \code{TRUE} for
+default 1pt black, a color, a Typst stroke spec like \code{"2pt + blue"}, or a
+Typst dictionary like \code{"(bottom: 1pt)"}.}
 
 \item{hline_above}{Add horizontal line above the row. Can be \code{TRUE} for default
 line or a stroke specification.}
@@ -52,11 +62,11 @@ Applies formatting to one or more rows. Use row = 0 to style the header row.
 \examples{
 # Style header row
 tt(mtcars[1:5, 1:3], rownames = FALSE) |>
-  tt_row(0, bold = TRUE, background = "gray")
+  tt_row(0, bold = TRUE, fill = "gray")
 
 # Highlight specific rows
 tt(mtcars[1:5, 1:3], rownames = FALSE) |>
-  tt_row(c(1, 3, 5), background = "#ffffcc")
+  tt_row(c(1, 3, 5), fill = "#ffffcc")
 
 # Add horizontal lines
 tt(mtcars[1:5, 1:3], rownames = FALSE) |>

@@ -33,9 +33,6 @@ tt_render <- function(table) {
   # Build data rows
   rows <- .render_data_rows(table)
 
-  # Build footnotes
-  footnotes <- .render_footnotes(table)
-
   # Assemble table with booktabs rules
   table_content <- c(booktabs$top, header, booktabs$mid, hlines$after_header, rows, booktabs$bottom)
   table_content <- table_content[table_content != ""]  # Remove empty strings
@@ -49,14 +46,9 @@ tt_render <- function(table) {
 
   table_code <- paste0("#table(\n  ", args, ",\n  ", table_content, "\n)")
 
-  # Wrap in figure if caption or label provided
-  if (!is.null(table$caption) || !is.null(table$label)) {
-    table_code <- .wrap_in_figure(table_code, table$caption, table$label)
-  }
-
-  # Add footnotes after table
-  if (nchar(footnotes) > 0) {
-    table_code <- paste(table_code, footnotes, sep = "\n\n")
+  # Prepend preamble if set
+  if (!is.null(table$preamble)) {
+    table_code <- paste0(table$preamble, "\n", table_code)
   }
 
   table_code
@@ -110,7 +102,7 @@ tt_render <- function(table) {
     args <- c(args, "stroke: none")
   }
 
-  # Fill (background)
+  # Fill
   if (!is.null(table$fill)) {
     fill <- .to_typst_color(table$fill)
     args <- c(args, paste0("fill: ", fill))
@@ -163,7 +155,7 @@ tt_render <- function(table) {
   # Get headers_above cells
   headers_above_rows <- .render_headers_above_cells(table)
 
-  needs_wrapper <- isTRUE(table$header_separate) || length(table$headers_above) > 0
+  needs_wrapper <- length(table$headers_above) > 0
 
   if (needs_wrapper) {
     # Combine all header content inside table.header()
@@ -197,9 +189,10 @@ tt_render <- function(table) {
     # Get column style (filter out data-driven attributes for header row)
     col_style <- table$col_styles[[table$display_cols[i]]]
     if (!is.null(col_style)) {
-      # Remove data-driven attributes (*_col) as they don't apply to header cells
-      data_driven <- c("background_col", "color_col", "bold_col", "italic_col", "font_size_col", "rotate_col")
-      col_style <- col_style[!names(col_style) %in% data_driven]
+      # Remove data-driven attributes (*_col) and their seq keys as they don't apply to header cells
+      data_driven <- c("fill_col", "color_col", "bold_col", "italic_col", "font_size_col", "rotate_col", "inset_col", "stroke_col")
+      data_driven_seq <- paste0(".seq_", data_driven)
+      col_style <- col_style[!names(col_style) %in% c(data_driven, data_driven_seq)]
     }
 
     # Merge styles: header row style + column style
@@ -231,16 +224,52 @@ tt_render <- function(table) {
   # Get gap info
   gap_info <- .get_gap_info(table)
 
+  # Identify which header_spec is the innermost gap-defining one
+  gap_defining_idx <- NULL
+  if (gap_info$has_gaps) {
+    for (idx in rev(seq_along(table$headers_above))) {
+      hs <- table$headers_above[[idx]]
+      if (!is.null(hs$gap) && length(hs$header) > 1) {
+        gap_defining_idx <- idx
+        break
+      }
+    }
+  }
+
   # Collect all cells from all headers_above rows
   all_cells <- character()
 
-  for (header_spec in table$headers_above) {
+  for (header_idx in seq_along(table$headers_above)) {
+    header_spec <- table$headers_above[[header_idx]]
+    neg_row <- -(length(table$headers_above) - header_idx + 1)
     row_cells <- character()
     # Use cell borders for gaps when multiple groups with line=TRUE
-    use_cell_borders <- isTRUE(header_spec$line) && length(header_spec$header) > 1
+    # Skip when stroke is set (grid borders handle this)
+    use_cell_borders <- isTRUE(header_spec$line) && length(header_spec$header) > 1 && is.null(table$stroke)
 
-    # Check if this header_spec is the one that defines gaps
-    this_has_gaps <- !is.null(header_spec$gap) && length(header_spec$header) > 1
+    # Check if this header_spec is the innermost gap-defining one
+    is_gap_defining <- !is.null(gap_defining_idx) && header_idx == gap_defining_idx
+
+    # Build base style from header_spec (seq=0, lowest priority)
+    base_style <- list()
+    for (attr_name in c("bold", "italic", "color", "fill",
+                         "font_size", "rotate", "inset", "stroke")) {
+      val <- header_spec[[attr_name]]
+      if (attr_name == "bold") val <- val %||% TRUE
+      if (!is.null(val)) {
+        base_style[[attr_name]] <- val
+        base_style[[paste0(".seq_", attr_name)]] <- 0L
+      }
+    }
+    # Map align -> cell_align for merge compatibility
+    if (!is.null(header_spec$align)) {
+      base_style$cell_align <- .to_typst_align(header_spec$align)
+      base_style$.seq_cell_align <- 0L
+    }
+
+    # Merge with row-level override from tt_row()
+    row_style <- table$row_styles[[as.character(neg_row)]]
+    merged <- .merge_styles(base_style, row_style)
 
     for (i in seq_along(header_spec$header)) {
       span <- header_spec$header[i]
@@ -250,33 +279,61 @@ tt_render <- function(table) {
         label <- ""
       }
 
+      # Compute start_col for this group (used as cell key)
+      cumspans <- cumsum(header_spec$header)
+      start_col <- if (i == 1) 1L else cumspans[i - 1] + 1L
+
+      # Merge with cell-level override from tt_cell()
+      cell_key <- paste0(neg_row, "_", start_col)
+      cell_style <- table$cell_styles[[cell_key]]
+      final <- .merge_styles(merged, cell_style)
+
+      # Handle content override
+      if (!is.null(final[["content"]])) {
+        label <- final[["content"]]
+      }
+
       # Escape if needed
       if (table$escape && label != "") {
         label <- .escape_typst(label)
       }
 
-      # Apply styling
-      style <- list(
-        bold = header_spec$bold %||% TRUE,
-        align = header_spec$align,
-        color = header_spec$color,
-        background = header_spec$background
+      content <- .format_text(label,
+        bold = final[["bold"]],
+        italic = final[["italic"]],
+        color = final[["color"]],
+        size = final[["font_size"]],
+        rotate = final[["rotate"]]
       )
 
-      content <- .format_text(label, bold = style[["bold"]])
+      # For outer headers (not the gap-defining one), adjust colspan to account for gap columns
+      effective_span <- span
+      if (gap_info$has_gaps && !is_gap_defining) {
+        # Calculate this group's column range in original (non-gap) coordinates
+        col_start <- start_col
+        col_end <- cumspans[i]
+        # Count gap positions within [col_start, col_end)
+        gaps_within <- sum(gap_info$positions >= col_start & gap_info$positions < col_end)
+        effective_span <- span + gaps_within
+      }
 
       # Build cell arguments
       cell_args <- character()
-      if (span > 1) {
-        cell_args <- c(cell_args, paste0("colspan: ", span))
+      if (effective_span > 1) {
+        cell_args <- c(cell_args, paste0("colspan: ", effective_span))
       }
-      if (!is.null(style[["align"]])) {
-        cell_args <- c(cell_args, paste0("align: ", .to_typst_align(style[["align"]])))
+      if (!is.null(final[["cell_align"]])) {
+        cell_args <- c(cell_args, paste0("align: ", .to_typst_align(final[["cell_align"]])))
       }
-      if (!is.null(style[["background"]])) {
-        cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(style[["background"]])))
+      if (!is.null(final[["fill"]])) {
+        cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(final[["fill"]])))
       }
-      if (use_cell_borders && trimws(label) != "") {
+      if (!is.null(final[["inset"]])) {
+        cell_args <- c(cell_args, paste0("inset: ", .to_typst_length(final[["inset"]])))
+      }
+      if (!is.null(final[["stroke"]])) {
+        cell_args <- c(cell_args, paste0("stroke: ", .to_typst_stroke(final[["stroke"]])))
+      } else if (use_cell_borders && trimws(label) != "") {
         # Add bottom border to create lines with gaps between groups
         # Skip for empty/whitespace-only labels to create visual gap
         cell_args <- c(cell_args, "stroke: (bottom: 0.5pt)")
@@ -288,16 +345,16 @@ tt_render <- function(table) {
         row_cells <- c(row_cells, paste0("[", content, "]"))
       }
 
-      # Insert empty gap cell after each group except the last (if this header defines gaps)
-      if (this_has_gaps && i < length(header_spec$header)) {
+      # Insert empty gap cell after each group except the last (only for gap-defining header)
+      if (is_gap_defining && i < length(header_spec$header)) {
         row_cells <- c(row_cells, "[]")
       }
     }
 
     all_cells <- c(all_cells, row_cells)
 
-    # Add hline below if requested (only for single group)
-    if (isTRUE(header_spec$line) && length(header_spec$header) == 1) {
+    # Add hline below if requested (only for single group, skip when stroke is set)
+    if (isTRUE(header_spec$line) && length(header_spec$header) == 1 && is.null(table$stroke)) {
       all_cells <- c(all_cells, "table.hline()")
     }
   }
@@ -399,13 +456,18 @@ tt_render <- function(table) {
   if (is.null(style) || length(style) == 0) {
     return(paste0("[", content, "]"))
   }
+  real_attrs <- names(style)[!startsWith(names(style), ".seq_")]
+  if (length(real_attrs) == 0) {
+    return(paste0("[", content, "]"))
+  }
 
   # Check if we need table.cell wrapper (for fill, colspan, rowspan, align)
-  # Use [[]] to avoid partial matching (e.g., $background matching $background_col)
-  needs_wrapper <- !is.null(style[["background"]]) ||
+  needs_wrapper <- !is.null(style[["fill"]]) ||
                    !is.null(style[["colspan"]]) && style[["colspan"]] > 1 ||
                    !is.null(style[["rowspan"]]) && style[["rowspan"]] > 1 ||
-                   !is.null(style[["cell_align"]])
+                   !is.null(style[["cell_align"]]) ||
+                   !is.null(style[["inset"]]) ||
+                   !is.null(style[["stroke"]])
 
   # Apply text formatting
   formatted <- content
@@ -438,8 +500,14 @@ tt_render <- function(table) {
     if (!is.null(style[["cell_align"]])) {
       cell_args <- c(cell_args, paste0("align: ", .to_typst_align(style[["cell_align"]])))
     }
-    if (!is.null(style[["background"]])) {
-      cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(style[["background"]])))
+    if (!is.null(style[["fill"]])) {
+      cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(style[["fill"]])))
+    }
+    if (!is.null(style[["inset"]])) {
+      cell_args <- c(cell_args, paste0("inset: ", .to_typst_length(style[["inset"]])))
+    }
+    if (!is.null(style[["stroke"]])) {
+      cell_args <- c(cell_args, paste0("stroke: ", .to_typst_stroke(style[["stroke"]])))
     }
 
     paste0("table.cell(", paste(cell_args, collapse = ", "), ")[", formatted, "]")
@@ -459,7 +527,7 @@ tt_render <- function(table) {
   # Check for data-driven attributes
   resolved <- col_style
 
-  for (attr in c("background", "color", "bold", "italic", "font_size", "rotate")) {
+  for (attr in c("fill", "color", "bold", "italic", "font_size", "rotate", "inset", "stroke")) {
     col_ref <- col_style[[paste0(attr, "_col")]]
     if (!is.null(col_ref)) {
       # Look up value in original data
@@ -472,6 +540,11 @@ tt_render <- function(table) {
           } else {
             resolved[[attr]] <- value
           }
+          # Propagate sequence from *_col to resolved attribute
+          col_seq_key <- paste0(".seq_", attr, "_col")
+          if (!is.null(resolved[[col_seq_key]])) {
+            resolved[[paste0(".seq_", attr)]] <- resolved[[col_seq_key]]
+          }
         }
       }
     }
@@ -480,17 +553,22 @@ tt_render <- function(table) {
   resolved
 }
 
-#' Merge two style lists
+#' Merge two style lists using last-write-wins sequence numbers
 #' @noRd
 .merge_styles <- function(base, override) {
   if (is.null(base)) return(override)
   if (is.null(override)) return(base)
 
-  # Override takes precedence
   result <- base
   for (name in names(override)) {
-    if (!is.null(override[[name]])) {
+    if (startsWith(name, ".seq_")) next
+    if (is.null(override[[name]])) next
+    seq_key <- paste0(".seq_", name)
+    override_seq <- override[[seq_key]] %||% 0L
+    base_seq <- result[[seq_key]] %||% 0L
+    if (override_seq >= base_seq) {
       result[[name]] <- override[[name]]
+      result[[seq_key]] <- override_seq
     }
   }
   result
@@ -500,12 +578,6 @@ tt_render <- function(table) {
 #' @noRd
 .render_hlines <- function(table) {
   result <- list(after_header = NULL)
-
-  # Check for header separator
-  if (isTRUE(table$header_separate)) {
-    result$after_header <- "table.hline(),"
-  }
-
   result
 }
 
@@ -524,7 +596,7 @@ tt_render <- function(table) {
       args <- c(args, paste0("start: ", vline$start))
     }
     if (!is.null(vline$end)) {
-      args <- c(args, paste0("end: ", vline$end))
+      args <- c(args, paste0("end: ", vline$end + 1))
     }
     if (!is.null(vline$stroke)) {
       args <- c(args, paste0("stroke: ", .to_typst_stroke(vline$stroke)))
@@ -590,7 +662,7 @@ tt_render <- function(table) {
         args <- c(args, paste0("start: ", hline$start))
       }
       if (!is.null(hline$end)) {
-        args <- c(args, paste0("end: ", hline$end))
+        args <- c(args, paste0("end: ", hline$end + 1))
       }
       if (!is.null(hline$stroke)) {
         args <- c(args, paste0("stroke: ", .to_typst_stroke(hline$stroke)))
@@ -604,68 +676,6 @@ tt_render <- function(table) {
     }
   }
   NULL
-}
-
-#' Render footnotes
-#' @noRd
-.render_footnotes <- function(table) {
-  if (length(table$footnotes) == 0) return("")
-
-  notes <- character()
-
-  # General footnotes
-  if (!is.null(table$footnotes$general)) {
-    for (note in table$footnotes$general) {
-      notes <- c(notes, note)
-    }
-  }
-
-  # Numbered footnotes
-  if (!is.null(table$footnotes$number)) {
-    for (i in seq_along(table$footnotes$number)) {
-      notes <- c(notes, paste0(i, ". ", table$footnotes$number[i]))
-    }
-  }
-
-  # Symbol footnotes
-  if (!is.null(table$footnotes$symbol)) {
-    symbols <- c("*", "\u2020", "\u2021", "\u00a7", "\u00b6", "#")
-    for (i in seq_along(table$footnotes$symbol)) {
-      sym <- symbols[(i - 1) %% length(symbols) + 1]
-      notes <- c(notes, paste0(sym, " ", table$footnotes$symbol[i]))
-    }
-  }
-
-  if (length(notes) == 0) return("")
-
-  paste0("#text(size: 0.9em)[\n", paste(notes, collapse = " \\\n"), "\n]")
-}
-
-#' Wrap table in figure
-#' @noRd
-.wrap_in_figure <- function(table_code, caption, label) {
-  args <- character()
-
-  if (!is.null(caption)) {
-    args <- c(args, paste0("caption: [", caption, "]"))
-  }
-
-  # Remove leading # from table code when embedding in figure
-  # (inside function arguments, you don't use # for function calls)
-  table_inner <- sub("^#", "", table_code)
-
-  inner <- table_code
-
-  if (length(args) > 0) {
-    inner <- paste0("#figure(\n  ", table_inner, ",\n  ", paste(args, collapse = ",\n  "), "\n)")
-  }
-
-  # Add label if provided
-  if (!is.null(label)) {
-    inner <- paste0(inner, " <", label, ">")
-  }
-
-  inner
 }
 
 #' Null-coalescing operator

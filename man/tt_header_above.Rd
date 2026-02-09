@@ -10,7 +10,12 @@ tt_header_above(
   bold = TRUE,
   align = "center",
   color = NULL,
-  background = NULL,
+  fill = NULL,
+  italic = NULL,
+  font_size = NULL,
+  rotate = NULL,
+  inset = NULL,
+  stroke = NULL,
   line = TRUE,
   gap = "10pt"
 )
@@ -28,7 +33,19 @@ columns without a group header.}
 
 \item{color}{Text color.}
 
-\item{background}{Background fill color.}
+\item{fill}{Fill color.}
+
+\item{italic}{Logical. Make header text italic.}
+
+\item{font_size}{Font size.}
+
+\item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}).}
+
+\item{inset}{Cell padding (e.g., \code{"10pt"}, \code{"5pt 8pt"}).}
+
+\item{stroke}{Stroke (border) specification for the header cell(s). Can be \code{TRUE}
+for default 1pt black, a color, a Typst stroke spec like \code{"2pt + blue"}, or a
+Typst dictionary like \code{"(bottom: 1pt)"}.}
 
 \item{line}{Logical. Add horizontal line below the header (default TRUE).}
 

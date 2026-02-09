@@ -45,10 +45,45 @@ test_that(".to_typst_align handles abbreviations",
   expect_equal(.to_typst_align("left"), "left")
 })
 
+test_that(".to_typst_color passes through unrecognized strings as raw Typst", {
+  # Gradient expressions
+  expect_equal(
+    .to_typst_color("gradient.linear(red, blue)"),
+    "gradient.linear(red, blue)"
+  )
+  # Tiling patterns
+  expect_equal(
+    .to_typst_color("pattern(size: (10pt, 10pt))[#rect()]"),
+    "pattern(size: (10pt, 10pt))[#rect()]"
+  )
+  # Variable names
+  expect_equal(.to_typst_color("my-color"), "my-color")
+  # Method calls
+  expect_equal(.to_typst_color("red.lighten(50%)"), "red.lighten(50%)")
+})
+
 test_that(".to_typst_stroke converts correctly", {
   expect_equal(.to_typst_stroke(TRUE), "1pt + black")
   expect_equal(.to_typst_stroke("red"), "1pt + red")
   expect_equal(.to_typst_stroke("2pt + blue"), "2pt + blue")
   expect_null(.to_typst_stroke(NULL))
   expect_null(.to_typst_stroke(FALSE))
+})
+
+test_that(".to_typst_stroke passes through complex Typst expressions", {
+  # Dictionary stroke specs
+  expect_equal(
+    .to_typst_stroke("(bottom: 0.5pt)"),
+    "(bottom: 0.5pt)"
+  )
+  # Function calls
+  expect_equal(
+    .to_typst_stroke("stroke(paint: red, thickness: 2pt)"),
+    "stroke(paint: red, thickness: 2pt)"
+  )
+  # Partial sides
+  expect_equal(
+    .to_typst_stroke("(bottom: 1pt, rest: none)"),
+    "(bottom: 1pt, rest: none)"
+  )
 })

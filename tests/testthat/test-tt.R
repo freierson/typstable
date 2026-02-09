@@ -69,3 +69,13 @@ test_that("tt stores escape setting", {
   tbl2 <- tt(mtcars[1:3, 1:3], escape = FALSE, rownames = FALSE)
   expect_false(tbl2$escape)
 })
+
+test_that("tt stores preamble", {
+  tbl <- tt(mtcars[1:3, 1:3], preamble = '#set text(font: "Arial")', rownames = FALSE)
+  expect_equal(tbl$preamble, '#set text(font: "Arial")')
+})
+
+test_that("tt preamble is NULL by default", {
+  tbl <- tt(mtcars[1:3, 1:3], rownames = FALSE)
+  expect_null(tbl$preamble)
+})

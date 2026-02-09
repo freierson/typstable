@@ -12,9 +12,9 @@ tt_hline(table, y, start = NULL, end = NULL, stroke = TRUE)
 \item{y}{Position of the line (0 = top of table, 1 = below header,
 2 = below first data row, etc.).}
 
-\item{start}{Starting column for partial line (0-indexed).}
+\item{start}{Starting column for partial line (0-indexed, inclusive).}
 
-\item{end}{Ending column for partial line (0-indexed).}
+\item{end}{Ending column for partial line (0-indexed, inclusive).}
 
 \item{stroke}{Line style: \code{TRUE} for default, color name, or full stroke spec
 like \code{"2pt + red"}.}

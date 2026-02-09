@@ -5,8 +5,8 @@
 #' @param table A `typst_table` object.
 #' @param y Position of the line (0 = top of table, 1 = below header,
 #'   2 = below first data row, etc.).
-#' @param start Starting column for partial line (0-indexed).
-#' @param end Ending column for partial line (0-indexed).
+#' @param start Starting column for partial line (0-indexed, inclusive).
+#' @param end Ending column for partial line (0-indexed, inclusive).
 #' @param stroke Line style: `TRUE` for default, color name, or full stroke spec
 #'   like `"2pt + red"`.
 #'
@@ -65,8 +65,8 @@ tt_hline <- function(table,
 #'
 #' @param table A `typst_table` object.
 #' @param x Position of the line (0 = before first column, 1 = after first column, etc.).
-#' @param start Starting row for partial line (0-indexed, 0 = header).
-#' @param end Ending row for partial line.
+#' @param start Starting row for partial line (0-indexed, inclusive, 0 = header).
+#' @param end Ending row for partial line (0-indexed, inclusive).
 #' @param stroke Line style: `TRUE` for default, color name, or full stroke spec.
 #'
 #' @return The modified `typst_table` object.

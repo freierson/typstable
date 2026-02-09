@@ -15,12 +15,12 @@
 #'   columns that fill the container. Use `tt_widths()` for custom proportions.
 #' @param align Column alignment: single value applied to all columns, or vector
 #'   of alignments. Valid values: "left"/"l", "center"/"c", "right"/"r".
-#' @param caption Optional table caption (displayed above table).
-#' @param label Optional label for cross-referencing (e.g., "tbl-results").
+#' @param preamble Optional character string of raw Typst code to insert before the
+#'   table. Useful for `#set` rules, `#let` bindings, or other Typst directives that
+#'   should apply to the table (e.g., `'#set text(font: "Arial")'`).
 #' @param escape Logical. If TRUE (default), escapes Typst special characters.
-#' @param rownames Controls row name handling: TRUE (default) includes row names
-#'   as the first column with an empty header, FALSE excludes row names, or a
-#'   string to use as the column header for row names.
+#' @param rownames Logical. TRUE (default) includes row names as the first column
+#'   with an empty header, FALSE excludes them.
 #'
 #' @return A `typst_table` object that can be further styled and rendered.
 #'
@@ -43,8 +43,7 @@ tt <- function(data,
                col_names = NULL,
                col_widths = "auto",
                align = NULL,
-               caption = NULL,
-               label = NULL,
+               preamble = NULL,
                escape = TRUE,
                rownames = TRUE) {
   # Validate input
@@ -54,9 +53,8 @@ tt <- function(data,
 
   # Handle rownames parameter
   rownames_display_name <- NULL
-  if (!isFALSE(rownames)) {
-    # Determine display name for rownames column
-    rownames_display_name <- if (isTRUE(rownames)) "" else as.character(rownames)
+  if (isTRUE(rownames)) {
+    rownames_display_name <- ""
 
     # Get rownames and prepend as first column
     rn <- rownames(data)
@@ -130,9 +128,8 @@ tt <- function(data,
       ncol = length(display_cols),
 
       # Global settings
+      preamble = preamble,
       escape = escape,
-      caption = caption,
-      label = label,
 
       # Column configuration
       col_widths = col_widths,
@@ -147,17 +144,15 @@ tt <- function(data,
       column_gutter = NULL,
       position = NULL,
       full_width = FALSE,
-      header_separate = NULL,
-
       # Style overrides (populated by tt_column, tt_row, tt_cell)
       col_styles = list(),
       row_styles = list(),
       cell_styles = list(),
+      style_seq = 0L,
 
       # Additional features
       headers_above = list(),
       row_groups = list(),
-      footnotes = list(),
       hlines = list(),
       vlines = list()
     ),

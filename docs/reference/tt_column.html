@@ -49,11 +49,13 @@ data-driven formatting where styling parameters reference other columns.</p>
 <span>  bold <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  italic <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  border_left <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  border_right <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  font_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rotate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stroke <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warn"</span>, <span class="st">"ignore"</span>, <span class="st">"error"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -92,8 +94,8 @@ If column name (unquoted), uses that column's values. If pattern containing <cod
 <dd><p>Text color. Can be a color value, column name, or pattern string.</p></dd>
 
 
-<dt id="arg-background">background<a class="anchor" aria-label="anchor" href="#arg-background"></a></dt>
-<dd><p>Background fill color. Can be a color value, column name, or pattern string.</p></dd>
+<dt id="arg-fill">fill<a class="anchor" aria-label="anchor" href="#arg-fill"></a></dt>
+<dd><p>Fill color. Can be a color value, column name, or pattern string.</p></dd>
 
 
 <dt id="arg-border-left">border_left<a class="anchor" aria-label="anchor" href="#arg-border-left"></a></dt>
@@ -110,6 +112,16 @@ If column name (unquoted), uses that column's values. If pattern containing <cod
 
 <dt id="arg-rotate">rotate<a class="anchor" aria-label="anchor" href="#arg-rotate"></a></dt>
 <dd><p>Rotation angle (e.g., <code>"90deg"</code>, <code>90</code>, <code>"1.5rad"</code>). Can be a column name or pattern string.</p></dd>
+
+
+<dt id="arg-inset">inset<a class="anchor" aria-label="anchor" href="#arg-inset"></a></dt>
+<dd><p>Cell padding (e.g., <code>"10pt"</code>, <code>"5pt 8pt"</code>). Can be a column name or pattern string.</p></dd>
+
+
+<dt id="arg-stroke">stroke<a class="anchor" aria-label="anchor" href="#arg-stroke"></a></dt>
+<dd><p>Stroke (border) specification for the cell(s). Can be <code>TRUE</code> for
+default 1pt black, a color, a Typst stroke spec like <code>"2pt + blue"</code>, or a
+Typst dictionary like <code>"(bottom: 1pt)"</code>. Can also be a column name or pattern string.</p></dd>
 
 
 <dt id="arg--missing">.missing<a class="anchor" aria-label="anchor" href="#arg--missing"></a></dt>
@@ -132,7 +144,7 @@ If column name (unquoted), uses that column's values. If pattern containing <cod
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>bg_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">value</span> <span class="op">&gt;</span> <span class="fl">100</span>, <span class="st">"red"</span>, <span class="st">"white"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">name</span>, <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">value</span>, background <span class="op">=</span> <span class="va">bg_color</span><span class="op">)</span></span></code></pre><p></p></div>
+<span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">value</span>, fill <span class="op">=</span> <span class="va">bg_color</span><span class="op">)</span></span></code></pre><p></p></div>
 <p>The <code>bg_color</code> column is hidden from display but used for styling.</p>
 </div>
 
@@ -145,7 +157,7 @@ to automatically expand column references:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="co"># Instead of repetitive calls:</span></span>
 <span><span class="va">data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">qsec</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"color_{col}"</span>, background <span class="op">=</span> <span class="st">"bg_{col}"</span><span class="op">)</span></span></code></pre><p></p></div>
+<span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"color_{col}"</span>, fill <span class="op">=</span> <span class="st">"bg_{col}"</span><span class="op">)</span></span></code></pre><p></p></div>
 <p>For column <code>mpg</code>, this looks for <code>color_mpg</code> and <code>bg_mpg</code> in the data.</p>
 </div>
 

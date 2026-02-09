@@ -10,8 +10,7 @@ tt(
   col_names = NULL,
   col_widths = "auto",
   align = NULL,
-  caption = NULL,
-  label = NULL,
+  preamble = NULL,
   escape = TRUE,
   rownames = TRUE
 )
@@ -32,15 +31,14 @@ columns that fill the container. Use \code{tt_widths()} for custom proportions.}
 \item{align}{Column alignment: single value applied to all columns, or vector
 of alignments. Valid values: "left"/"l", "center"/"c", "right"/"r".}
 
-\item{caption}{Optional table caption (displayed above table).}
-
-\item{label}{Optional label for cross-referencing (e.g., "tbl-results").}
+\item{preamble}{Optional character string of raw Typst code to insert before the
+table. Useful for \verb{#set} rules, \verb{#let} bindings, or other Typst directives that
+should apply to the table (e.g., \code{'#set text(font: "Arial")'}).}
 
 \item{escape}{Logical. If TRUE (default), escapes Typst special characters.}
 
-\item{rownames}{Controls row name handling: TRUE (default) includes row names
-as the first column with an empty header, FALSE excludes row names, or a
-string to use as the column header for row names.}
+\item{rownames}{Logical. TRUE (default) includes row names as the first column
+with an empty header, FALSE excludes them.}
 }
 \value{
 A \code{typst_table} object that can be further styled and rendered.

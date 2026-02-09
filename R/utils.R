@@ -58,8 +58,8 @@
     hex <- sprintf("%02x%02x%02x", rgb_vals[1], rgb_vals[2], rgb_vals[3])
     return(paste0('rgb("#', hex, '")'))
   }, error = function(e) {
-    rlang::warn(paste0("Unknown color '", color, "', using black"))
-    return("black")
+    # Not a recognized color — pass through as raw Typst
+    return(color)
   })
 }
 
@@ -205,6 +205,11 @@
     return("1pt + black")
   }
 
+  # Complex Typst expression (parentheses, braces, or colons) — pass through
+  if (is.character(stroke) && grepl("[(){}:]", stroke)) {
+    return(stroke)
+  }
+
   # If it's just a color, add default width
   if (is.character(stroke) && !grepl("\\+", stroke) && !grepl("pt|mm|cm", stroke)) {
     color <- .to_typst_color(stroke)
@@ -247,7 +252,7 @@
 #'
 #' @param ref_col Name of the referenced column that was not found
 #' @param display_col Name of the column being styled
-#' @param attr_name Name of the style attribute (e.g., "color", "background")
+#' @param attr_name Name of the style attribute (e.g., "color", "fill")
 #' @param missing_mode One of "warn", "ignore", or "error"
 #' @noRd
 .handle_missing_style_col <- function(ref_col, display_col, attr_name, missing_mode) {
@@ -357,8 +362,13 @@
     return(result)
   }
 
-  # Look for first header_above with gap specified and multiple groups
-  for (header_spec in table$headers_above) {
+  # No gaps when stroke is active (grid borders make gaps redundant)
+  if (!is.null(table$stroke)) {
+    return(result)
+  }
+
+  # Look for the innermost (last) header_above with gap specified and multiple groups
+  for (header_spec in rev(table$headers_above)) {
     if (!is.null(header_spec$gap) && length(header_spec$header) > 1) {
       gap_width <- .to_typst_length(header_spec$gap)
 
@@ -377,7 +387,7 @@
       result$widths <- rep(gap_width, length(positions))
       result$total_cols <- table$ncol + length(positions)
 
-      break  # Only use first header with gaps
+      break  # Only use innermost header with gaps
     }
   }
 
@@ -404,4 +414,34 @@
   new_table$hlines <- lapply(table$hlines, function(x) x)
   new_table$vlines <- lapply(table$vlines, function(x) x)
   new_table
+}
+
+#' Resolve a column index to its header_above group
+#'
+#' Maps a column index to the group it falls within in a header_above spec,
+#' returning the group index and its starting column.
+#'
+#' @param header_spec A header_above specification (list with $header named vector)
+#' @param col_idx Integer column index
+#' @return A list with group_idx and start_col
+#' @noRd
+.resolve_header_group <- function(header_spec, col_idx) {
+  cumspans <- cumsum(header_spec$header)
+  group_idx <- which(col_idx <= cumspans)[1]
+  start_col <- if (group_idx == 1) 1L else cumspans[group_idx - 1] + 1L
+  list(group_idx = group_idx, start_col = start_col)
+}
+
+#' Set a style attribute with sequence tracking
+#'
+#' @param style A style list
+#' @param attr Attribute name (e.g., "bold", "color")
+#' @param value The value to set
+#' @param seq The sequence number for last-write-wins ordering
+#' @return The updated style list
+#' @noRd
+.set_style_attr <- function(style, attr, value, seq) {
+  style[[attr]] <- value
+  style[[paste0(".seq_", attr)]] <- seq
+  style
 }

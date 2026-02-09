@@ -4,14 +4,20 @@
 #'
 #' @param table A `typst_table` object.
 #' @param row Integer vector of row numbers to style. Use 0 for the header row,
-#'   1 to n for data rows.
+#'   1 to n for data rows. Use negative indices to target `tt_header_above()` rows:
+#'   -1 is the innermost header_above (closest to the main header), -2 is the next
+#'   row up, etc.
 #' @param bold Logical. Make text bold.
 #' @param italic Logical. Make text italic.
 #' @param color Text color.
-#' @param background Background fill color.
+#' @param fill Fill color.
 #' @param align Row alignment override.
 #' @param font_size Font size.
 #' @param rotate Rotation angle (e.g., `"90deg"`, `90`, `"1.5rad"`).
+#' @param inset Cell padding (e.g., `"10pt"`, `"5pt 8pt"`).
+#' @param stroke Stroke (border) specification for the cell(s). Can be `TRUE` for
+#'   default 1pt black, a color, a Typst stroke spec like `"2pt + blue"`, or a
+#'   Typst dictionary like `"(bottom: 1pt)"`.
 #' @param hline_above Add horizontal line above the row. Can be `TRUE` for default
 #'   line or a stroke specification.
 #' @param hline_below Add horizontal line below the row.
@@ -21,11 +27,11 @@
 #' @examples
 #' # Style header row
 #' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
-#'   tt_row(0, bold = TRUE, background = "gray")
+#'   tt_row(0, bold = TRUE, fill = "gray")
 #'
 #' # Highlight specific rows
 #' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
-#'   tt_row(c(1, 3, 5), background = "#ffffcc")
+#'   tt_row(c(1, 3, 5), fill = "#ffffcc")
 #'
 #' # Add horizontal lines
 #' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
@@ -37,10 +43,12 @@ tt_row <- function(table,
                    bold = NULL,
                    italic = NULL,
                    color = NULL,
-                   background = NULL,
+                   fill = NULL,
                    align = NULL,
                    font_size = NULL,
                    rotate = NULL,
+                   inset = NULL,
+                   stroke = NULL,
                    hline_above = NULL,
                    hline_below = NULL) {
   .check_typst_table(table)
@@ -51,16 +59,23 @@ tt_row <- function(table,
   }
 
   # Validate row numbers
-  valid_rows <- 0:table$nrow
+  n_above <- length(table$headers_above)
+  valid_min <- if (n_above > 0) -n_above else 0L
+  valid_rows <- valid_min:table$nrow
   invalid <- setdiff(row, valid_rows)
   if (length(invalid) > 0) {
     rlang::warn(paste0(
-      "Row(s) ", paste(invalid, collapse = ", "), " out of range (0-", table$nrow, "), ignoring"
+      "Row(s) ", paste(invalid, collapse = ", "), " out of range (",
+      valid_min, " to ", table$nrow, "), ignoring"
     ))
     row <- intersect(row, valid_rows)
   }
 
   if (length(row) == 0) return(table)
+
+  # Increment sequence counter for last-write-wins ordering
+  table$style_seq <- table$style_seq + 1L
+  seq <- table$style_seq
 
   # Apply style to each row
   for (r in row) {
@@ -69,30 +84,36 @@ tt_row <- function(table,
     # Create or update style for this row
     style <- table$row_styles[[row_key]] %||% list()
 
-    if (!is.null(bold)) style$bold <- bold
-    if (!is.null(italic)) style$italic <- italic
-    if (!is.null(color)) style$color <- color
-    if (!is.null(background)) style$background <- background
-    if (!is.null(align)) style$cell_align <- .to_typst_align(align)
-    if (!is.null(font_size)) style$font_size <- font_size
-    if (!is.null(rotate)) style$rotate <- rotate
+    if (!is.null(bold)) style <- .set_style_attr(style, "bold", bold, seq)
+    if (!is.null(italic)) style <- .set_style_attr(style, "italic", italic, seq)
+    if (!is.null(color)) style <- .set_style_attr(style, "color", color, seq)
+    if (!is.null(fill)) style <- .set_style_attr(style, "fill", fill, seq)
+    if (!is.null(align)) style <- .set_style_attr(style, "cell_align", .to_typst_align(align), seq)
+    if (!is.null(font_size)) style <- .set_style_attr(style, "font_size", font_size, seq)
+    if (!is.null(rotate)) style <- .set_style_attr(style, "rotate", rotate, seq)
+    if (!is.null(inset)) style <- .set_style_attr(style, "inset", inset, seq)
+    if (!is.null(stroke)) style <- .set_style_attr(style, "stroke", stroke, seq)
 
     table$row_styles[[row_key]] <- style
 
-    # Handle horizontal lines
+    # Handle horizontal lines (not supported for header_above rows)
+    if (r < 0 && (!is.null(hline_above) || !is.null(hline_below))) {
+      rlang::warn("hline_above/hline_below not supported for header_above rows, ignoring")
+      next
+    }
     if (!is.null(hline_above)) {
       # For header (row 0), line goes at position 0
       # For data rows, line goes at row position (accounting for header)
       y_pos <- if (r == 0) 0 else r
-      stroke <- if (isTRUE(hline_above)) NULL else hline_above
-      table$hlines <- c(table$hlines, list(list(y = y_pos, stroke = stroke)))
+      hline_stroke <- if (isTRUE(hline_above)) NULL else hline_above
+      table$hlines <- c(table$hlines, list(list(y = y_pos, stroke = hline_stroke)))
     }
 
     if (!is.null(hline_below)) {
       # Line below row r goes at position r+1
       y_pos <- r + 1
-      stroke <- if (isTRUE(hline_below)) NULL else hline_below
-      table$hlines <- c(table$hlines, list(list(y = y_pos, stroke = stroke)))
+      hline_stroke <- if (isTRUE(hline_below)) NULL else hline_below
+      table$hlines <- c(table$hlines, list(list(y = y_pos, stroke = hline_stroke)))
     }
   }
 

@@ -11,10 +11,12 @@ tt_cell(
   bold = NULL,
   italic = NULL,
   color = NULL,
-  background = NULL,
+  fill = NULL,
   align = NULL,
   font_size = NULL,
   rotate = NULL,
+  inset = NULL,
+  stroke = NULL,
   colspan = 1,
   rowspan = 1,
   content = NULL
@@ -23,7 +25,10 @@ tt_cell(
 \arguments{
 \item{table}{A \code{typst_table} object.}
 
-\item{row}{Row number (1-indexed for data rows, 0 for header).}
+\item{row}{Row number (1-indexed for data rows, 0 for header). Use negative
+indices to target \code{tt_header_above()} rows: -1 is the innermost header_above
+(closest to the main header), -2 is the next row up, etc. The column is
+normalized to the start of the header group it falls within.}
 
 \item{column}{Column specification: integer index or column name.}
 
@@ -33,13 +38,19 @@ tt_cell(
 
 \item{color}{Text color.}
 
-\item{background}{Background fill color.}
+\item{fill}{Fill color.}
 
 \item{align}{Cell alignment.}
 
 \item{font_size}{Font size.}
 
 \item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}).}
+
+\item{inset}{Cell padding (e.g., \code{"10pt"}, \code{"5pt 8pt"}).}
+
+\item{stroke}{Stroke (border) specification for the cell. Can be \code{TRUE} for
+default 1pt black, a color, a Typst stroke spec like \code{"2pt + blue"}, or a
+Typst dictionary like \code{"(bottom: 1pt)"}.}
 
 \item{colspan}{Number of columns to span (default 1).}
 
@@ -57,7 +68,7 @@ cell appearance including spanning multiple rows or columns.
 \examples{
 # Highlight a specific cell
 tt(mtcars[1:5, 1:3], rownames = FALSE) |>
-  tt_cell(1, 1, background = "yellow", bold = TRUE)
+  tt_cell(1, 1, fill = "yellow", bold = TRUE)
 
 # Cell spanning multiple columns
 tt(mtcars[1:5, 1:3], rownames = FALSE) |>

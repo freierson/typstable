@@ -13,8 +13,7 @@ tt_style(
   row_gutter = NULL,
   column_gutter = NULL,
   position = NULL,
-  full_width = FALSE,
-  header_separate = NULL
+  full_width = FALSE
 )
 }
 \arguments{
@@ -22,9 +21,10 @@ tt_style(
 
 \item{stroke}{Stroke (border) specification: \code{TRUE} for default 1pt black borders,
 a color name/hex for 1pt borders in that color, or a Typst stroke specification
-like \code{"2pt + blue"}.}
+like \code{"2pt + blue"}. When stroke is set, gap columns and separator lines from
+\code{tt_header_above()} are automatically suppressed.}
 
-\item{fill}{Background fill color for the entire table.}
+\item{fill}{Fill color for the entire table.}
 
 \item{striped}{Logical. If \code{TRUE}, alternates row background colors for readability.}
 
@@ -38,15 +38,13 @@ for different padding on each side.}
 \item{position}{Table position on page: \code{"auto"}, \code{"left"}, \code{"center"}, \code{"right"}.}
 
 \item{full_width}{Logical. If \code{TRUE}, table spans full page width.}
-
-\item{header_separate}{Logical. If \code{TRUE}, adds a horizontal line below the header row.}
 }
 \value{
 The modified \code{typst_table} object.
 }
 \description{
 Sets global styling properties for the entire table including stroke (borders),
-fill (background), striped rows, and spacing.
+fill, striped rows, and spacing.
 }
 \examples{
 # Add borders and striped rows
@@ -56,9 +54,5 @@ tt(mtcars[1:5, 1:3], rownames = FALSE) |>
 # Custom border color and padding
 tt(mtcars[1:5, 1:3], rownames = FALSE) |>
   tt_style(stroke = "gray", inset = "8pt")
-
-# Header separator line
-tt(mtcars[1:5, 1:3], rownames = FALSE) |>
-  tt_style(header_separate = TRUE)
 
 }

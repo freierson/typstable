@@ -66,107 +66,95 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The purpose of typstable is to produce publication-ready tables for
+<p>The purpose of typstable is to produce publication ready tables for
 Quarto documents targeting the Typst format. Typst is a modern,
 open-source, markup-based typesetting system that provides an
 alternative to LaTeX for rendering PDF documents. In this article I show
 how to use the typstable package.</p>
 </div>
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Install from GitHub</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"freierson/typstable"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
 <h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
-<p>Create a basic table with <code><a href="../reference/tt.html">tt()</a></code>:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<p>Create a basic table with <code><a href="../reference/tt.html">tt()</a></code>.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://freierson.github.io/typstable/">typstable</a></span><span class="op">)</span></span>
-<span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">sans_font</span> <span class="op">&lt;-</span> <span class="st">'#set text(font: "Arial")'</span></span>
+<span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, preamble <span class="op">=</span> <span class="va">sans_font</span><span class="op">)</span></span>
 <span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-1.svg" width="100%"></p>
+<p><img src="figures/table-1.svg" alt="" width="100%"></p>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="apply-formatting-to-cells-rows-and-columns">Apply formatting to cells, rows, and columns<a class="anchor" aria-label="anchor" href="#apply-formatting-to-cells-rows-and-columns"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">tbl</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_row.html">tt_row</a></span><span class="op">(</span>row <span class="op">=</span> <span class="fl">0</span>, rotate <span class="op">=</span> <span class="op">-</span><span class="fl">45</span>, align <span class="op">=</span> <span class="st">'left + bottom'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/table-2.svg" width="100%"></p>
+<p>Format specific parts of the table with <code><a href="../reference/tt_column.html">tt_column()</a></code>,
+<code><a href="../reference/tt_row.html">tt_row()</a></code>, and <code><a href="../reference/tt_cell.html">tt_cell()</a></code>. Columns can be
+targeted using tidyselect syntax.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, preamble <span class="op">=</span> <span class="va">sans_font</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, align <span class="op">=</span> <span class="st">"center"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tt_row.html">tt_row</a></span><span class="op">(</span><span class="fl">3</span>, fill <span class="op">=</span> <span class="st">"yellow"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tt_cell.html">tt_cell</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, bold <span class="op">=</span> <span class="cn">TRUE</span>, rotate <span class="op">=</span> <span class="fl">45</span>, fill <span class="op">=</span> <span class="st">"lightgrey"</span><span class="op">)</span></span>
+<span><span class="va">tbl</span></span></code></pre></div>
+<p><img src="figures/table-2.svg" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="table-styling">Table Styling<a class="anchor" aria-label="anchor" href="#table-styling"></a>
 </h2>
-<p>Use <code><a href="../reference/tt_style.html">tt_style()</a></code> to customize the table appearance:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>Use <code><a href="../reference/tt_style.html">tt_style()</a></code> to customize the table appearance.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,</span>
-<span>          col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">""</span>, <span class="st">"Miles/Gallon"</span>, <span class="st">"Cylinders"</span>, <span class="st">"Displacement"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>          col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">""</span>, <span class="st">"Miles/Gallon"</span>, <span class="st">"Cylinders"</span>, <span class="st">"Displacement"</span><span class="op">)</span>,</span>
+<span>          preamble <span class="op">=</span> <span class="va">sans_font</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_style.html">tt_style</a></span><span class="op">(</span></span>
 <span>    striped <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    header_separate <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    inset <span class="op">=</span> <span class="st">"8pt"</span></span>
+<span>    inset <span class="op">=</span> <span class="st">"4pt"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-3.svg" width="100%"></p>
-</div>
-<div class="section level2">
-<h2 id="column-row-and-cell-formatting">Column, Row, and Cell Formatting<a class="anchor" aria-label="anchor" href="#column-row-and-cell-formatting"></a>
-</h2>
-<p>Format specific parts of the table with <code><a href="../reference/tt_column.html">tt_column()</a></code>,
-<code><a href="../reference/tt_row.html">tt_row()</a></code>, and <code><a href="../reference/tt_cell.html">tt_cell()</a></code>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="va">mpg</span>, align <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_row.html">tt_row</a></span><span class="op">(</span><span class="fl">1</span>, bold <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_cell.html">tt_cell</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, background <span class="op">=</span> <span class="st">"yellow"</span><span class="op">)</span></span>
-<span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-4.svg" width="100%"></p>
+<p><img src="figures/table-3.svg" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="column-widths">Column Widths<a class="anchor" aria-label="anchor" href="#column-widths"></a>
 </h2>
-<p>Control column widths with <code><a href="../reference/tt_widths.html">tt_widths()</a></code>. Values are
-proportional:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_style.html">tt_style</a></span><span class="op">(</span>stroke <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_widths.html">tt_widths</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>  <span class="co"># 20%, 40%, 20%, 20%</span></span>
-<span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-5.svg" width="100%"></p>
+<p>Control column widths with <code><a href="../reference/tt_widths.html">tt_widths()</a></code>.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, preamble <span class="op">=</span> <span class="va">sans_font</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tt_style.html">tt_style</a></span><span class="op">(</span>stroke <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="figures/table-4.svg" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="spanning-headers">Spanning Headers<a class="anchor" aria-label="anchor" href="#spanning-headers"></a>
 </h2>
 <p>Add spanning headers with <code><a href="../reference/tt_header_above.html">tt_header_above()</a></code>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"qsec"</span>, <span class="st">"cyl"</span>, <span class="st">"disp"</span>, <span class="st">"hp"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_style.html">tt_style</a></span><span class="op">(</span>header_separate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"qsec"</span>, <span class="st">"cyl"</span>, <span class="st">"disp"</span>, <span class="st">"hp"</span>, <span class="st">"wt"</span><span class="op">)</span><span class="op">]</span>, preamble <span class="op">=</span> <span class="va">sans_font</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_header_above.html">tt_header_above</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">" "</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"Performance"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"Characteristics"</span> <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>, gap<span class="op">=</span><span class="st">'5pt'</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fl">1</span>, width <span class="op">=</span> <span class="st">"25%"</span><span class="op">)</span></span>
 <span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-6.svg" width="100%"></p>
+<p><img src="figures/table-5.svg" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="row-grouping">Row Grouping<a class="anchor" aria-label="anchor" href="#row-grouping"></a>
 </h2>
-<p>Group rows with <code><a href="../reference/tt_pack_rows.html">tt_pack_rows()</a></code>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_pack_rows.html">tt_pack_rows</a></span><span class="op">(</span><span class="st">"4 Cylinders"</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_pack_rows.html">tt_pack_rows</a></span><span class="op">(</span><span class="st">"6 Cylinders"</span>, <span class="fl">3</span>, <span class="fl">6</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fl">1</span>, width<span class="op">=</span><span class="st">"30%"</span><span class="op">)</span></span>
+<p>Group rows with <code><a href="../reference/tt_pack_rows.html">tt_pack_rows()</a></code>. Sort the data by a
+grouping variable, then use <code><a href="https://rdrr.io/r/base/table.html" class="external-link">table()</a></code> to compute group sizes
+for the <code>index</code> parameter.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cars</span> <span class="op">&lt;-</span> <span class="va">mtcars</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">cyl</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mpg"</span>, <span class="st">"disp"</span>, <span class="st">"hp"</span>, <span class="st">"wt"</span>, <span class="st">"cyl"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">cars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="va"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">cars</span>, <span class="va">cars</span><span class="op">$</span><span class="va">cyl</span><span class="op">)</span>, <span class="va">head</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">cars</span><span class="op">$</span><span class="va">cyl</span><span class="op">)</span></span>
+<span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">groups</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">groups</span><span class="op">)</span>, <span class="st">"Cylinders"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">cars</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">.rownames</span>, <span class="va">mpg</span>, <span class="va">disp</span>, <span class="va">hp</span>, <span class="va">wt</span><span class="op">)</span>, preamble <span class="op">=</span> <span class="va">sans_font</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tt_pack_rows.html">tt_pack_rows</a></span><span class="op">(</span>index <span class="op">=</span> <span class="va">groups</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fl">1</span>, width <span class="op">=</span> <span class="st">"30%"</span><span class="op">)</span></span>
 <span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-7.svg" width="100%"></p>
+<p><img src="figures/table-6.svg" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="saving-tables">Saving Tables<a class="anchor" aria-label="anchor" href="#saving-tables"></a>
 </h2>
 <p>If you have the Typst CLI installed, you can export tables to various
 formats using <code><a href="../reference/tt_save.html">tt_save()</a></code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Save as SVG</span></span>
 <span><span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_save.html">tt_save</a></span><span class="op">(</span><span class="st">"table.svg"</span><span class="op">)</span></span>
