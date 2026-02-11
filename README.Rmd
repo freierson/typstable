@@ -22,10 +22,7 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/freierson/typstable/graph/badge.svg)](https://app.codecov.io/gh/freierson/typstable)
 </div>
 
-The purpose of typstable /ˈtaɪps.tə.bᵊl/ is to produce publication-ready tables
-for Quarto documents targeting the Typst format. Typst is a modern, open-source,
-markup-based typesetting system that provides an alternative to LaTeX for
-rendering PDF documents. This package allows R users to create Typst tables with elaborate formatting.
+The purpose of typstable /ˈtaɪps.tə.bᵊl/ is to produce publication-ready tables for Quarto documents targeting the Typst format. Typst is a modern, open-source, markup-based typesetting system that provides an alternative to LaTeX for rendering PDF documents. This package allows R users to create Typst tables with elaborate formatting.
 
 ## Example
 
