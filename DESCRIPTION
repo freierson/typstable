@@ -1,5 +1,5 @@
 Package: typstable
-Title: Better Typst Tables in R
+Title: Better Typst Tables
 Version: 0.1.0
 URL: https://freierson.github.io/typstable/, https://github.com/freierson/typstable
 BugReports: https://github.com/freierson/typstable/issues
