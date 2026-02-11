@@ -26,7 +26,7 @@
 #' is not required.
 #'
 #' For `.svg`, `.png`, and `.pdf` output, the function:
-#' 1
+#'
 #' 1. Generates a complete Typst document with appropriate page settings
 #' 2. Writes it to a temporary `.typ` file
 #' 3. Calls `typst compile` to render the output
