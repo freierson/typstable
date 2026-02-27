@@ -19,8 +19,8 @@
 #'   table. Useful for `#set` rules, `#let` bindings, or other Typst directives that
 #'   should apply to the table (e.g., `'#set text(font: "Arial")'`).
 #' @param escape Logical. If TRUE (default), escapes Typst special characters.
-#' @param rownames Logical. TRUE (default) includes row names as the first column
-#'   with an empty header, FALSE excludes them.
+#' @param rownames Logical. TRUE includes row names as the first column
+#'   with an empty header, FALSE (default) excludes them.
 #' @param na_string Character. How NA values are displayed in the table (default "-").
 #'
 #' @return A `typst_table` object that can be further styled and rendered.
@@ -46,7 +46,7 @@ tt <- function(data,
                align = NULL,
                preamble = NULL,
                escape = TRUE,
-               rownames = TRUE,
+               rownames = FALSE,
                na_string = '-') {
   # Validate input
   if (!is.data.frame(data)) {

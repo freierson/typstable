@@ -153,3 +153,12 @@ test_that("rownames = TRUE with NULL rownames uses numeric indices", {
   # First column should be the rownames (as character numbers)
   expect_equal(tbl$display_data[, 1], c("1", "2", "3"))
 })
+
+test_that("rownames default uses numeric indices", {
+  df <- data.frame(a = 1:3, b = 4:6)
+  tbl <- tt(df)
+  tbl_out <- trimws(paste0(capture.output(print(tbl)),collapse='\n'))
+  expect_equal(tbl$ncol, 2)
+  expect_equal(tbl_out,
+  "#table(\n  columns: (1fr, 1fr),\n  stroke: none,\n  table.hline(stroke: 1pt),\n  [a], [b],\n  table.hline(stroke: 0.5pt),\n  [1], [4],\n  [2], [5],\n  [3], [6],\n  table.hline(stroke: 1pt)\n)")
+})
