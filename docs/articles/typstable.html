@@ -81,7 +81,7 @@ how to use the typstable package.</p>
 <span><span class="va">sans_font</span> <span class="op">&lt;-</span> <span class="st">'#set text(font: "Arial")'</span></span>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, preamble <span class="op">=</span> <span class="va">sans_font</span><span class="op">)</span></span>
 <span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-1.svg" alt="" width="100%"></p>
+<p><img src="figures/table-1.svg" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="apply-formatting-to-cells-rows-and-columns">Apply formatting to cells, rows, and columns<a class="anchor" aria-label="anchor" href="#apply-formatting-to-cells-rows-and-columns"></a>
@@ -95,7 +95,7 @@ targeted using tidyselect syntax.</p>
 <span>  <span class="fu"><a href="../reference/tt_row.html">tt_row</a></span><span class="op">(</span><span class="fl">3</span>, fill <span class="op">=</span> <span class="st">"yellow"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_cell.html">tt_cell</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, bold <span class="op">=</span> <span class="cn">TRUE</span>, rotate <span class="op">=</span> <span class="fl">45</span>, fill <span class="op">=</span> <span class="st">"lightgrey"</span><span class="op">)</span></span>
 <span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-2.svg" alt="" width="100%"></p>
+<p><img src="figures/table-2.svg" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="table-styling">Table Styling<a class="anchor" aria-label="anchor" href="#table-styling"></a>
@@ -110,7 +110,7 @@ targeted using tidyselect syntax.</p>
 <span>    inset <span class="op">=</span> <span class="st">"4pt"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-3.svg" alt="" width="100%"></p>
+<p><img src="figures/table-3.svg" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="column-widths">Column Widths<a class="anchor" aria-label="anchor" href="#column-widths"></a>
@@ -120,7 +120,7 @@ targeted using tidyselect syntax.</p>
 <code class="sourceCode R"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, preamble <span class="op">=</span> <span class="va">sans_font</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_style.html">tt_style</a></span><span class="op">(</span>stroke <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_widths.html">tt_widths</a></span><span class="op">(</span>.rownames<span class="op">=</span><span class="fl">8</span>,mpg<span class="op">=</span><span class="fl">1</span>,cyl<span class="op">=</span><span class="fl">1</span>,disp<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/table-4.svg" alt="" width="100%"></p>
+<p><img src="figures/table-4.svg" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="spanning-headers">Spanning Headers<a class="anchor" aria-label="anchor" href="#spanning-headers"></a>
@@ -131,7 +131,7 @@ targeted using tidyselect syntax.</p>
 <span>  <span class="fu"><a href="../reference/tt_header_above.html">tt_header_above</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">" "</span> <span class="op">=</span> <span class="fl">1</span>, <span class="st">"Performance"</span> <span class="op">=</span> <span class="fl">2</span>, <span class="st">"Characteristics"</span> <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>, gap<span class="op">=</span><span class="st">'5pt'</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fl">1</span>, width <span class="op">=</span> <span class="st">"25%"</span><span class="op">)</span></span>
 <span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-5.svg" alt="" width="100%"></p>
+<p><img src="figures/table-5.svg" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="row-grouping">Row Grouping<a class="anchor" aria-label="anchor" href="#row-grouping"></a>
@@ -148,7 +148,7 @@ for the <code>index</code> parameter.</p>
 <span>  <span class="fu"><a href="../reference/tt_pack_rows.html">tt_pack_rows</a></span><span class="op">(</span>index <span class="op">=</span> <span class="va">groups</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tt_column.html">tt_column</a></span><span class="op">(</span><span class="fl">1</span>, width <span class="op">=</span> <span class="st">"30%"</span><span class="op">)</span></span>
 <span><span class="va">tbl</span></span></code></pre></div>
-<p><img src="figures/table-6.svg" alt="" width="100%"></p>
+<p><img src="figures/table-6.svg" width="100%"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

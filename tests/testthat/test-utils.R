@@ -11,8 +11,7 @@ test_that(".escape_typst escapes backslashes", {
   expect_equal(.escape_typst("\\$5.00"), "\\\\$5.00")
 })
 
-test_that(".escape_typst handles NA and empty strings", {
-  expect_equal(.escape_typst(NA_character_), "")
+test_that(".escape_typst handles empty strings", {
   expect_equal(.escape_typst(""), "")
 })
 

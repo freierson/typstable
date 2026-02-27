@@ -244,3 +244,17 @@ test_that("no preamble by default", {
 
   expect_true(grepl("^#table\\(", code))
 })
+
+test_that("NA renders correct by default", {
+  df <- data.frame(a = c(NA, 'abc'), b = c(3, NA))
+  code <- tt(df, rownames = FALSE) |> tt_render()
+  expect_true(grepl("[-], [3]", code, fixed = TRUE))
+  expect_true(grepl("[abc], [-]", code, fixed = TRUE))
+})
+
+test_that("na_string argument works renders correct by default", {
+  df <- data.frame(a = c(NA, 'abc'), b = c(3, NA))
+  code <- tt(df, rownames = FALSE, na_string = '') |> tt_render()
+  expect_true(grepl("[], [3]", code, fixed = TRUE))
+  expect_true(grepl("[abc], []", code, fixed = TRUE))
+})

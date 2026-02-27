@@ -387,10 +387,14 @@ tt_render <- function(table) {
 
     for (j in seq_len(table$ncol)) {
       col_name <- table$display_cols[j]
-      content <- as.character(table$display_data[i, j])
-
+      
       # Handle NA
-      if (is.na(content)) content <- ""
+      if (is.na(table$display_data[i, j])) {
+        content <- table$na_string
+      }
+      else {
+        content <- as.character(table$display_data[i, j])
+      }
 
       # Escape if needed
       if (table$escape) {

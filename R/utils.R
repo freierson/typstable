@@ -9,8 +9,6 @@
   if (!is.character(x)) {
     x <- as.character(x)
   }
-  x[is.na(x)] <- ""
-
   # Escape all Typst special characters: \ * _ ` # @ < >
   gsub("([\\\\*_`#@<>])", "\\\\\\1", x, perl = TRUE)
 }

@@ -55,7 +55,8 @@ the table appearance.</p>
 <span>  align <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  preamble <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  escape <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rownames <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  rownames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  na_string <span class="op">=</span> <span class="st">"-"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -101,6 +102,10 @@ should apply to the table (e.g., <code>'#set text(font: "Arial")'</code>).</p></
 <dt id="arg-rownames">rownames<a class="anchor" aria-label="anchor" href="#arg-rownames"></a></dt>
 <dd><p>Logical. TRUE (default) includes row names as the first column
 with an empty header, FALSE excludes them.</p></dd>
+
+
+<dt id="arg-na-string">na_string<a class="anchor" aria-label="anchor" href="#arg-na-string"></a></dt>
+<dd><p>Character. How NA values are displayed in the table (default "-").</p></dd>
 
 </dl></div>
     <div class="section level2">

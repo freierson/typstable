@@ -51,7 +51,6 @@ For \code{.typ} output, only the Typst source code is written and the Typst CLI
 is not required.
 
 For \code{.svg}, \code{.png}, and \code{.pdf} output, the function:
-1
 \enumerate{
 \item Generates a complete Typst document with appropriate page settings
 \item Writes it to a temporary \code{.typ} file

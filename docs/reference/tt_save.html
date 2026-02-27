@@ -104,8 +104,7 @@ If <code>FALSE</code>, throws an error when the output file already exists.</p><
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>For <code>.typ</code> output, only the Typst source code is written and the Typst CLI
 is not required.</p>
-<p>For <code>.svg</code>, <code>.png</code>, and <code>.pdf</code> output, the function:
-1</p><ol><li><p>Generates a complete Typst document with appropriate page settings</p></li>
+<p>For <code>.svg</code>, <code>.png</code>, and <code>.pdf</code> output, the function:</p><ol><li><p>Generates a complete Typst document with appropriate page settings</p></li>
 <li><p>Writes it to a temporary <code>.typ</code> file</p></li>
 <li><p>Calls <code>typst compile</code> to render the output</p></li>
 <li><p>Cleans up the temporary file</p></li>

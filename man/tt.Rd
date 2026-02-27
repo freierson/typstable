@@ -12,7 +12,8 @@ tt(
   align = NULL,
   preamble = NULL,
   escape = TRUE,
-  rownames = TRUE
+  rownames = TRUE,
+  na_string = "-"
 )
 }
 \arguments{
@@ -39,6 +40,8 @@ should apply to the table (e.g., \code{'#set text(font: "Arial")'}).}
 
 \item{rownames}{Logical. TRUE (default) includes row names as the first column
 with an empty header, FALSE excludes them.}
+
+\item{na_string}{Character. How NA values are displayed in the table (default "-").}
 }
 \value{
 A \code{typst_table} object that can be further styled and rendered.
