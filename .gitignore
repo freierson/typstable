@@ -10,3 +10,4 @@ vignettes/*_files/
 /*.Rcheck/
 .claude/
 .Rhistory
+/.quarto/
