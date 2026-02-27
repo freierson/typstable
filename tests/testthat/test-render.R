@@ -258,3 +258,140 @@ test_that("na_string argument works renders correct by default", {
   expect_true(grepl("[], [3]", code, fixed = TRUE))
   expect_true(grepl("[abc], []", code, fixed = TRUE))
 })
+
+# --- Vertical lines rendering tests ---
+
+test_that("vlines render with all parameters", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_vline(x = 1, start = 1, end = 2, stroke = "2pt + blue") |>
+    tt_render()
+
+  expect_true(grepl("table\\.vline\\(", code))
+  expect_true(grepl("x: 1", code))
+  expect_true(grepl("start: 1", code))
+  expect_true(grepl("end: 3", code))  # end is incremented by 1 in render
+  expect_true(grepl("stroke: 2pt \\+ blue", code))
+})
+
+test_that("vlines render with minimal parameters", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_vline(x = 1) |>
+    tt_render()
+
+  expect_true(grepl("table\\.vline\\(x: 1\\)", code))
+})
+
+# --- Row groups rendering tests ---
+
+test_that("group label row renders with colspan", {
+  df <- data.frame(a = 1:5, b = 6:10, c = 11:15)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_pack_rows("My Group", 1, 3) |>
+    tt_render()
+
+  expect_true(grepl("table\\.cell\\(colspan: 3\\)\\[\\*My Group\\*\\]", code))
+})
+
+test_that("group label without bold renders correctly", {
+  df <- data.frame(a = 1:5, b = 6:10)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_pack_rows("Plain Group", 1, 3, bold_label = FALSE) |>
+    tt_render()
+
+  expect_true(grepl("table\\.cell\\(colspan: 2\\)\\[Plain Group\\]", code))
+  expect_false(grepl("\\*Plain Group\\*", code))
+})
+
+test_that("group label escapes special characters", {
+  df <- data.frame(a = 1:5, b = 6:10)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_pack_rows("Group*with_special#chars", 1, 3) |>
+    tt_render()
+
+  expect_true(grepl("Group\\\\\\*with\\\\_special\\\\#chars", code))
+})
+
+# --- Horizontal lines rendering tests ---
+
+test_that("hline with stroke renders correctly", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_hline(y = 2, stroke = "2pt + red") |>
+    tt_render()
+
+  expect_true(grepl("table\\.hline\\(stroke: 2pt \\+ red\\)", code))
+})
+
+test_that("hline with start/end columns renders correctly", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_hline(y = 2, start = 0, end = 1) |>
+    tt_render()
+
+  expect_true(grepl("table\\.hline\\(start: 0, end: 2\\)", code))
+})
+
+test_that("hline below row via tt_row renders correctly", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_row(1, hline_below = TRUE) |>
+    tt_render()
+
+  # Should have an hline after row 1
+  expect_true(grepl("table\\.hline\\(\\)", code))
+})
+
+# --- Cell spanning rendering tests ---
+
+test_that("rowspan renders in table.cell", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_cell(1, 1, rowspan = 2) |>
+    tt_render()
+
+  expect_true(grepl("table\\.cell\\(rowspan: 2\\)", code))
+})
+
+test_that("colspan and rowspan together render correctly", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_cell(1, 1, colspan = 2, rowspan = 2) |>
+    tt_render()
+
+  expect_true(grepl("colspan: 2", code))
+  expect_true(grepl("rowspan: 2", code))
+})
+
+# --- Row gutter and column gutter rendering ---
+
+test_that("row_gutter renders in table arguments", {
+  df <- data.frame(a = 1:2, b = 3:4)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_style(row_gutter = "5pt") |>
+    tt_render()
+
+  expect_true(grepl("row-gutter: 5pt", code))
+})
+
+test_that("column_gutter renders in table arguments", {
+  df <- data.frame(a = 1:2, b = 3:4)
+
+  code <- tt(df, rownames = FALSE) |>
+    tt_style(column_gutter = "8pt") |>
+    tt_render()
+
+  expect_true(grepl("column-gutter: 8pt", code))
+})
