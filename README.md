@@ -28,11 +28,16 @@ install.packages("typstable")
 
 ``` r
 # Create table with data-driven styling
-tbl <- tt(cars, cols = c(.rownames, all_of(style_cols)), preamble='#set text(font: "Arial")') |>
+tbl <- tt(
+  cars,
+  cols = all_of(style_cols),
+  preamble = '#set text(font: "Arial")',
+  rownames = TRUE
+) |>
   tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4)) |>
   tt_column(-1, color = "color_{col}", fill = "bg_{col}") |>
   tt_pack_rows(index = table(cars$brand)) |>
   tt_column(1, width = "25%")
 ```
 
-<img src="man/figures/readme-example.svg" width="100%" />
+<img src="man/figures/readme-example.svg" alt="" width="100%" />

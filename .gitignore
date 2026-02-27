@@ -11,3 +11,4 @@ vignettes/*_files/
 .claude/
 .Rhistory
 /.quarto/
+**/*.quarto_ipynb
