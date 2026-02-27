@@ -28,11 +28,11 @@
 #'
 #' @examples
 #' # Highlight a specific cell
-#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+#' tt(mtcars[1:5, 1:3]) |>
 #'   tt_cell(1, 1, fill = "yellow", bold = TRUE)
 #'
 #' # Cell spanning multiple columns
-#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+#' tt(mtcars[1:5, 1:3]) |>
 #'   tt_cell(1, 1, colspan = 2, content = "Combined")
 #'
 #' @export

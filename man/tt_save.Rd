@@ -64,20 +64,20 @@ for both (the default) creates a page that fits the table content exactly.
 }
 \examples{
 # Save Typst source (no CLI required)
-tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+tt(mtcars[1:5, 1:3]) |>
   tt_save(file.path(tempdir(), "table.typ"))
 
 if (tt_typst_available()) {
   # Save as SVG
-  tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+  tt(mtcars[1:5, 1:3]) |>
     tt_save(file.path(tempdir(), "table.svg"))
 
   # Save as PNG with higher resolution
-  tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+  tt(mtcars[1:5, 1:3]) |>
     tt_save(file.path(tempdir(), "table.png"), ppi = 300)
 
   # Save as PDF with specific page size
-  tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+  tt(mtcars[1:5, 1:3]) |>
     tt_style(stroke = TRUE) |>
     tt_save(file.path(tempdir(), "table.pdf"), width = "6in", height = "4in")
 }

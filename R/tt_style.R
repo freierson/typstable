@@ -20,11 +20,11 @@
 #'
 #' @examples
 #' # Add borders and striped rows
-#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+#' tt(mtcars[1:5, 1:3]) |>
 #'   tt_style(stroke = TRUE, striped = TRUE)
 #'
 #' # Custom border color and padding
-#' tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+#' tt(mtcars[1:5, 1:3]) |>
 #'   tt_style(stroke = "gray", inset = "8pt")
 #'
 #' @export

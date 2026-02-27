@@ -84,7 +84,7 @@ cars <- cars |>
 
 ```{r example, message=FALSE, eval=FALSE}
 # Create table with data-driven styling
-tbl <- tt(cars, cols = c(.rownames, all_of(style_cols)), preamble='#set text(font: "Arial")') |>
+tbl <- tt(cars, cols = c(.rownames, all_of(style_cols)), preamble='#set text(font: "Arial")', rownames = TRUE) |>
   tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4)) |>
   tt_column(-1, color = "color_{col}", fill = "bg_{col}") |>
   tt_pack_rows(index = table(cars$brand)) |>
@@ -93,7 +93,7 @@ tbl <- tt(cars, cols = c(.rownames, all_of(style_cols)), preamble='#set text(fon
 
 ```{r table-build, echo=FALSE, message=FALSE}
 # Create table with data-driven styling
-tbl <- tt(cars, cols = c(.rownames, all_of(style_cols)), preamble='#set text(font: "Arial")') |>
+tbl <- tt(cars, cols = c(.rownames, all_of(style_cols)), preamble='#set text(font: "Arial")', rownames = TRUE) |>
   tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4)) |>
   tt_column(c(mpg, qsec, cyl, disp, hp, wt), color = "color_{col}", fill = "bg_{col}") |>
   tt_pack_rows(index = table(cars$brand)) |>

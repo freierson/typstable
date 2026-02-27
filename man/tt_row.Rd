@@ -61,15 +61,15 @@ Applies formatting to one or more rows. Use row = 0 to style the header row.
 }
 \examples{
 # Style header row
-tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+tt(mtcars[1:5, 1:3]) |>
   tt_row(0, bold = TRUE, fill = "gray")
 
 # Highlight specific rows
-tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+tt(mtcars[1:5, 1:3]) |>
   tt_row(c(1, 3, 5), fill = "#ffffcc")
 
 # Add horizontal lines
-tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+tt(mtcars[1:5, 1:3]) |>
   tt_row(3, hline_above = TRUE, hline_below = TRUE)
 
 }

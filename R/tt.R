@@ -26,14 +26,14 @@
 #' @return A `typst_table` object that can be further styled and rendered.
 #'
 #' @examples
-#' # Basic table (includes row names by default)
+#' # Basic table
 #' tt(mtcars[1:5, 1:3])
 #'
-#' # Select specific columns (excludes row names)
-#' tt(mtcars, cols = c(mpg, cyl, hp), rownames = FALSE)
+#' # Select specific columns
+#' tt(mtcars, cols = c(mpg, cyl, hp))
 #'
 #' # Custom column names
-#' tt(mtcars[1:5, 1:3], col_names = c("Miles/Gallon", "Cylinders", "Horsepower"), rownames = FALSE)
+#' tt(mtcars[1:5, 1:3], col_names = c("Miles/Gallon", "Cylinders", "Horsepower"))
 #'
 #' # Right-align numeric columns
 #' tt(mtcars[1:5, 1:3], align = "right")
@@ -60,7 +60,6 @@ tt <- function(data,
 
     # Get rownames and prepend as first column
     rn <- rownames(data)
-    if (is.null(rn)) rn <- as.character(seq_len(nrow(data)))
 
     # Use internal placeholder name (R doesn't allow empty column names)
     data <- cbind(
@@ -76,6 +75,9 @@ tt <- function(data,
   cols_quo <- rlang::enquo(cols)
   selected_idx <- tidyselect::eval_select(cols_quo, data = data)
   display_cols <- names(selected_idx)
+  if(rownames && !(".rownames" %in% display_cols)) {
+    display_cols <- c(".rownames", display_cols)
+  }
 
   # Subset data to display columns (keep order from selection)
   display_data <- data[, display_cols, drop = FALSE]
@@ -182,13 +184,13 @@ tt <- function(data,
 #'
 #' @examples
 #' # Equal widths
-#' tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_widths(1, 1, 1)
+#' tt(mtcars[1:5, 1:3]) |> tt_widths(1, 1, 1)
 #'
 #' # Proportional widths (25%, 50%, 25%)
-#' tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_widths(1, 2, 1)
+#' tt(mtcars[1:5, 1:3]) |> tt_widths(1, 2, 1)
 #'
 #' # Named columns
-#' tt(mtcars[1:5, 1:3], rownames = FALSE) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
+#' tt(mtcars[1:5, 1:3]) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
 #'
 #' @export
 tt_widths <- function(table, ...) {

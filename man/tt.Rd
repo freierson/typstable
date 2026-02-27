@@ -12,7 +12,7 @@ tt(
   align = NULL,
   preamble = NULL,
   escape = TRUE,
-  rownames = TRUE,
+  rownames = FALSE,
   na_string = "-"
 )
 }
@@ -38,8 +38,8 @@ should apply to the table (e.g., \code{'#set text(font: "Arial")'}).}
 
 \item{escape}{Logical. If TRUE (default), escapes Typst special characters.}
 
-\item{rownames}{Logical. TRUE (default) includes row names as the first column
-with an empty header, FALSE excludes them.}
+\item{rownames}{Logical. TRUE includes row names as the first column
+with an empty header, FALSE (default) excludes them.}
 
 \item{na_string}{Character. How NA values are displayed in the table (default "-").}
 }
@@ -53,14 +53,14 @@ rendered to Typst markup. Use pipe-friendly styling functions like
 the table appearance.
 }
 \examples{
-# Basic table (includes row names by default)
+# Basic table
 tt(mtcars[1:5, 1:3])
 
-# Select specific columns (excludes row names)
-tt(mtcars, cols = c(mpg, cyl, hp), rownames = FALSE)
+# Select specific columns
+tt(mtcars, cols = c(mpg, cyl, hp))
 
 # Custom column names
-tt(mtcars[1:5, 1:3], col_names = c("Miles/Gallon", "Cylinders", "Horsepower"), rownames = FALSE)
+tt(mtcars[1:5, 1:3], col_names = c("Miles/Gallon", "Cylinders", "Horsepower"))
 
 # Right-align numeric columns
 tt(mtcars[1:5, 1:3], align = "right")

@@ -8,7 +8,7 @@
 #' @return A character string containing Typst table markup.
 #'
 #' @examples
-#' code <- tt(mtcars[1:3, 1:3], rownames = FALSE) |> tt_render()
+#' code <- tt(mtcars[1:3, 1:3]) |> tt_render()
 #' cat(code)
 #'
 #' @export

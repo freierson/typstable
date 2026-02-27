@@ -2,7 +2,7 @@
 
 test_that("print.typst_table outputs Typst code to console", {
   df <- data.frame(a = 1:2, b = 3:4)
-  tbl <- tt(df, rownames = FALSE)
+  tbl <- tt(df)
 
   output <- capture.output(print(tbl))
   output_str <- paste(output, collapse = "\n")
@@ -13,7 +13,7 @@ test_that("print.typst_table outputs Typst code to console", {
 
 test_that("print.typst_table returns invisibly", {
   df <- data.frame(a = 1:2, b = 3:4)
-  tbl <- tt(df, rownames = FALSE)
+  tbl <- tt(df)
 
   result <- withVisible(print(tbl))
 
@@ -24,7 +24,7 @@ test_that("print.typst_table returns invisibly", {
 
 test_that("print.typst_table returns the Typst code string", {
   df <- data.frame(a = 1:2, b = 3:4)
-  tbl <- tt(df, rownames = FALSE)
+  tbl <- tt(df)
 
   result <- print(tbl)
 
@@ -36,7 +36,7 @@ test_that("knit_print.typst_table returns knitr::asis_output with raw Typst bloc
   skip_if_not_installed("knitr")
 
   df <- data.frame(a = 1:2, b = 3:4)
-  tbl <- tt(df, rownames = FALSE)
+  tbl <- tt(df)
 
   result <- knit_print.typst_table(tbl)
 
@@ -54,7 +54,7 @@ test_that("knit_print.typst_table includes all table content", {
   skip_if_not_installed("knitr")
 
   df <- data.frame(a = 1:2, b = 3:4)
-  tbl <- tt(df, rownames = FALSE) |>
+  tbl <- tt(df) |>
     tt_style(stroke = TRUE) |>
     tt_column(a, bold = TRUE)
 

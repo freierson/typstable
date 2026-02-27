@@ -95,11 +95,11 @@ For column \code{mpg}, this looks for \code{color_mpg} and \code{bg_mpg} in the 
 }
 \examples{
 # Right-align and bold a numeric column
-tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+tt(mtcars[1:5, 1:3]) |>
   tt_column(mpg, align = "right", bold = TRUE)
 
 # Style multiple columns at once
-tt(mtcars[1:5, 1:3], rownames = FALSE) |>
+tt(mtcars[1:5, 1:3]) |>
   tt_column(c(mpg, disp), align = "right", color = "blue")
 
 # Pattern-based styling (column-specific style columns)
@@ -108,7 +108,7 @@ df <- data.frame(
   color_a = c("red", "green", "blue"),
   color_b = c("black", "gray", "white")
 )
-tt(df, cols = c(a, b), rownames = FALSE) |>
+tt(df, cols = c(a, b)) |>
   tt_column(c(a, b), color = "color_{col}")
 
 }

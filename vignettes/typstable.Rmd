@@ -52,7 +52,7 @@ Format specific parts of the table with `tt_column()`, `tt_row()`, and `tt_cell(
 
 ```{r table-2}
 tbl <- tt(mtcars[1:5, 1:3], preamble = sans_font) |>
-  tt_column(2:4, align = "center") |>
+  tt_column(1:3, align = "center") |>
   tt_row(3, fill = "yellow") |>
   tt_cell(2, 2, bold = TRUE, rotate = 45, fill = "lightgrey")
 tbl
@@ -69,7 +69,8 @@ Use `tt_style()` to customize the table appearance.
 ```{r table-3}
 tbl <- tt(mtcars[1:5, 1:3],
           col_names = c("", "Miles/Gallon", "Cylinders", "Displacement"),
-          preamble = sans_font) |>
+          preamble = sans_font,
+          rownames = TRUE) |>
   tt_style(
     striped = TRUE,
     inset = "4pt"
@@ -86,7 +87,7 @@ render_table(tbl)
 Control relative column widths with `tt_widths()`.
 
 ```{r table-4}
-tbl <- tt(mtcars[1:5, 1:3], preamble = sans_font) |>
+tbl <- tt(mtcars[1:5, 1:3], preamble = sans_font, rownames = TRUE) |>
   tt_style(stroke = TRUE) |>
   tt_widths(.rownames=8,mpg=1,cyl=1,disp=1)
 ```
@@ -100,7 +101,7 @@ render_table(tbl)
 Add spanning headers with `tt_header_above()`:
 
 ```{r table-5}
-tbl <- tt(mtcars[1:6, c("mpg", "qsec", "cyl", "disp", "hp", "wt")], preamble = sans_font) |>
+tbl <- tt(mtcars[1:6, c("mpg", "qsec", "cyl", "disp", "hp", "wt")], preamble = sans_font, rownames = TRUE) |>
   tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4), gap='5pt') |>
   tt_column(1, width = "25%")
 tbl
@@ -120,7 +121,7 @@ cars <- mtcars[order(mtcars$cyl), c("mpg", "disp", "hp", "wt", "cyl")]
 cars <- do.call(dplyr::bind_rows, lapply(split(cars, cars$cyl), head, 3))
 groups <- table(cars$cyl)
 groups <- setNames(as.integer(groups), paste(names(groups), "Cylinders"))
-tbl <- tt(cars, cols = c(.rownames, mpg, disp, hp, wt), preamble = sans_font) |>
+tbl <- tt(cars, cols = c(mpg, disp, hp, wt), preamble = sans_font, rownames = TRUE) |>
   tt_pack_rows(index = groups) |>
   tt_column(1, width = "30%")
 tbl

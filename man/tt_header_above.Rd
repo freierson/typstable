@@ -62,15 +62,15 @@ columns together.
 }
 \examples{
 # Group columns under headers
-tt(mtcars[1:5, 1:6], rownames = FALSE) |>
+tt(mtcars[1:5, 1:6]) |>
   tt_header_above(c("Performance" = 3, "Design" = 3))
 
 # Leave some columns ungrouped
-tt(mtcars[1:5, 1:6], rownames = FALSE) |>
+tt(mtcars[1:5, 1:6]) |>
   tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3))
 
 # Disable gaps between groups
-tt(mtcars[1:5, 1:6], rownames = FALSE) |>
+tt(mtcars[1:5, 1:6]) |>
   tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3), gap = NULL)
 
 }

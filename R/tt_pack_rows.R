@@ -18,12 +18,12 @@
 #'
 #' @examples
 #' # Group rows with a label
-#' tt(mtcars[1:10, 1:3], rownames = FALSE) |>
+#' tt(mtcars[1:10, 1:3]) |>
 #'   tt_pack_rows("4 Cylinders", 1, 5) |>
 #'   tt_pack_rows("6 Cylinders", 6, 10)
 #'
 #' # Using index parameter (alternative style)
-#' tt(mtcars[1:10, 1:3], rownames = FALSE) |>
+#' tt(mtcars[1:10, 1:3]) |>
 #'   tt_pack_rows(index = c("4 Cylinders" = 5, "6 Cylinders" = 5))
 #'
 #' @export
