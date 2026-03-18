@@ -13,7 +13,8 @@ tt(
   preamble = NULL,
   escape = TRUE,
   rownames = FALSE,
-  na_string = "-"
+  na_string = "-",
+  repeat_header = TRUE
 )
 }
 \arguments{
@@ -42,6 +43,9 @@ should apply to the table (e.g., \code{'#set text(font: "Arial")'}).}
 with an empty header, FALSE (default) excludes them.}
 
 \item{na_string}{Character. How NA values are displayed in the table (default "-").}
+
+\item{repeat_header}{Logical. If TRUE (default), wraps header rows in
+\code{table.header()} so they repeat on each page in multi-page tables.}
 }
 \value{
 A \code{typst_table} object that can be further styled and rendered.

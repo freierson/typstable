@@ -21,26 +21,38 @@ tt_render <- function(table) {
   # Build booktabs-style rules (default)
   booktabs <- .render_booktabs(table)
 
-  # Build header content (may include headers_above)
-  header <- .render_all_headers(table)
+  # Build header content (returns vector of lines)
+  header_lines <- .render_all_headers(table)
 
-  # Build horizontal lines (user-specified)
-  hlines <- .render_hlines(table)
-
-  # Build vertical lines
+  # Build vertical lines (user-specified)
   vlines <- .render_vlines(table)
 
   # Build data rows
   rows <- .render_data_rows(table)
 
-  # Assemble table with booktabs rules
-  table_content <- c(booktabs$top, header, booktabs$mid, hlines$after_header, rows, booktabs$bottom)
-  table_content <- table_content[table_content != ""]  # Remove empty strings
+  if (isTRUE(table$repeat_header)) {
+    # Wrap header content in table.header()
+    inner_parts <- c(booktabs$top, header_lines, booktabs$mid)
+    inner_parts <- inner_parts[nzchar(inner_parts)]
+    header_block <- paste0(
+      "table.header(\n    ",
+      paste(inner_parts, collapse = ",\n    "),
+      "\n  ),")
+    body_parts <- c(header_block, rows, booktabs$bottom)
+  } else {
+    # No wrapper
+    header_str <- paste(header_lines, collapse = ",\n  ")
+    if (nzchar(header_str)) header_str <- paste0(header_str, ",")
+    bt_top <- if (nzchar(booktabs$top)) paste0(booktabs$top, ",") else ""
+    bt_mid <- if (nzchar(booktabs$mid)) paste0(booktabs$mid, ",") else ""
+    body_parts <- c(bt_top, header_str, bt_mid, rows, booktabs$bottom)
+  }
+
+  table_content <- body_parts[nzchar(body_parts)]
   table_content <- paste(table_content, collapse = "\n  ")
 
-  # Add vlines to args if any
+  # Add user vlines
   if (length(vlines) > 0) {
-    # Vlines need to go in the table body, not args
     table_content <- paste(c(vlines, table_content), collapse = "\n  ")
   }
 
@@ -59,25 +71,8 @@ tt_render <- function(table) {
 .render_table_args <- function(table) {
   args <- character()
 
-  # Get gap info for inserting empty columns between header groups
-
-  gap_info <- .get_gap_info(table)
-
-  # Columns (widths) - insert gap columns if needed
   col_widths <- table$col_widths
   col_align <- table$col_align
-
-  if (gap_info$has_gaps) {
-    # Insert gap columns at the specified positions
-    # Work backwards to preserve indices
-    for (i in rev(seq_along(gap_info$positions))) {
-      pos <- gap_info$positions[i]
-      width <- gap_info$widths[i]
-      # Insert after position 'pos' (R is 1-indexed)
-      col_widths <- append(col_widths, width, after = pos)
-      col_align <- append(col_align, "center", after = pos)
-    }
-  }
 
   col_spec <- paste0("(", paste(col_widths, collapse = ", "), ")")
   args <- c(args, paste0("columns: ", col_spec))
@@ -140,31 +135,24 @@ tt_render <- function(table) {
   }
 
   list(
-    top = "table.hline(stroke: 1pt),",
-    mid = "table.hline(stroke: 0.5pt),",
-    bottom = "table.hline(stroke: 1pt)"  # No trailing comma - it's last
+    top = "table.hline(stroke: 1pt)",
+    mid = "table.hline(stroke: 0.5pt)",
+    bottom = "table.hline(stroke: 1pt)"
   )
 }
 
 #' Render all header rows (headers_above + main header)
+#'
+#' Returns a character vector where each element is one logical line of output
+#' (a row of cells, an hline, a vline, or a hidden separator row).
 #' @noRd
 .render_all_headers <- function(table) {
-  # Get the main header row cells
   main_header_cells <- .render_header_cells(table)
+  main_header_line <- paste(main_header_cells, collapse = ", ")
 
-  # Get headers_above cells
-  headers_above_rows <- .render_headers_above_cells(table)
+  headers_above_lines <- .render_headers_above_lines(table)
 
-  needs_wrapper <- length(table$headers_above) > 0
-
-  if (needs_wrapper) {
-    # Combine all header content inside table.header()
-    all_header_content <- c(headers_above_rows, main_header_cells)
-    paste0("table.header(\n    ", paste(all_header_content, collapse = ",\n    "), "\n  ),")
-  } else {
-    # Just return main header cells with trailing comma
-    paste0(paste(main_header_cells, collapse = ", "), ",")
-  }
+  c(headers_above_lines, main_header_line)
 }
 
 #' Render main header row cells
@@ -172,9 +160,6 @@ tt_render <- function(table) {
 .render_header_cells <- function(table) {
   # Get header styling (row 0)
   header_style <- table$row_styles[["0"]]
-
-  # Get gap info
-  gap_info <- .get_gap_info(table)
 
   cells <- character()
 
@@ -206,160 +191,160 @@ tt_render <- function(table) {
     }
 
     cells <- c(cells, .render_cell(content, style, table, row = 0, col = i))
-
-    # Insert empty gap cell if this column is followed by a gap
-    if (gap_info$has_gaps && i %in% gap_info$positions) {
-      cells <- c(cells, "[]")
-    }
   }
 
   cells
 }
 
-#' Render headers_above cells (returns vector of cell strings)
+#' Render headers_above as lines (hidden rows + white vlines approach)
+#'
+#' Returns a character vector of output lines: header cells, hlines,
+#' white vlines for separation, and hidden separator rows.
 #' @noRd
-.render_headers_above_cells <- function(table) {
+.render_headers_above_lines <- function(table) {
   if (length(table$headers_above) == 0) return(character())
 
-  # Get gap info
-  gap_info <- .get_gap_info(table)
-
-  # Identify which header_spec is the innermost gap-defining one
-  gap_defining_idx <- NULL
-  if (gap_info$has_gaps) {
-    for (idx in rev(seq_along(table$headers_above))) {
-      hs <- table$headers_above[[idx]]
-      if (!is.null(hs$gap) && length(hs$header) > 1) {
-        gap_defining_idx <- idx
-        break
-      }
-    }
-  }
-
-  # Collect all cells from all headers_above rows
-  all_cells <- character()
+  all_lines <- character()
+  current_row <- 0
 
   for (header_idx in seq_along(table$headers_above)) {
     header_spec <- table$headers_above[[header_idx]]
     neg_row <- -(length(table$headers_above) - header_idx + 1)
-    row_cells <- character()
-    # Use cell borders for gaps when multiple groups with line=TRUE
-    # Skip when stroke is set (grid borders handle this)
-    use_cell_borders <- isTRUE(header_spec$line) && length(header_spec$header) > 1 && is.null(table$stroke)
 
-    # Check if this header_spec is the innermost gap-defining one
-    is_gap_defining <- !is.null(gap_defining_idx) && header_idx == gap_defining_idx
+    # Determine if separator (hidden row + white vlines) is needed
+    needs_separator <- !is.null(header_spec$line_sep) &&
+                       length(header_spec$header) > 1 &&
+                       isTRUE(header_spec$line) &&
+                       is.null(table$stroke)
 
-    # Build base style from header_spec (seq=0, lowest priority)
-    base_style <- list()
-    for (attr_name in c("bold", "italic", "color", "fill",
-                         "font_size", "rotate", "inset", "stroke")) {
-      val <- header_spec[[attr_name]]
-      if (attr_name == "bold") val <- val %||% TRUE
-      if (!is.null(val)) {
-        base_style[[attr_name]] <- val
-        base_style[[paste0(".seq_", attr_name)]] <- 0L
-      }
-    }
-    # Map align -> cell_align for merge compatibility
-    if (!is.null(header_spec$align)) {
-      base_style$cell_align <- .to_typst_align(header_spec$align)
-      base_style$.seq_cell_align <- 0L
-    }
+    # Build cells for this header_above row
+    row_cells <- .render_header_above_row_cells(table, header_spec, neg_row)
+    all_lines <- c(all_lines, paste(row_cells, collapse = ", "))
 
-    # Merge with row-level override from tt_row()
-    row_style <- table$row_styles[[as.character(neg_row)]]
-    merged <- .merge_styles(base_style, row_style)
+    if (needs_separator) {
+      # Full-width hline below this header row
+      all_lines <- c(all_lines, "table.hline(stroke: 0.5pt)")
 
-    for (i in seq_along(header_spec$header)) {
-      span <- header_spec$header[i]
-      label <- names(header_spec$header)[i]
-
-      if (is.null(label) || label == "") {
-        label <- ""
-      }
-
-      # Compute start_col for this group (used as cell key)
+      # White vlines at group boundaries
       cumspans <- cumsum(header_spec$header)
-      start_col <- if (i == 1) 1L else cumspans[i - 1] + 1L
+      hidden_row <- current_row + 1
+      line_sep_width <- .to_typst_length(header_spec$line_sep)
 
-      # Merge with cell-level override from tt_cell()
-      cell_key <- paste0(neg_row, "_", start_col)
-      cell_style <- table$cell_styles[[cell_key]]
-      final <- .merge_styles(merged, cell_style)
-
-      # Handle content override
-      if (!is.null(final[["content"]])) {
-        label <- final[["content"]]
+      for (i in seq_len(length(cumspans) - 1)) {
+        x_pos <- cumspans[i]
+        vline_str <- paste0(
+          "table.vline(x: ", x_pos,
+          ", start: ", hidden_row,
+          ", end: ", hidden_row + 1,
+          ", stroke: ", line_sep_width, " + white)")
+        all_lines <- c(all_lines, vline_str)
       }
 
-      # Escape if needed
-      if (table$escape && label != "") {
-        label <- .escape_typst(label)
-      }
+      # Hidden row (empty cells with zero vertical inset)
+      hidden_cell <- "table.cell(inset: (y: 0pt))[]"
+      all_lines <- c(all_lines, paste(rep(hidden_cell, table$ncol), collapse = ", "))
 
-      content <- .format_text(label,
-        bold = final[["bold"]],
-        italic = final[["italic"]],
-        color = final[["color"]],
-        size = final[["font_size"]],
-        rotate = final[["rotate"]]
-      )
-
-      # For outer headers (not the gap-defining one), adjust colspan to account for gap columns
-      effective_span <- span
-      if (gap_info$has_gaps && !is_gap_defining) {
-        # Calculate this group's column range in original (non-gap) coordinates
-        col_start <- start_col
-        col_end <- cumspans[i]
-        # Count gap positions within [col_start, col_end)
-        gaps_within <- sum(gap_info$positions >= col_start & gap_info$positions < col_end)
-        effective_span <- span + gaps_within
+      current_row <- current_row + 2
+    } else {
+      # Single group or no separator — just add hline if requested
+      if (isTRUE(header_spec$line) && is.null(table$stroke)) {
+        all_lines <- c(all_lines, "table.hline(stroke: 0.5pt)")
       }
-
-      # Build cell arguments
-      cell_args <- character()
-      if (effective_span > 1) {
-        cell_args <- c(cell_args, paste0("colspan: ", effective_span))
-      }
-      if (!is.null(final[["cell_align"]])) {
-        cell_args <- c(cell_args, paste0("align: ", .to_typst_align(final[["cell_align"]])))
-      }
-      if (!is.null(final[["fill"]])) {
-        cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(final[["fill"]])))
-      }
-      if (!is.null(final[["inset"]])) {
-        cell_args <- c(cell_args, paste0("inset: ", .to_typst_length(final[["inset"]])))
-      }
-      if (!is.null(final[["stroke"]])) {
-        cell_args <- c(cell_args, paste0("stroke: ", .to_typst_stroke(final[["stroke"]])))
-      } else if (use_cell_borders && trimws(label) != "") {
-        # Add bottom border to create lines with gaps between groups
-        # Skip for empty/whitespace-only labels to create visual gap
-        cell_args <- c(cell_args, "stroke: (bottom: 0.5pt)")
-      }
-
-      if (length(cell_args) > 0) {
-        row_cells <- c(row_cells, paste0("table.cell(", paste(cell_args, collapse = ", "), ")[", content, "]"))
-      } else {
-        row_cells <- c(row_cells, paste0("[", content, "]"))
-      }
-
-      # Insert empty gap cell after each group except the last (only for gap-defining header)
-      if (is_gap_defining && i < length(header_spec$header)) {
-        row_cells <- c(row_cells, "[]")
-      }
-    }
-
-    all_cells <- c(all_cells, row_cells)
-
-    # Add hline below if requested (only for single group, skip when stroke is set)
-    if (isTRUE(header_spec$line) && length(header_spec$header) == 1 && is.null(table$stroke)) {
-      all_cells <- c(all_cells, "table.hline()")
+      current_row <- current_row + 1
     }
   }
 
-  all_cells
+  all_lines
+}
+
+#' Render cells for one header_above row
+#' @noRd
+.render_header_above_row_cells <- function(table, header_spec, neg_row) {
+  row_cells <- character()
+
+  # Build base style from header_spec (seq=0, lowest priority)
+  base_style <- list()
+  for (attr_name in c("bold", "italic", "color", "fill",
+                       "font_size", "rotate", "inset", "stroke")) {
+    val <- header_spec[[attr_name]]
+    if (attr_name == "bold") val <- val %||% TRUE
+    if (!is.null(val)) {
+      base_style[[attr_name]] <- val
+      base_style[[paste0(".seq_", attr_name)]] <- 0L
+    }
+  }
+  # Map align -> cell_align for merge compatibility
+  if (!is.null(header_spec$align)) {
+    base_style$cell_align <- .to_typst_align(header_spec$align)
+    base_style$.seq_cell_align <- 0L
+  }
+
+  # Merge with row-level override from tt_row()
+  row_style <- table$row_styles[[as.character(neg_row)]]
+  merged <- .merge_styles(base_style, row_style)
+
+  cumspans <- cumsum(header_spec$header)
+
+  for (i in seq_along(header_spec$header)) {
+    span <- header_spec$header[i]
+    label <- names(header_spec$header)[i]
+
+    if (is.null(label) || label == "") {
+      label <- ""
+    }
+
+    # Compute start_col for this group (used as cell key)
+    start_col <- if (i == 1) 1L else cumspans[i - 1] + 1L
+
+    # Merge with cell-level override from tt_cell()
+    cell_key <- paste0(neg_row, "_", start_col)
+    cell_style <- table$cell_styles[[cell_key]]
+    final <- .merge_styles(merged, cell_style)
+
+    # Handle content override
+    if (!is.null(final[["content"]])) {
+      label <- final[["content"]]
+    }
+
+    # Escape if needed
+    if (table$escape && label != "") {
+      label <- .escape_typst(label)
+    }
+
+    content <- .format_text(label,
+      bold = final[["bold"]],
+      italic = final[["italic"]],
+      color = final[["color"]],
+      size = final[["font_size"]],
+      rotate = final[["rotate"]]
+    )
+
+    # Build cell arguments
+    cell_args <- character()
+    if (span > 1) {
+      cell_args <- c(cell_args, paste0("colspan: ", span))
+    }
+    if (!is.null(final[["cell_align"]])) {
+      cell_args <- c(cell_args, paste0("align: ", .to_typst_align(final[["cell_align"]])))
+    }
+    if (!is.null(final[["fill"]])) {
+      cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(final[["fill"]])))
+    }
+    if (!is.null(final[["inset"]])) {
+      cell_args <- c(cell_args, paste0("inset: ", .to_typst_length(final[["inset"]])))
+    }
+    if (!is.null(final[["stroke"]])) {
+      cell_args <- c(cell_args, paste0("stroke: ", .to_typst_stroke(final[["stroke"]])))
+    }
+
+    if (length(cell_args) > 0) {
+      row_cells <- c(row_cells, paste0("table.cell(", paste(cell_args, collapse = ", "), ")[", content, "]"))
+    } else {
+      row_cells <- c(row_cells, paste0("[", content, "]"))
+    }
+  }
+
+  row_cells
 }
 
 #' Render data rows
@@ -369,9 +354,6 @@ tt_render <- function(table) {
 
   # Get row groups for indentation
   row_groups <- .get_row_group_info(table)
-
-  # Get gap info
-  gap_info <- .get_gap_info(table)
 
   for (i in seq_len(table$nrow)) {
     row_cells <- character()
@@ -387,7 +369,7 @@ tt_render <- function(table) {
 
     for (j in seq_len(table$ncol)) {
       col_name <- table$display_cols[j]
-      
+
       # Handle NA
       if (is.na(table$display_data[i, j])) {
         content <- table$na_string
@@ -420,11 +402,6 @@ tt_render <- function(table) {
       }
 
       row_cells <- c(row_cells, .render_cell(content, style, table, row = i, col = j))
-
-      # Insert empty gap cell if this column is followed by a gap
-      if (gap_info$has_gaps && j %in% gap_info$positions) {
-        row_cells <- c(row_cells, "[]")
-      }
     }
 
     # Combine cells for this row
@@ -648,10 +625,7 @@ tt_render <- function(table) {
     label <- paste0("*", label, "*")
   }
 
-  # Span all columns (including gap columns)
-  gap_info <- .get_gap_info(table)
-  total_cols <- gap_info$total_cols
-  paste0("table.cell(colspan: ", total_cols, ")[", label, "]")
+  paste0("table.cell(colspan: ", table$ncol, ")[", label, "]")
 }
 
 #' Get hline at position

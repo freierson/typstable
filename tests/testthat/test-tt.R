@@ -160,5 +160,5 @@ test_that("rownames default uses numeric indices", {
   tbl_out <- trimws(paste0(capture.output(print(tbl)),collapse='\n'))
   expect_equal(tbl$ncol, 2)
   expect_equal(tbl_out,
-  "#table(\n  columns: (1fr, 1fr),\n  stroke: none,\n  table.hline(stroke: 1pt),\n  [a], [b],\n  table.hline(stroke: 0.5pt),\n  [1], [4],\n  [2], [5],\n  [3], [6],\n  table.hline(stroke: 1pt)\n)")
+  "#table(\n  columns: (1fr, 1fr),\n  stroke: none,\n  table.header(\n    table.hline(stroke: 1pt),\n    [a], [b],\n    table.hline(stroke: 0.5pt)\n  ),\n  [1], [4],\n  [2], [5],\n  [3], [6],\n  table.hline(stroke: 1pt)\n)")
 })

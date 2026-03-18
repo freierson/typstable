@@ -19,9 +19,10 @@
 #'   for default 1pt black, a color, a Typst stroke spec like `"2pt + blue"`, or a
 #'   Typst dictionary like `"(bottom: 1pt)"`.
 #' @param line Logical. Add horizontal line below the header (default TRUE).
-#' @param gap Width of visual gap between header groups (e.g., "10pt", "0.5em").
-#'   When specified, empty columns are inserted between groups. Default "10pt".
-#'   Use NULL to disable gaps.
+#' @param line_sep Stroke width of the white separator line between header groups
+#'   (e.g., `"4pt"`, `"2pt"`). Creates a visual gap between groups by overlaying a
+#'   white vertical line on the horizontal rule at group boundaries. Default `"4pt"`.
+#'   Use `NULL` to disable separation.
 #'
 #' @return The modified `typst_table` object.
 #'
@@ -34,9 +35,9 @@
 #' tt(mtcars[1:5, 1:6]) |>
 #'   tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3))
 #'
-#' # Disable gaps between groups
+#' # Disable separator between groups
 #' tt(mtcars[1:5, 1:6]) |>
-#'   tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3), gap = NULL)
+#'   tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3), line_sep = NULL)
 #'
 #' @export
 tt_header_above <- function(table,
@@ -51,7 +52,7 @@ tt_header_above <- function(table,
                             inset = NULL,
                             stroke = NULL,
                             line = TRUE,
-                            gap = "10pt") {
+                            line_sep = "4pt") {
   .check_typst_table(table)
   table <- .copy_table(table)
 
@@ -85,7 +86,7 @@ tt_header_above <- function(table,
     inset = inset,
     stroke = stroke,
     line = line,
-    gap = gap
+    line_sep = line_sep
   )
 
   # Prepend to headers_above (most recent goes first)

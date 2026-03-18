@@ -21,7 +21,7 @@ tt_style(
 
 \item{stroke}{Stroke (border) specification: \code{TRUE} for default 1pt black borders,
 a color name/hex for 1pt borders in that color, or a Typst stroke specification
-like \code{"2pt + blue"}. When stroke is set, gap columns and separator lines from
+like \code{"2pt + blue"}. When stroke is set, separator lines from
 \code{tt_header_above()} are automatically suppressed.}
 
 \item{fill}{Fill color for the entire table.}

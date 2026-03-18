@@ -17,7 +17,7 @@ tt_header_above(
   inset = NULL,
   stroke = NULL,
   line = TRUE,
-  gap = "10pt"
+  line_sep = "4pt"
 )
 }
 \arguments{
@@ -49,9 +49,10 @@ Typst dictionary like \code{"(bottom: 1pt)"}.}
 
 \item{line}{Logical. Add horizontal line below the header (default TRUE).}
 
-\item{gap}{Width of visual gap between header groups (e.g., "10pt", "0.5em").
-When specified, empty columns are inserted between groups. Default "10pt".
-Use NULL to disable gaps.}
+\item{line_sep}{Stroke width of the white separator line between header groups
+(e.g., \code{"4pt"}, \code{"2pt"}). Creates a visual gap between groups by overlaying a
+white vertical line on the horizontal rule at group boundaries. Default \code{"4pt"}.
+Use \code{NULL} to disable separation.}
 }
 \value{
 The modified \code{typst_table} object.
@@ -69,8 +70,8 @@ tt(mtcars[1:5, 1:6]) |>
 tt(mtcars[1:5, 1:6]) |>
   tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3))
 
-# Disable gaps between groups
+# Disable separator between groups
 tt(mtcars[1:5, 1:6]) |>
-  tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3), gap = NULL)
+  tt_header_above(c(" " = 1, "Group A" = 2, "Group B" = 3), line_sep = NULL)
 
 }

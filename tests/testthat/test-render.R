@@ -61,9 +61,16 @@ test_that("tt_render handles header_above", {
   expect_true(grepl("Group", code))
 })
 
-test_that("no table.header() wrapper without headers_above", {
+test_that("table.header() wrapper by default", {
   df <- data.frame(a = 1:2, b = 3:4)
   code <- tt(df) |> tt_render()
+
+  expect_true(grepl("table\\.header\\(", code))
+})
+
+test_that("no table.header() wrapper when repeat_header = FALSE", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df, repeat_header = FALSE) |> tt_render()
 
   expect_false(grepl("table\\.header\\(", code))
 })

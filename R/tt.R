@@ -22,6 +22,8 @@
 #' @param rownames Logical. TRUE includes row names as the first column
 #'   with an empty header, FALSE (default) excludes them.
 #' @param na_string Character. How NA values are displayed in the table (default "-").
+#' @param repeat_header Logical. If TRUE (default), wraps header rows in
+#'   `table.header()` so they repeat on each page in multi-page tables.
 #'
 #' @return A `typst_table` object that can be further styled and rendered.
 #'
@@ -47,7 +49,8 @@ tt <- function(data,
                preamble = NULL,
                escape = TRUE,
                rownames = FALSE,
-               na_string = '-') {
+               na_string = '-',
+               repeat_header = TRUE) {
   # Validate input
   if (!is.data.frame(data)) {
     rlang::abort("`data` must be a data.frame or tibble")
@@ -159,7 +162,10 @@ tt <- function(data,
       headers_above = list(),
       row_groups = list(),
       hlines = list(),
-      vlines = list()
+      vlines = list(),
+
+      # Header repeating
+      repeat_header = repeat_header
     ),
     class = "typst_table"
   )

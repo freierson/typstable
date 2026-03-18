@@ -102,7 +102,7 @@ Add spanning headers with `tt_header_above()`:
 
 ```{r table-5}
 tbl <- tt(mtcars[1:6, c("mpg", "qsec", "cyl", "disp", "hp", "wt")], preamble = sans_font, rownames = TRUE) |>
-  tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4), gap='5pt') |>
+  tt_header_above(c(" " = 1, "Performance" = 2, "Characteristics" = 4), line_sep = "5pt") |>
   tt_column(1, width = "25%")
 tbl
 ```

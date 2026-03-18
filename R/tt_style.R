@@ -6,7 +6,7 @@
 #' @param table A `typst_table` object.
 #' @param stroke Stroke (border) specification: `TRUE` for default 1pt black borders,
 #'   a color name/hex for 1pt borders in that color, or a Typst stroke specification
-#'   like `"2pt + blue"`. When stroke is set, gap columns and separator lines from
+#'   like `"2pt + blue"`. When stroke is set, separator lines from
 #'   `tt_header_above()` are automatically suppressed.
 #' @param fill Fill color for the entire table.
 #' @param striped Logical. If `TRUE`, alternates row background colors for readability.
