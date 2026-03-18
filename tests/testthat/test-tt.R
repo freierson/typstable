@@ -80,6 +80,16 @@ test_that("tt preamble is NULL by default", {
   expect_null(tbl$preamble)
 })
 
+test_that("tt stores epilogue", {
+  tbl <- tt(mtcars[1:3, 1:3], epilogue = '#emph[Source: mtcars]')
+  expect_equal(tbl$epilogue, '#emph[Source: mtcars]')
+})
+
+test_that("tt epilogue is NULL by default", {
+  tbl <- tt(mtcars[1:3, 1:3])
+  expect_null(tbl$epilogue)
+})
+
 # --- Input validation tests ---
 
 test_that("tt rejects non-data.frame input", {

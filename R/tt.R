@@ -18,6 +18,8 @@
 #' @param preamble Optional character string of raw Typst code to insert before the
 #'   table. Useful for `#set` rules, `#let` bindings, or other Typst directives that
 #'   should apply to the table (e.g., `'#set text(font: "Arial")'`).
+#' @param epilogue Optional character string of raw Typst code to insert after the
+#'   table. Useful for notes, captions, or other content that should follow the table.
 #' @param escape Logical. If TRUE (default), escapes Typst special characters.
 #' @param rownames Logical. TRUE includes row names as the first column
 #'   with an empty header, FALSE (default) excludes them.
@@ -50,6 +52,7 @@ tt <- function(data,
                col_widths = "auto",
                align = NULL,
                preamble = NULL,
+               epilogue = NULL,
                escape = TRUE,
                rownames = FALSE,
                na_string = '-',
@@ -140,6 +143,7 @@ tt <- function(data,
 
       # Global settings
       preamble = preamble,
+      epilogue = epilogue,
       escape = escape,
       na_string = na_string,
 

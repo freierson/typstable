@@ -11,6 +11,7 @@ tt(
   col_widths = "auto",
   align = NULL,
   preamble = NULL,
+  epilogue = NULL,
   escape = TRUE,
   rownames = FALSE,
   na_string = "-",
@@ -37,6 +38,9 @@ of alignments. Valid values: "left"/"l", "center"/"c", "right"/"r".}
 \item{preamble}{Optional character string of raw Typst code to insert before the
 table. Useful for \verb{#set} rules, \verb{#let} bindings, or other Typst directives that
 should apply to the table (e.g., \code{'#set text(font: "Arial")'}).}
+
+\item{epilogue}{Optional character string of raw Typst code to insert after the
+table. Useful for notes, captions, or other content that should follow the table.}
 
 \item{escape}{Logical. If TRUE (default), escapes Typst special characters.}
 

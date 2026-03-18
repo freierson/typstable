@@ -66,6 +66,11 @@ tt_render <- function(table) {
     table_code <- paste0(table$preamble, "\n", table_code)
   }
 
+  # Append epilogue if set
+  if (!is.null(table$epilogue)) {
+    table_code <- paste0(table_code, "\n", table$epilogue)
+  }
+
   table_code
 }
 

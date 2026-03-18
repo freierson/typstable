@@ -252,6 +252,33 @@ test_that("no preamble by default", {
   expect_true(grepl("^#table\\(", code))
 })
 
+# Epilogue tests
+
+test_that("epilogue is appended after table code", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df, epilogue = '#emph[Source: test]') |>
+    tt_render()
+
+  expect_true(grepl('#emph\\[Source: test\\]$', code))
+  expect_true(grepl('\\)\n#emph\\[Source: test\\]$', code))
+})
+
+test_that("no epilogue by default", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |> tt_render()
+
+  expect_true(grepl("\\)$", code))
+})
+
+test_that("preamble and epilogue work together", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df, preamble = '#set text(font: "Arial")', epilogue = '#emph[Note]') |>
+    tt_render()
+
+  expect_true(grepl('^#set text\\(font: "Arial"\\)\n#table\\(', code))
+  expect_true(grepl('#emph\\[Note\\]$', code))
+})
+
 test_that("NA renders correct by default", {
   df <- data.frame(a = c(NA, 'abc'), b = c(3, NA))
   code <- tt(df) |> tt_render()
