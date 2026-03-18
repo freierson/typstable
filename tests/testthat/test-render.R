@@ -402,3 +402,73 @@ test_that("column_gutter renders in table arguments", {
 
   expect_true(grepl("column-gutter: 8pt", code))
 })
+
+# --- Booktabs argument tests ---
+
+test_that("booktabs = TRUE (default) produces booktabs rules", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |> tt_render()
+
+  expect_true(grepl("stroke: none", code))
+  expect_true(grepl("table\\.hline\\(stroke: 1pt\\)", code))
+  expect_true(grepl("table\\.hline\\(stroke: 0\\.5pt\\)", code))
+})
+
+test_that("booktabs = FALSE produces grid table", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df, booktabs = FALSE) |> tt_render()
+
+  expect_true(grepl("stroke: 0\\.5pt \\+ black", code))
+  expect_false(grepl("table\\.hline", code))
+})
+
+test_that("hline_above = FALSE suppresses booktabs mid rule", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_row(1, hline_above = FALSE) |>
+    tt_render()
+
+  # Mid rule should be suppressed (stroke: none)
+  expect_true(grepl("table\\.hline\\(stroke: none\\)", code))
+})
+
+test_that("tt_hline(stroke = FALSE) suppresses a booktabs rule", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_hline(0, stroke = FALSE) |>
+    tt_render()
+
+  # Top rule should be suppressed (stroke: none)
+  expect_true(grepl("table\\.hline\\(stroke: none\\)", code))
+})
+
+test_that("tt_style(stroke = ...) with booktabs = TRUE suppresses booktabs defaults", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_style(stroke = TRUE) |>
+    tt_render()
+
+  # Should have table-level stroke and no separate hlines
+  expect_true(grepl("stroke: 1pt \\+ black", code))
+  expect_false(grepl("table\\.hline", code))
+})
+
+test_that("stroke = FALSE on cells produces stroke: none", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_cell(1, 1, stroke = FALSE) |>
+    tt_render()
+
+  expect_true(grepl("stroke: none", code))
+})
+
+test_that("booktabs = FALSE with hline_above = FALSE removes row border", {
+  df <- data.frame(a = 1:3, b = 4:6)
+  code <- tt(df, booktabs = FALSE) |>
+    tt_row(2, hline_above = FALSE) |>
+    tt_render()
+
+  # Grid table with an hline override at row 2
+  expect_true(grepl("stroke: 0\\.5pt \\+ black", code))
+  expect_true(grepl("table\\.hline\\(stroke: none\\)", code))
+})

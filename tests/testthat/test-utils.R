@@ -66,7 +66,7 @@ test_that(".to_typst_stroke converts correctly", {
   expect_equal(.to_typst_stroke("red"), "1pt + red")
   expect_equal(.to_typst_stroke("2pt + blue"), "2pt + blue")
   expect_null(.to_typst_stroke(NULL))
-  expect_null(.to_typst_stroke(FALSE))
+  expect_equal(.to_typst_stroke(FALSE), "none")
 })
 
 test_that(".to_typst_stroke passes through complex Typst expressions", {

@@ -18,8 +18,11 @@ tt_render <- function(table) {
   # Build table arguments
   args <- .render_table_args(table)
 
-  # Build booktabs-style rules (default)
-  booktabs <- .render_booktabs(table)
+  # Resolve boundary hlines (booktabs or user overrides)
+  booktabs_flag <- isTRUE(table$booktabs) && is.null(table$stroke)
+  top_rule <- .resolve_boundary_hline(table, 0, if (booktabs_flag) "1pt" else NULL)
+  mid_rule <- .resolve_boundary_hline(table, 1, if (booktabs_flag) "0.5pt" else NULL)
+  bottom_rule <- .resolve_boundary_hline(table, table$nrow + 1, if (booktabs_flag) "1pt" else NULL)
 
   # Build header content (returns vector of lines)
   header_lines <- .render_all_headers(table)
@@ -32,20 +35,20 @@ tt_render <- function(table) {
 
   if (isTRUE(table$repeat_header)) {
     # Wrap header content in table.header()
-    inner_parts <- c(booktabs$top, header_lines, booktabs$mid)
+    inner_parts <- c(top_rule, header_lines, mid_rule)
     inner_parts <- inner_parts[nzchar(inner_parts)]
     header_block <- paste0(
       "table.header(\n    ",
       paste(inner_parts, collapse = ",\n    "),
       "\n  ),")
-    body_parts <- c(header_block, rows, booktabs$bottom)
+    body_parts <- c(header_block, rows, bottom_rule)
   } else {
     # No wrapper
     header_str <- paste(header_lines, collapse = ",\n  ")
     if (nzchar(header_str)) header_str <- paste0(header_str, ",")
-    bt_top <- if (nzchar(booktabs$top)) paste0(booktabs$top, ",") else ""
-    bt_mid <- if (nzchar(booktabs$mid)) paste0(booktabs$mid, ",") else ""
-    body_parts <- c(bt_top, header_str, bt_mid, rows, booktabs$bottom)
+    bt_top <- if (nzchar(top_rule)) paste0(top_rule, ",") else ""
+    bt_mid <- if (nzchar(mid_rule)) paste0(mid_rule, ",") else ""
+    body_parts <- c(bt_top, header_str, bt_mid, rows, bottom_rule)
   }
 
   table_content <- body_parts[nzchar(body_parts)]
@@ -125,20 +128,41 @@ tt_render <- function(table) {
   paste(args, collapse = ",\n  ")
 }
 
-#' Render booktabs-style horizontal rules
+#' Resolve a boundary hline (top/mid/bottom rule)
+#'
+#' Searches user hlines for an override at position y. If found, renders it
+#' (including stroke: none for suppression). If not found, uses the default
+#' stroke if provided and table$stroke is NULL.
 #' @noRd
-.render_booktabs <- function(table) {
-  # Default booktabs style: top rule, mid rule (after header), bottom rule
-  # Skip if user has set stroke (they want custom borders)
-  if (!is.null(table$stroke)) {
-    return(list(top = "", mid = "", bottom = ""))
+.resolve_boundary_hline <- function(table, y, default_stroke) {
+  # Search hlines in reverse (last match wins)
+  for (i in rev(seq_along(table$hlines))) {
+    hline <- table$hlines[[i]]
+    if (hline$y == y) {
+      args <- character()
+      if (!is.null(hline$start)) {
+        args <- c(args, paste0("start: ", hline$start))
+      }
+      if (!is.null(hline$end)) {
+        args <- c(args, paste0("end: ", hline$end + 1))
+      }
+      if (!is.null(hline$stroke)) {
+        args <- c(args, paste0("stroke: ", .to_typst_stroke(hline$stroke)))
+      }
+      if (length(args) > 0) {
+        return(paste0("table.hline(", paste(args, collapse = ", "), ")"))
+      } else {
+        return("table.hline()")
+      }
+    }
   }
 
-  list(
-    top = "table.hline(stroke: 1pt)",
-    mid = "table.hline(stroke: 0.5pt)",
-    bottom = "table.hline(stroke: 1pt)"
-  )
+  # No user hline found — use default if applicable
+  if (!is.null(default_stroke) && is.null(table$stroke)) {
+    return(paste0("table.hline(stroke: ", default_stroke, ")"))
+  }
+
+  ""
 }
 
 #' Render all header rows (headers_above + main header)
@@ -361,8 +385,8 @@ tt_render <- function(table) {
     # Get row styling
     row_style <- table$row_styles[[as.character(i)]]
 
-    # Check for hline above this row
-    hline_above <- .get_hline_at(table, i, "above")
+    # Check for hline above this row (skip row 1 — handled as mid_rule)
+    hline_above <- if (i == 1) NULL else .get_hline_at(table, i, "above")
 
     # Check if this row starts a group
     group_label <- row_groups$labels[i]
@@ -420,10 +444,12 @@ tt_render <- function(table) {
 
     rows[i] <- row_str
 
-    # Check for hline below this row
-    hline_below <- .get_hline_at(table, i, "below")
-    if (!is.null(hline_below)) {
-      rows[i] <- paste(rows[i], hline_below, sep = ",\n  ")
+    # Check for hline below this row (skip last row — handled as bottom_rule)
+    if (i < table$nrow) {
+      hline_below <- .get_hline_at(table, i, "below")
+      if (!is.null(hline_below)) {
+        rows[i] <- paste(rows[i], hline_below, sep = ",\n  ")
+      }
     }
   }
 
@@ -631,7 +657,8 @@ tt_render <- function(table) {
 #' Get hline at position
 #' @noRd
 .get_hline_at <- function(table, row, position = "above") {
-  for (hline in table$hlines) {
+  for (i in rev(seq_along(table$hlines))) {
+    hline <- table$hlines[[i]]
     if ((position == "above" && hline$y == row) ||
         (position == "below" && hline$y == row + 1)) {
       args <- character()

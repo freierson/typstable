@@ -15,7 +15,8 @@ tt_vline(table, x, start = NULL, end = NULL, stroke = TRUE)
 
 \item{end}{Ending row for partial line (0-indexed, inclusive).}
 
-\item{stroke}{Line style: \code{TRUE} for default, color name, or full stroke spec.}
+\item{stroke}{Line style: \code{TRUE} for default, color name, full stroke spec,
+or \code{FALSE} to explicitly remove a line.}
 }
 \value{
 The modified \code{typst_table} object.

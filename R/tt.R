@@ -22,6 +22,9 @@
 #' @param rownames Logical. TRUE includes row names as the first column
 #'   with an empty header, FALSE (default) excludes them.
 #' @param na_string Character. How NA values are displayed in the table (default "-").
+#' @param booktabs Logical. If TRUE (default), renders with booktabs-style rules
+#'   (no cell borders, three horizontal rules: top, mid, bottom). If FALSE,
+#'   renders a grid-style table with `0.5pt + black` borders on all cells.
 #' @param repeat_header Logical. If TRUE (default), wraps header rows in
 #'   `table.header()` so they repeat on each page in multi-page tables.
 #'
@@ -50,6 +53,7 @@ tt <- function(data,
                escape = TRUE,
                rownames = FALSE,
                na_string = '-',
+               booktabs = TRUE,
                repeat_header = TRUE) {
   # Validate input
   if (!is.data.frame(data)) {
@@ -143,8 +147,11 @@ tt <- function(data,
       col_widths = col_widths,
       col_align = align,
 
+      # Booktabs mode
+      booktabs = booktabs,
+
       # Table styling (set by tt_style)
-      stroke = NULL,
+      stroke = if (isTRUE(booktabs)) NULL else "0.5pt + black",
       fill = NULL,
       striped = NULL,
       inset = NULL,

@@ -197,7 +197,8 @@
 #' @return Typst stroke string
 #' @noRd
 .to_typst_stroke <- function(stroke) {
-  if (is.null(stroke) || isFALSE(stroke)) return(NULL)
+  if (is.null(stroke)) return(NULL)
+  if (isFALSE(stroke)) return("none")
 
   if (isTRUE(stroke)) {
     return("1pt + black")

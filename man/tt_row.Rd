@@ -49,9 +49,11 @@ default 1pt black, a color, a Typst stroke spec like \code{"2pt + blue"}, or a
 Typst dictionary like \code{"(bottom: 1pt)"}.}
 
 \item{hline_above}{Add horizontal line above the row. Can be \code{TRUE} for default
-line or a stroke specification.}
+line, a stroke specification, or \code{FALSE} to explicitly remove a line
+(e.g., suppress a booktabs rule).}
 
-\item{hline_below}{Add horizontal line below the row.}
+\item{hline_below}{Add horizontal line below the row. Can be \code{TRUE} for default
+line, a stroke specification, or \code{FALSE} to explicitly remove a line.}
 }
 \value{
 The modified \code{typst_table} object.

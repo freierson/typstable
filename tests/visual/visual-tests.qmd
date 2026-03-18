@@ -1320,4 +1320,144 @@ tt(mt6) |>
 ```
 
 
+# `booktabs` Argument
+
+## Default booktabs=TRUE
+
+Default table with three horizontal rules and no cell borders.
+
+```{r}
+tt(mt)
+```
+
+## booktabs=FALSE (grid style)
+
+Grid-style table with borders on all cells.
+
+```{r}
+tt(mt, booktabs = FALSE)
+```
+
+## booktabs=FALSE with header styling
+
+Grid table combined with header row styling.
+
+```{r}
+tt(mt, booktabs = FALSE) |>
+  tt_row(0, bold = TRUE, fill = "#e0e0e0")
+```
+
+## booktabs=FALSE with header_above
+
+Grid table with a spanning header.
+
+```{r}
+tt(mt, booktabs = FALSE) |>
+  tt_header_above(c("Performance" = 2, "Engine" = 1))
+```
+
+
+# `stroke = FALSE` (Line Suppression)
+
+## Suppress top booktabs rule
+
+Remove the top horizontal rule using `tt_hline(0, stroke = FALSE)`.
+
+```{r}
+tt(mt) |>
+  tt_hline(0, stroke = FALSE)
+```
+
+## Suppress mid booktabs rule
+
+Remove the mid rule (below header) using `tt_row(1, hline_above = FALSE)`.
+
+```{r}
+tt(mt) |>
+  tt_row(1, hline_above = FALSE)
+```
+
+## Suppress bottom booktabs rule
+
+Remove the bottom rule using `tt_hline()` at the last position.
+
+```{r}
+tt(mt) |>
+  tt_hline(nrow(mt) + 1, stroke = FALSE)
+```
+
+## Suppress all three booktabs rules
+
+Remove all default rules for a minimal table.
+
+```{r}
+tt(mt) |>
+  tt_hline(0, stroke = FALSE) |>
+  tt_hline(1, stroke = FALSE) |>
+  tt_hline(nrow(mt) + 1, stroke = FALSE)
+```
+
+## Suppress mid rule and add custom replacement
+
+Replace the default mid rule with a colored line.
+
+```{r}
+tt(mt) |>
+  tt_row(1, hline_above = FALSE) |>
+  tt_hline(1, stroke = "2pt + blue")
+```
+
+## stroke=FALSE on individual cells
+
+Explicitly remove borders from specific cells in a grid table.
+
+```{r}
+tt(mt, booktabs = FALSE) |>
+  tt_cell(2, 2, stroke = FALSE)
+```
+
+## stroke=FALSE on a row in a grid table
+
+Remove borders from an entire row in a grid table.
+
+```{r}
+tt(mt, booktabs = FALSE) |>
+  tt_row(3, stroke = FALSE)
+```
+
+## hline_above=FALSE on a grid table row
+
+Suppress the border above a specific row in a grid table.
+
+```{r}
+tt(mt, booktabs = FALSE) |>
+  tt_row(3, hline_above = FALSE)
+```
+
+## tt_style(stroke=TRUE) overrides booktabs
+
+Setting `tt_style(stroke = TRUE)` on a booktabs table switches to grid and suppresses the default rules.
+
+```{r}
+tt(mt) |>
+  tt_style(stroke = TRUE)
+```
+
+## Override a booktabs rule with custom stroke
+
+Replace the top rule with a thick red line.
+
+```{r}
+tt(mt) |>
+  tt_hline(0, stroke = "3pt + red")
+```
+
+## booktabs=FALSE with vline(stroke=FALSE)
+
+Suppress a vertical line in a grid table.
+
+```{r}
+tt(mt, booktabs = FALSE) |>
+  tt_vline(1, stroke = FALSE)
+```
 

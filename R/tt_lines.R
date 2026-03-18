@@ -7,8 +7,9 @@
 #'   2 = below first data row, etc.).
 #' @param start Starting column for partial line (0-indexed, inclusive).
 #' @param end Ending column for partial line (0-indexed, inclusive).
-#' @param stroke Line style: `TRUE` for default, color name, or full stroke spec
-#'   like `"2pt + red"`.
+#' @param stroke Line style: `TRUE` for default, color name, full stroke spec
+#'   like `"2pt + red"`, or `FALSE` to explicitly remove a line (e.g., suppress
+#'   a booktabs rule).
 #'
 #' @return The modified `typst_table` object.
 #'
@@ -24,6 +25,10 @@
 #' # Partial line spanning some columns
 #' tt(mtcars[1:5, 1:3]) |>
 #'   tt_hline(1, start = 0, end = 2)
+#'
+#' # Remove top booktabs rule
+#' tt(mtcars[1:5, 1:3]) |>
+#'   tt_hline(0, stroke = FALSE)
 #'
 #' @export
 tt_hline <- function(table,
@@ -67,7 +72,8 @@ tt_hline <- function(table,
 #' @param x Position of the line (0 = before first column, 1 = after first column, etc.).
 #' @param start Starting row for partial line (0-indexed, inclusive, 0 = header).
 #' @param end Ending row for partial line (0-indexed, inclusive).
-#' @param stroke Line style: `TRUE` for default, color name, or full stroke spec.
+#' @param stroke Line style: `TRUE` for default, color name, full stroke spec,
+#'   or `FALSE` to explicitly remove a line.
 #'
 #' @return The modified `typst_table` object.
 #'

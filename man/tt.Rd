@@ -14,6 +14,7 @@ tt(
   escape = TRUE,
   rownames = FALSE,
   na_string = "-",
+  booktabs = TRUE,
   repeat_header = TRUE
 )
 }
@@ -43,6 +44,10 @@ should apply to the table (e.g., \code{'#set text(font: "Arial")'}).}
 with an empty header, FALSE (default) excludes them.}
 
 \item{na_string}{Character. How NA values are displayed in the table (default "-").}
+
+\item{booktabs}{Logical. If TRUE (default), renders with booktabs-style rules
+(no cell borders, three horizontal rules: top, mid, bottom). If FALSE,
+renders a grid-style table with \verb{0.5pt + black} borders on all cells.}
 
 \item{repeat_header}{Logical. If TRUE (default), wraps header rows in
 \code{table.header()} so they repeat on each page in multi-page tables.}

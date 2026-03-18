@@ -16,8 +16,9 @@ tt_hline(table, y, start = NULL, end = NULL, stroke = TRUE)
 
 \item{end}{Ending column for partial line (0-indexed, inclusive).}
 
-\item{stroke}{Line style: \code{TRUE} for default, color name, or full stroke spec
-like \code{"2pt + red"}.}
+\item{stroke}{Line style: \code{TRUE} for default, color name, full stroke spec
+like \code{"2pt + red"}, or \code{FALSE} to explicitly remove a line (e.g., suppress
+a booktabs rule).}
 }
 \value{
 The modified \code{typst_table} object.
@@ -37,5 +38,9 @@ tt(mtcars[1:5, 1:3]) |>
 # Partial line spanning some columns
 tt(mtcars[1:5, 1:3]) |>
   tt_hline(1, start = 0, end = 2)
+
+# Remove top booktabs rule
+tt(mtcars[1:5, 1:3]) |>
+  tt_hline(0, stroke = FALSE)
 
 }

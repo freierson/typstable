@@ -19,8 +19,10 @@
 #'   default 1pt black, a color, a Typst stroke spec like `"2pt + blue"`, or a
 #'   Typst dictionary like `"(bottom: 1pt)"`.
 #' @param hline_above Add horizontal line above the row. Can be `TRUE` for default
-#'   line or a stroke specification.
-#' @param hline_below Add horizontal line below the row.
+#'   line, a stroke specification, or `FALSE` to explicitly remove a line
+#'   (e.g., suppress a booktabs rule).
+#' @param hline_below Add horizontal line below the row. Can be `TRUE` for default
+#'   line, a stroke specification, or `FALSE` to explicitly remove a line.
 #'
 #' @return The modified `typst_table` object.
 #'
