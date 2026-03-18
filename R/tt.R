@@ -11,8 +11,9 @@
 #'   Defaults to all columns.
 #' @param col_names Optional character vector of display names for columns.
 #'   Must match the number of selected columns. If NULL, uses column names from data.
-#' @param col_widths Column width specification: "auto" (default) creates equal-width
-#'   columns that fill the container. Use `tt_widths()` for custom proportions.
+#' @param col_widths Column width specification. A single value is recycled to all
+#'   columns. Defaults to "auto" which sizes columns to fit content. Use `tt_widths()`
+#'   for proportional widths that fill the container.
 #' @param align Column alignment: single value applied to all columns, or vector
 #'   of alignments. Valid values: "left"/"l", "center"/"c", "right"/"r".
 #' @param preamble Optional character string of raw Typst code to insert before the
@@ -109,12 +110,12 @@ tt <- function(data,
 
 
   # Process column widths
-  # Default "auto" now means equal fractional widths (full width table)
-  if (length(col_widths) == 1 && col_widths == "auto") {
-    col_widths <- rep("1fr", length(display_cols))
+  # Single value is recycled to all columns
+  if (length(col_widths) == 1) {
+    col_widths <- rep(col_widths, length(display_cols))
   } else if (length(col_widths) != length(display_cols)) {
     rlang::abort(paste0(
-      "`col_widths` must be 'auto' or have ", length(display_cols), " elements"
+      "`col_widths` must be a single value or have ", length(display_cols), " elements"
     ))
   }
 
@@ -187,17 +188,19 @@ tt <- function(data,
 #' Set proportional column widths
 #'
 #' Sets column widths as proportions that fill the page or container width.
-#' Widths are converted to Typst `fr` (fractional) units.
+#' Numeric widths are converted to Typst `fr` (fractional) units. Use `"auto"`
+#' for columns that should size to fit their content.
 #'
 #' @param table A `typst_table` object.
-#' @param ... Width values as numbers. Can be unnamed (applied in order) or
-#'   named by column. Values represent relative proportions.
+#' @param ... Width values as numbers or `"auto"`. Can be unnamed (applied in order)
+#'   or named by column. Numeric values represent relative proportions.
 #'
 #' @return The modified `typst_table` object.
 #'
 #' @details
 #' Widths are relative proportions, not absolute values. For example,
 #' `tt_widths(tbl, 1, 2, 1)` creates columns at 25%, 50%, 25% of the container width.
+#' Use `"auto"` to let a column size to fit its content.
 #'
 #' @examples
 #' # Equal widths
@@ -205,6 +208,9 @@ tt <- function(data,
 #'
 #' # Proportional widths (25%, 50%, 25%)
 #' tt(mtcars[1:5, 1:3]) |> tt_widths(1, 2, 1)
+#'
+#' # Mix auto and proportional widths
+#' tt(mtcars[1:5, 1:3]) |> tt_widths("auto", 2, 1)
 #'
 #' # Named columns
 #' tt(mtcars[1:5, 1:3]) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
@@ -249,13 +255,18 @@ tt_widths <- function(table, ...) {
     width_values <- unname(width_values)
   }
 
-  # Validate all widths are numeric and positive
-  if (!all(is.numeric(width_values)) || any(width_values <= 0)) {
-    rlang::abort("All widths must be positive numbers")
+  # Validate: each width must be "auto" or a positive number
+  is_auto <- width_values == "auto"
+  numeric_values <- suppressWarnings(as.numeric(width_values[!is_auto]))
+  if (any(is.na(numeric_values)) || any(numeric_values <= 0)) {
+    rlang::abort("All widths must be positive numbers or \"auto\"")
   }
 
-  # Convert to fr units
-  table$col_widths <- paste0(width_values, "fr")
+  # Convert to Typst units: numeric -> fr, "auto" -> auto
+  result <- character(length(width_values))
+  result[is_auto] <- "auto"
+  result[!is_auto] <- paste0(as.numeric(width_values[!is_auto]), "fr")
+  table$col_widths <- result
 
   table
 }

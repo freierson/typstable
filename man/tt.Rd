@@ -29,8 +29,9 @@ Defaults to all columns.}
 \item{col_names}{Optional character vector of display names for columns.
 Must match the number of selected columns. If NULL, uses column names from data.}
 
-\item{col_widths}{Column width specification: "auto" (default) creates equal-width
-columns that fill the container. Use \code{tt_widths()} for custom proportions.}
+\item{col_widths}{Column width specification. A single value is recycled to all
+columns. Defaults to "auto" which sizes columns to fit content. Use \code{tt_widths()}
+for proportional widths that fill the container.}
 
 \item{align}{Column alignment: single value applied to all columns, or vector
 of alignments. Valid values: "left"/"l", "center"/"c", "right"/"r".}

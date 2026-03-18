@@ -51,6 +51,12 @@ test_that("tt_widths sets proportional widths", {
   expect_equal(tbl$col_widths, c("1fr", "2fr", "1fr"))
 })
 
+test_that("tt_widths accepts auto mixed with numeric", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  tbl <- tt(df) |> tt_widths("auto", 2, 1)
+  expect_equal(tbl$col_widths, c("auto", "2fr", "1fr"))
+})
+
 test_that("tt_widths works with named columns", {
   df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
   tbl <- tt(df) |> tt_widths(a = 1, b = 2, c = 1)
@@ -170,7 +176,7 @@ test_that("rownames default uses numeric indices", {
   tbl_out <- trimws(paste0(capture.output(print(tbl)),collapse='\n'))
   expect_equal(tbl$ncol, 2)
   expect_equal(tbl_out,
-  "#table(\n  columns: (1fr, 1fr),\n  stroke: none,\n  table.header(\n    table.hline(stroke: 1pt),\n    [a], [b],\n    table.hline(stroke: 0.5pt)\n  ),\n  [1], [4],\n  [2], [5],\n  [3], [6],\n  table.hline(stroke: 1pt)\n)")
+  "#table(\n  columns: (auto, auto),\n  stroke: none,\n  table.header(\n    table.hline(stroke: 1pt),\n    [a], [b],\n    table.hline(stroke: 0.5pt)\n  ),\n  [1], [4],\n  [2], [5],\n  [3], [6],\n  table.hline(stroke: 1pt)\n)")
 })
 
 test_that("rownames = TRUE with cols selection includes rownames column", {

@@ -9,19 +9,21 @@ tt_widths(table, ...)
 \arguments{
 \item{table}{A \code{typst_table} object.}
 
-\item{...}{Width values as numbers. Can be unnamed (applied in order) or
-named by column. Values represent relative proportions.}
+\item{...}{Width values as numbers or \code{"auto"}. Can be unnamed (applied in order)
+or named by column. Numeric values represent relative proportions.}
 }
 \value{
 The modified \code{typst_table} object.
 }
 \description{
 Sets column widths as proportions that fill the page or container width.
-Widths are converted to Typst \code{fr} (fractional) units.
+Numeric widths are converted to Typst \code{fr} (fractional) units. Use \code{"auto"}
+for columns that should size to fit their content.
 }
 \details{
 Widths are relative proportions, not absolute values. For example,
 \code{tt_widths(tbl, 1, 2, 1)} creates columns at 25\%, 50\%, 25\% of the container width.
+Use \code{"auto"} to let a column size to fit its content.
 }
 \examples{
 # Equal widths
@@ -29,6 +31,9 @@ tt(mtcars[1:5, 1:3]) |> tt_widths(1, 1, 1)
 
 # Proportional widths (25\%, 50\%, 25\%)
 tt(mtcars[1:5, 1:3]) |> tt_widths(1, 2, 1)
+
+# Mix auto and proportional widths
+tt(mtcars[1:5, 1:3]) |> tt_widths("auto", 2, 1)
 
 # Named columns
 tt(mtcars[1:5, 1:3]) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
