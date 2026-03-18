@@ -472,3 +472,120 @@ test_that("booktabs = FALSE with hline_above = FALSE removes row border", {
   expect_true(grepl("stroke: 0\\.5pt \\+ black", code))
   expect_true(grepl("table\\.hline\\(stroke: none\\)", code))
 })
+
+# --- Coverage expansion tests ---
+
+test_that("uniform non-left alignment renders single align argument", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df, align = "center") |> tt_render()
+
+  expect_true(grepl("align: center", code))
+  expect_false(grepl("\\(center, center\\)", code))
+})
+
+test_that("per-column alignment renders tuple", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df, align = c("left", "right")) |> tt_render()
+
+  expect_true(grepl("align: \\(left, right\\)", code))
+})
+
+test_that("global fill renders in table arguments", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |> tt_style(fill = "#eee") |> tt_render()
+
+  expect_true(grepl('fill: rgb\\("#eee"\\)', code))
+})
+
+test_that("global inset renders in table arguments", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |> tt_style(inset = "8pt") |> tt_render()
+
+  expect_true(grepl("inset: 8pt", code))
+})
+
+test_that("cell content override renders with escaping", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_cell(1, 1, content = "new*value") |>
+    tt_render()
+
+  expect_true(grepl("new\\\\\\*value", code))
+})
+
+test_that("cell align renders in output", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_cell(1, 1, align = "center") |>
+    tt_render()
+
+  expect_true(grepl("table\\.cell\\(.*align: center", code))
+})
+
+test_that("cell inset renders in output", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_cell(1, 1, inset = "10pt") |>
+    tt_render()
+
+  expect_true(grepl("table\\.cell\\(.*inset: 10pt", code))
+})
+
+test_that("cell style override on header row 0 renders", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_cell(0, 1, fill = "yellow") |>
+    tt_render()
+
+  expect_true(grepl("fill: yellow", code))
+})
+
+test_that("rotation renders in cell formatting", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_cell(1, 1, rotate = "90deg") |>
+    tt_render()
+
+  expect_true(grepl("rotate\\(90deg", code))
+})
+
+test_that("data-driven style with NA value skips attribute", {
+  df <- data.frame(a = 1:2, color_a = c("red", NA))
+
+  code <- tt(df, cols = a) |>
+    tt_column(a, color = color_a) |>
+    tt_render()
+
+  # Row 1 should have red, row 2 should not have a color
+  expect_true(grepl("red", code))
+})
+
+test_that("header_above cell with empty label renders plain bracket", {
+  df <- data.frame(a = 1:2, b = 3:4, c = 5:6)
+  code <- tt(df) |>
+    tt_header_above(c("Group" = 2, " " = 1)) |>
+    tt_render()
+
+  expect_true(grepl("Group", code))
+})
+
+test_that("header_above cell with inset and stroke renders", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  code <- tt(df) |>
+    tt_header_above(c("G" = 2), inset = "5pt", stroke = "1pt + red") |>
+    tt_render()
+
+  expect_true(grepl("inset: 5pt", code))
+  expect_true(grepl("stroke: 1pt \\+ red", code))
+})
+
+test_that("vline without stroke renders table.vline()", {
+  df <- data.frame(a = 1:2, b = 3:4)
+  tbl <- tt(df)
+  # Manually add a vline with no stroke, no start, no end
+  tbl2 <- .copy_table(tbl)
+  tbl2$vlines <- list(list(x = 1, stroke = NULL, start = NULL, end = NULL))
+  code <- tt_render(tbl2)
+
+  expect_true(grepl("table\\.vline\\(x: 1\\)", code))
+})

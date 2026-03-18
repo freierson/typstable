@@ -162,3 +162,17 @@ test_that("rownames default uses numeric indices", {
   expect_equal(tbl_out,
   "#table(\n  columns: (1fr, 1fr),\n  stroke: none,\n  table.header(\n    table.hline(stroke: 1pt),\n    [a], [b],\n    table.hline(stroke: 0.5pt)\n  ),\n  [1], [4],\n  [2], [5],\n  [3], [6],\n  table.hline(stroke: 1pt)\n)")
 })
+
+test_that("rownames = TRUE with cols selection includes rownames column", {
+  df <- data.frame(a = 1:3, b = 4:6)
+  rownames(df) <- c("r1", "r2", "r3")
+
+  tbl <- tt(df, rownames = TRUE, cols = a)
+  expect_equal(tbl$ncol, 2)
+  expect_true(".rownames" %in% tbl$display_cols)
+})
+
+test_that("col_widths wrong length errors", {
+  df <- data.frame(a = 1:3, b = 4:6)
+  expect_error(tt(df, col_widths = c("1fr", "2fr", "3fr")), "must be")
+})

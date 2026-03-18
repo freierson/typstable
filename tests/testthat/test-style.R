@@ -41,6 +41,20 @@ test_that("tt_row handles hlines", {
   expect_true(length(tbl$hlines) >= 2)
 })
 
+test_that("tt_row errors when row is missing", {
+  df <- data.frame(a = 1:3, b = 4:6)
+  expect_error(tt(df) |> tt_row(), "must specify at least one row number")
+})
+
+test_that("tt_row stores rotate, inset, stroke attributes", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  tbl <- tt(df) |> tt_row(1, rotate = "45deg", inset = "8pt", stroke = "2pt + red")
+  expect_equal(tbl$row_styles[["1"]]$rotate, "45deg")
+  expect_equal(tbl$row_styles[["1"]]$inset, "8pt")
+  expect_equal(tbl$row_styles[["1"]]$stroke, "2pt + red")
+})
+
 test_that("tt_cell sets individual cell styles", {
   df <- data.frame(a = 1:3, b = 4:6)
 
@@ -743,6 +757,99 @@ test_that("tt_column missing stroke ref warns", {
       tt_column(a, stroke = "missing_{col}"),
     "not found"
   )
+})
+
+# --- Coverage: missing bare-symbol column ref warnings for all style attributes ---
+
+test_that("tt_column missing italic bare-symbol ref warns", {
+  df <- data.frame(a = 1:3)
+
+  expect_warning(
+    tt(df, cols = a) |>
+      tt_column(a, italic = nonexistent),
+    "not found"
+  )
+})
+
+test_that("tt_column missing color bare-symbol ref warns", {
+  df <- data.frame(a = 1:3)
+
+  expect_warning(
+    tt(df, cols = a) |>
+      tt_column(a, color = nonexistent),
+    "not found"
+  )
+})
+
+test_that("tt_column missing fill bare-symbol ref warns", {
+  df <- data.frame(a = 1:3)
+
+  expect_warning(
+    tt(df, cols = a) |>
+      tt_column(a, fill = nonexistent),
+    "not found"
+  )
+})
+
+test_that("tt_column missing font_size bare-symbol ref warns", {
+  df <- data.frame(a = 1:3)
+
+  expect_warning(
+    tt(df, cols = a) |>
+      tt_column(a, font_size = nonexistent),
+    "not found"
+  )
+})
+
+test_that("tt_column missing rotate bare-symbol ref warns", {
+  df <- data.frame(a = 1:3)
+
+  expect_warning(
+    tt(df, cols = a) |>
+      tt_column(a, rotate = nonexistent),
+    "not found"
+  )
+})
+
+test_that("tt_column missing inset bare-symbol ref warns", {
+  df <- data.frame(a = 1:3)
+
+  expect_warning(
+    tt(df, cols = a) |>
+      tt_column(a, inset = nonexistent),
+    "not found"
+  )
+})
+
+test_that("tt_column missing stroke bare-symbol ref warns", {
+  df <- data.frame(a = 1:3)
+
+  expect_warning(
+    tt(df, cols = a) |>
+      tt_column(a, stroke = nonexistent),
+    "not found"
+  )
+})
+
+test_that("tt_column static italic value works", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  tbl <- tt(df) |> tt_column(a, italic = TRUE)
+  expect_true(tbl$col_styles$a$italic)
+})
+
+test_that("tt_column static inset value works", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  tbl <- tt(df) |> tt_column(a, inset = "10pt")
+  expect_equal(tbl$col_styles$a$inset, "10pt")
+})
+
+test_that("tt_column static rotate value works", {
+  df <- data.frame(a = 1:3, b = 4:6)
+
+  tbl <- tt(df) |> tt_column(a, font_size = "14pt")
+  expect_equal(tbl$col_styles$a$font_size, "14pt")
 })
 
 # --- tt_lines additional tests ---

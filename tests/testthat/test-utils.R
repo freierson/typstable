@@ -191,3 +191,18 @@ test_that(".to_typst_align handles vectors", {
   result <- .to_typst_align(c("l", "c", "r"))
   expect_equal(result, c("left", "center", "right"))
 })
+
+test_that(".escape_typst converts non-character input", {
+  expect_equal(.escape_typst(123), "123")
+  expect_equal(.escape_typst(TRUE), "TRUE")
+})
+
+test_that(".format_text applies rotation", {
+  result <- .format_text("hello", rotate = "90deg")
+  expect_true(grepl("rotate\\(90deg", result))
+})
+
+test_that(".format_text skips 0deg rotation", {
+  result <- .format_text("hello", rotate = "0deg")
+  expect_false(grepl("rotate", result))
+})

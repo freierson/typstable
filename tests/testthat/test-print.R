@@ -15,21 +15,21 @@ test_that("print.typst_table returns invisibly", {
   df <- data.frame(a = 1:2, b = 3:4)
   tbl <- tt(df)
 
-  result <- withVisible(print(tbl))
+  result <- capture.output(vis <- withVisible(print(tbl)))
 
-  expect_false(result$visible)
-  expect_true(is.character(result$value))
-  expect_true(grepl("#table\\(", result$value))
+  expect_false(vis$visible)
+  expect_true(is.character(vis$value))
+  expect_true(grepl("#table\\(", vis$value))
 })
 
 test_that("print.typst_table returns the Typst code string", {
   df <- data.frame(a = 1:2, b = 3:4)
   tbl <- tt(df)
 
-  result <- print(tbl)
+  result <- capture.output(code <- print(tbl))
 
-  expect_true(is.character(result))
-  expect_equal(result, tt_render(tbl))
+  expect_true(is.character(code))
+  expect_equal(code, tt_render(tbl))
 })
 
 test_that("knit_print.typst_table returns knitr::asis_output with raw Typst block", {
@@ -63,4 +63,13 @@ test_that("knit_print.typst_table includes all table content", {
 
   expect_true(grepl("stroke:", result_str))
   expect_true(grepl("\\*", result_str))
+})
+
+test_that(".onLoad registers knit_print method without error", {
+  skip_if_not_installed("knitr")
+
+  # .onLoad should run without error when knitr is available and loaded
+  expect_no_error(
+    typstable:::.onLoad(NULL, "typstable")
+  )
 })
