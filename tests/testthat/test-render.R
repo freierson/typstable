@@ -335,7 +335,7 @@ test_that("group label without bold renders correctly", {
   df <- data.frame(a = 1:5, b = 6:10)
 
   code <- tt(df) |>
-    tt_pack_rows("Plain Group", 1, 3, bold_label = FALSE) |>
+    tt_pack_rows("Plain Group", 1, 3, bold = FALSE) |>
     tt_render()
 
   expect_true(grepl("table\\.cell\\(colspan: 2\\)\\[Plain Group\\]", code))
@@ -350,6 +350,88 @@ test_that("group label escapes special characters", {
     tt_render()
 
   expect_true(grepl("Group\\\\\\*with\\\\_special\\\\#chars", code))
+})
+
+test_that("group label with fill renders correctly", {
+  df <- data.frame(a = 1:5, b = 6:10)
+
+  code <- tt(df) |>
+    tt_pack_rows("Styled Group", 1, 3, fill = "#e6f3ff") |>
+    tt_render()
+
+  expect_true(grepl("fill: rgb\\(\"#e6f3ff\"\\)", code))
+  expect_true(grepl("colspan: 2", code))
+})
+
+test_that("group label with italic renders correctly", {
+  df <- data.frame(a = 1:5, b = 6:10)
+
+  code <- tt(df) |>
+    tt_pack_rows("Italic Group", 1, 3, italic = TRUE) |>
+    tt_render()
+
+  expect_true(grepl("_\\*Italic Group\\*_", code))
+})
+
+test_that("group label with color and font_size renders correctly", {
+  df <- data.frame(a = 1:5, b = 6:10)
+
+  code <- tt(df) |>
+    tt_pack_rows("Colored Group", 1, 3, color = "red", font_size = "14pt") |>
+    tt_render()
+
+  expect_true(grepl("fill: red", code))
+  expect_true(grepl("size: 14pt", code))
+})
+
+test_that("group label with align renders correctly", {
+  df <- data.frame(a = 1:5, b = 6:10)
+
+  code <- tt(df) |>
+    tt_pack_rows("Centered Group", 1, 3, align = "center") |>
+    tt_render()
+
+  expect_true(grepl("align: center", code))
+})
+
+test_that("group label with stroke renders correctly", {
+  df <- data.frame(a = 1:5, b = 6:10)
+
+  code <- tt(df) |>
+    tt_pack_rows("Bordered Group", 1, 3, stroke = "1pt + black") |>
+    tt_render()
+
+  expect_true(grepl("stroke: 1pt \\+ black", code))
+})
+
+test_that("group label with hline_below renders correctly", {
+  df <- data.frame(a = 1:5, b = 6:10)
+
+  code <- tt(df) |>
+    tt_pack_rows("Group", 1, 3, hline_below = TRUE) |>
+    tt_render()
+
+  expect_true(grepl("table\\.hline\\(\\)", code))
+})
+
+test_that("group label with hline_below stroke spec renders correctly", {
+  df <- data.frame(a = 1:5, b = 6:10)
+
+  code <- tt(df) |>
+    tt_pack_rows("Group", 1, 3, hline_below = "2pt + blue") |>
+    tt_render()
+
+  expect_true(grepl("table\\.hline\\(stroke: 2pt \\+ blue\\)", code))
+})
+
+test_that("group label styles work with index parameter", {
+  df <- data.frame(a = 1:8, b = 11:18)
+
+  code <- tt(df) |>
+    tt_pack_rows(index = c("Group A" = 3, "Group B" = 5), fill = "#cccccc", italic = TRUE) |>
+    tt_render()
+
+  expect_equal(length(gregexpr("fill: rgb\\(\"#cccccc\"\\)", code)[[1]]), 2)
 })
 
 # --- Horizontal lines rendering tests ---

@@ -438,7 +438,19 @@ tt_render <- function(table) {
 
     # Prepend group label row if needed
     if (!is.null(group_label) && !is.na(group_label) && group_label != "") {
-      group_row <- .render_group_label_row(table, group_label, row_groups$bold_label[i])
+      group_style <- row_groups$group_styles[[i]]
+      group_row <- .render_group_label_row(table, group_label, group_style)
+
+      # Add hline below group label if requested
+      if (!is.null(group_style$hline_below)) {
+        hline_stroke <- if (isTRUE(group_style$hline_below)) NULL else group_style$hline_below
+        if (!is.null(hline_stroke)) {
+          group_row <- paste(group_row, paste0("table.hline(stroke: ", .to_typst_stroke(hline_stroke), ")"), sep = ",\n  ")
+        } else {
+          group_row <- paste(group_row, "table.hline()", sep = ",\n  ")
+        }
+      }
+
       row_str <- paste(group_row, row_str, sep = ",\n  ")
     }
 
@@ -627,12 +639,12 @@ tt_render <- function(table) {
 .get_row_group_info <- function(table) {
   labels <- rep(NA_character_, table$nrow)
   indent <- rep(FALSE, table$nrow)
-  bold_label <- rep(TRUE, table$nrow)
+  group_styles <- vector("list", table$nrow)
 
   for (group in table$row_groups) {
     if (!is.null(group$start_row) && group$start_row <= table$nrow) {
       labels[group$start_row] <- group$group_label
-      bold_label[group$start_row] <- group$bold_label %||% TRUE
+      group_styles[[group$start_row]] <- group
 
       # Indent rows in group
       if (isTRUE(group$indent)) {
@@ -642,21 +654,42 @@ tt_render <- function(table) {
     }
   }
 
-  list(labels = labels, indent = indent, bold_label = bold_label)
+  list(labels = labels, indent = indent, group_styles = group_styles)
 }
 
 #' Render group label row
 #' @noRd
-.render_group_label_row <- function(table, label, bold = TRUE) {
+.render_group_label_row <- function(table, label, group_style) {
   if (table$escape) {
     label <- .escape_typst(label)
   }
 
-  if (isTRUE(bold)) {
-    label <- paste0("*", label, "*")
+  bold <- group_style$bold %||% TRUE
+  formatted <- .format_text(
+    label,
+    bold = bold,
+    italic = group_style$italic,
+    color = group_style$color,
+    size = group_style$font_size,
+    rotate = group_style$rotate
+  )
+
+  cell_args <- paste0("colspan: ", table$ncol)
+
+  if (!is.null(group_style$align)) {
+    cell_args <- c(cell_args, paste0("align: ", .to_typst_align(group_style$align)))
+  }
+  if (!is.null(group_style$fill)) {
+    cell_args <- c(cell_args, paste0("fill: ", .to_typst_color(group_style$fill)))
+  }
+  if (!is.null(group_style$inset)) {
+    cell_args <- c(cell_args, paste0("inset: ", .to_typst_length(group_style$inset)))
+  }
+  if (!is.null(group_style$stroke)) {
+    cell_args <- c(cell_args, paste0("stroke: ", .to_typst_stroke(group_style$stroke)))
   }
 
-  paste0("table.cell(colspan: ", table$ncol, ")[", label, "]")
+  paste0("table.cell(", paste(cell_args, collapse = ", "), ")[", formatted, "]")
 }
 
 #' Get hline at position

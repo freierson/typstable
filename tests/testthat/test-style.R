@@ -394,14 +394,14 @@ test_that("tt_pack_rows index parameter with named numeric vector", {
   expect_equal(tbl$row_groups[[2]]$end_row, 8L)
 })
 
-test_that("tt_pack_rows index respects indent and bold_label options", {
+test_that("tt_pack_rows index respects indent and bold options", {
   df <- data.frame(a = 1:5, b = 6:10)
 
   tbl <- tt(df) |>
-    tt_pack_rows(index = c("Group" = 5), indent = FALSE, bold_label = FALSE)
+    tt_pack_rows(index = c("Group" = 5), indent = FALSE, bold = FALSE)
 
   expect_false(tbl$row_groups[[1]]$indent)
-  expect_false(tbl$row_groups[[1]]$bold_label)
+  expect_false(tbl$row_groups[[1]]$bold)
 })
 
 test_that("tt_pack_rows index must be named numeric", {

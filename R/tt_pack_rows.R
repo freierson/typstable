@@ -12,7 +12,19 @@
 #'   Example: `c("Group A" = 3, "Group B" = 5)` creates two groups where
 #'   "Group A" covers rows 1-3 and "Group B" covers rows 4-8.
 #' @param indent Logical. Indent rows in the group (default TRUE).
-#' @param bold_label Logical. Make the group label bold (default TRUE).
+#' @param bold Logical. Make the group label bold (default TRUE).
+#' @param italic Logical. Make the group label italic.
+#' @param color Text color for the group label.
+#' @param fill Fill color for the group label row.
+#' @param align Alignment for the group label row.
+#' @param font_size Font size for the group label.
+#' @param rotate Rotation angle (e.g., `"90deg"`, `90`, `"1.5rad"`).
+#' @param inset Cell padding (e.g., `"10pt"`, `"5pt 8pt"`).
+#' @param stroke Stroke (border) specification for the group label cell. Can be `TRUE` for
+#'   default 1pt black, a color, a Typst stroke spec like `"2pt + blue"`, or a
+#'   Typst dictionary like `"(bottom: 1pt)"`.
+#' @param hline_below Add horizontal line below the group label. Can be `TRUE` for default
+#'   line or a stroke specification.
 #'
 #' @return The modified `typst_table` object.
 #'
@@ -26,6 +38,11 @@
 #' tt(mtcars[1:10, 1:3]) |>
 #'   tt_pack_rows(index = c("4 Cylinders" = 5, "6 Cylinders" = 5))
 #'
+#' # Styled group labels
+#' tt(mtcars[1:10, 1:3]) |>
+#'   tt_pack_rows("4 Cylinders", 1, 5, fill = "#e6f3ff", italic = TRUE) |>
+#'   tt_pack_rows("6 Cylinders", 6, 10, fill = "#e6f3ff", italic = TRUE)
+#'
 #' @export
 tt_pack_rows <- function(table,
                          group_label = NULL,
@@ -33,7 +50,16 @@ tt_pack_rows <- function(table,
                          end_row = NULL,
                          index = NULL,
                          indent = TRUE,
-                         bold_label = TRUE) {
+                         bold = TRUE,
+                         italic = NULL,
+                         color = NULL,
+                         fill = NULL,
+                         align = NULL,
+                         font_size = NULL,
+                         rotate = NULL,
+                         inset = NULL,
+                         stroke = NULL,
+                         hline_below = NULL) {
   .check_typst_table(table)
   table <- .copy_table(table)
 
@@ -61,7 +87,16 @@ tt_pack_rows <- function(table,
         start_row = as.integer(start_rows[i]),
         end_row = as.integer(end_rows[i]),
         indent = indent,
-        bold_label = bold_label
+        bold = bold,
+        italic = italic,
+        color = color,
+        fill = fill,
+        align = align,
+        font_size = font_size,
+        rotate = rotate,
+        inset = inset,
+        stroke = stroke,
+        hline_below = hline_below
       )
       table$row_groups <- c(table$row_groups, list(group_spec))
     }
@@ -101,7 +136,16 @@ tt_pack_rows <- function(table,
     start_row = as.integer(start_row),
     end_row = as.integer(end_row),
     indent = indent,
-    bold_label = bold_label
+    bold = bold,
+    italic = italic,
+    color = color,
+    fill = fill,
+    align = align,
+    font_size = font_size,
+    rotate = rotate,
+    inset = inset,
+    stroke = stroke,
+    hline_below = hline_below
   )
 
   table$row_groups <- c(table$row_groups, list(group_spec))

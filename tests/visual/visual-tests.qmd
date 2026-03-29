@@ -741,13 +741,30 @@ tt(mt10) |>
   tt_pack_rows("No Indent Group", 1, 5, indent = FALSE)
 ```
 
-## bold_label=FALSE
+## bold=FALSE
 
 Use a non-bold group label.
 
 ```{r}
 tt(mt10) |>
-  tt_pack_rows("Light Label", 1, 5, bold_label = FALSE)
+  tt_pack_rows("Light Label", 1, 5, bold = FALSE)
+```
+
+## Styled group labels
+
+Group labels with fill, italic, and hline_below.
+
+```{r}
+tt(mt10) |>
+  tt_pack_rows("4 Cylinders", 1, 5, fill = "#e6f3ff", italic = TRUE, hline_below = TRUE) |>
+  tt_pack_rows("6 Cylinders", 6, 10, fill = "#e6f3ff", italic = TRUE, hline_below = TRUE)
+```
+
+## Group label with color and alignment
+
+```{r}
+tt(mt10) |>
+  tt_pack_rows("Centered Group", 1, 5, align = "center", color = "blue", bold = FALSE)
 ```
 
 
@@ -1460,4 +1477,23 @@ Suppress a vertical line in a grid table.
 tt(mt, booktabs = FALSE) |>
   tt_vline(1, stroke = FALSE)
 ```
+
+## styling of tt_pack_rows
+
+```{r}
+dat <- data.frame(
+  group = c("Group A", "Group A", "Group B", "Group B"),
+  val = 1:4
+)
+dat |>
+  tt() |>
+  tt_pack_rows(index = table(dat$group),  
+               hline_below = '0.25pt+gray', italic = TRUE, color = 'orange') |>
+  tt_row(0:4) |>
+  tt_widths(1,1)
+```
+
+
+
+
 

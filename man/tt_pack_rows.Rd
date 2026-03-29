@@ -11,7 +11,16 @@ tt_pack_rows(
   end_row = NULL,
   index = NULL,
   indent = TRUE,
-  bold_label = TRUE
+  bold = TRUE,
+  italic = NULL,
+  color = NULL,
+  fill = NULL,
+  align = NULL,
+  font_size = NULL,
+  rotate = NULL,
+  inset = NULL,
+  stroke = NULL,
+  hline_below = NULL
 )
 }
 \arguments{
@@ -30,7 +39,28 @@ Example: \code{c("Group A" = 3, "Group B" = 5)} creates two groups where
 
 \item{indent}{Logical. Indent rows in the group (default TRUE).}
 
-\item{bold_label}{Logical. Make the group label bold (default TRUE).}
+\item{bold}{Logical. Make the group label bold (default TRUE).}
+
+\item{italic}{Logical. Make the group label italic.}
+
+\item{color}{Text color for the group label.}
+
+\item{fill}{Fill color for the group label row.}
+
+\item{align}{Alignment for the group label row.}
+
+\item{font_size}{Font size for the group label.}
+
+\item{rotate}{Rotation angle (e.g., \code{"90deg"}, \code{90}, \code{"1.5rad"}).}
+
+\item{inset}{Cell padding (e.g., \code{"10pt"}, \code{"5pt 8pt"}).}
+
+\item{stroke}{Stroke (border) specification for the group label cell. Can be \code{TRUE} for
+default 1pt black, a color, a Typst stroke spec like \code{"2pt + blue"}, or a
+Typst dictionary like \code{"(bottom: 1pt)"}.}
+
+\item{hline_below}{Add horizontal line below the group label. Can be \code{TRUE} for default
+line or a stroke specification.}
 }
 \value{
 The modified \code{typst_table} object.
@@ -48,5 +78,10 @@ tt(mtcars[1:10, 1:3]) |>
 # Using index parameter (alternative style)
 tt(mtcars[1:10, 1:3]) |>
   tt_pack_rows(index = c("4 Cylinders" = 5, "6 Cylinders" = 5))
+
+# Styled group labels
+tt(mtcars[1:10, 1:3]) |>
+  tt_pack_rows("4 Cylinders", 1, 5, fill = "#e6f3ff", italic = TRUE) |>
+  tt_pack_rows("6 Cylinders", 6, 10, fill = "#e6f3ff", italic = TRUE)
 
 }
