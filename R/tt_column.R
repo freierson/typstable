@@ -125,7 +125,7 @@ tt_column <- function(table,
 
     # Handle width
     if (!is.null(width)) {
-      table$col_widths[col_idx] <- .to_typst_length(width, allow_fr = TRUE)
+      table$col_widths[col_idx] <- as.character(width)
     }
 
     # Handle alignment

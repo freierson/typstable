@@ -48,7 +48,16 @@ Useful for creating visual sections in the table.</p>
 <span>  end_row <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  index <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  indent <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  bold_label <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  bold <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  italic <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  align <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  font_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rotate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stroke <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  hline_below <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -83,8 +92,47 @@ Example: <code>c("Group A" = 3, "Group B" = 5)</code> creates two groups where
 <dd><p>Logical. Indent rows in the group (default TRUE).</p></dd>
 
 
-<dt id="arg-bold-label">bold_label<a class="anchor" aria-label="anchor" href="#arg-bold-label"></a></dt>
+<dt id="arg-bold">bold<a class="anchor" aria-label="anchor" href="#arg-bold"></a></dt>
 <dd><p>Logical. Make the group label bold (default TRUE).</p></dd>
+
+
+<dt id="arg-italic">italic<a class="anchor" aria-label="anchor" href="#arg-italic"></a></dt>
+<dd><p>Logical. Make the group label italic.</p></dd>
+
+
+<dt id="arg-color">color<a class="anchor" aria-label="anchor" href="#arg-color"></a></dt>
+<dd><p>Text color for the group label.</p></dd>
+
+
+<dt id="arg-fill">fill<a class="anchor" aria-label="anchor" href="#arg-fill"></a></dt>
+<dd><p>Fill color for the group label row.</p></dd>
+
+
+<dt id="arg-align">align<a class="anchor" aria-label="anchor" href="#arg-align"></a></dt>
+<dd><p>Alignment for the group label row.</p></dd>
+
+
+<dt id="arg-font-size">font_size<a class="anchor" aria-label="anchor" href="#arg-font-size"></a></dt>
+<dd><p>Font size for the group label.</p></dd>
+
+
+<dt id="arg-rotate">rotate<a class="anchor" aria-label="anchor" href="#arg-rotate"></a></dt>
+<dd><p>Rotation angle (e.g., <code>"90deg"</code>, <code>90</code>, <code>"1.5rad"</code>).</p></dd>
+
+
+<dt id="arg-inset">inset<a class="anchor" aria-label="anchor" href="#arg-inset"></a></dt>
+<dd><p>Cell padding (e.g., <code>"10pt"</code>, <code>"5pt 8pt"</code>).</p></dd>
+
+
+<dt id="arg-stroke">stroke<a class="anchor" aria-label="anchor" href="#arg-stroke"></a></dt>
+<dd><p>Stroke (border) specification for the group label cell. Can be <code>TRUE</code> for
+default 1pt black, a color, a Typst stroke spec like <code>"2pt + blue"</code>, or a
+Typst dictionary like <code>"(bottom: 1pt)"</code>.</p></dd>
+
+
+<dt id="arg-hline-below">hline_below<a class="anchor" aria-label="anchor" href="#arg-hline-below"></a></dt>
+<dd><p>Add horizontal line below the group label. Can be <code>TRUE</code> for default
+line or a stroke specification.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -95,15 +143,17 @@ Example: <code>c("Group A" = 3, "Group B" = 5)</code> creates two groups where
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Group rows with a label</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_pack_rows</span><span class="op">(</span><span class="st">"4 Cylinders"</span>, <span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_pack_rows</span><span class="op">(</span><span class="st">"6 Cylinders"</span>, <span class="fl">6</span>, <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [mpg], [cyl], [disp],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.cell(colspan: 3)[*4 Cylinders*],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)21], [6], [160],</span>
@@ -120,14 +170,16 @@ Example: <code>c("Group A" = 3, "Group B" = 5)</code> creates two groups where
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using index parameter (alternative style)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_pack_rows</span><span class="op">(</span>index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4 Cylinders"</span> <span class="op">=</span> <span class="fl">5</span>, <span class="st">"6 Cylinders"</span> <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [mpg], [cyl], [disp],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.cell(colspan: 3)[*4 Cylinders*],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)21], [6], [160],</span>
@@ -135,6 +187,33 @@ Example: <code>c("Group A" = 3, "Group B" = 5)</code> creates two groups where
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)21.4], [6], [258],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)18.7], [8], [360],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.cell(colspan: 3)[*6 Cylinders*],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)18.1], [6], [225],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)14.3], [8], [360],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)24.4], [4], [146.7],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)22.8], [4], [140.8],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)19.2], [6], [167.6],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Styled group labels</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">tt_pack_rows</span><span class="op">(</span><span class="st">"4 Cylinders"</span>, <span class="fl">1</span>, <span class="fl">5</span>, fill <span class="op">=</span> <span class="st">"#e6f3ff"</span>, italic <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">tt_pack_rows</span><span class="op">(</span><span class="st">"6 Cylinders"</span>, <span class="fl">6</span>, <span class="fl">10</span>, fill <span class="op">=</span> <span class="st">"#e6f3ff"</span>, italic <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.cell(colspan: 3, fill: rgb("#e6f3ff"))[_*4 Cylinders*_],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)22.8], [4], [108],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)21.4], [6], [258],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)18.7], [8], [360],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.cell(colspan: 3, fill: rgb("#e6f3ff"))[_*6 Cylinders*_],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)18.1], [6], [225],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)14.3], [8], [360],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [#h(1em)24.4], [4], [146.7],</span>

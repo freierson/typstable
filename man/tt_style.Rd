@@ -12,8 +12,7 @@ tt_style(
   inset = NULL,
   row_gutter = NULL,
   column_gutter = NULL,
-  position = NULL,
-  full_width = FALSE
+  position = NULL
 )
 }
 \arguments{
@@ -36,8 +35,6 @@ for different padding on each side.}
 \item{column_gutter}{Horizontal spacing between columns.}
 
 \item{position}{Table position on page: \code{"auto"}, \code{"left"}, \code{"center"}, \code{"right"}.}
-
-\item{full_width}{Logical. If \code{TRUE}, table spans full page width.}
 }
 \value{
 The modified \code{typst_table} object.

@@ -113,8 +113,69 @@ test_that("tt align validation wrong length", {
   )
 })
 
-# --- tt_widths validation tests ---
+# --- testing different ways to set column widths
 
+test_that("tt_widths string passthrough: arbitrary Typst lengths accepted", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  tbl <- tt(df) |> tt_widths("100pt", "50%", "2cm")
+  expect_equal(tbl$col_widths, c("100pt", "50%", "2cm"))
+})
+
+test_that("tt_widths named partial update keeps unmentioned columns unchanged", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  tbl <- tt(df) |> tt_widths(b = "1cm")
+  expect_equal(tbl$col_widths, c("auto", "1cm", "auto"))
+})
+
+test_that("tt_widths named update with numeric uses .unit", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  tbl <- tt(df) |> tt_widths(b = 1)
+  expect_equal(tbl$col_widths, c("auto", "1fr", "auto"))
+})
+
+test_that("tt_column width passed through as-is", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  tbl <- tt(df) |> tt_column(b, width = "1fr")
+  expect_equal(tbl$col_widths[2], "1fr")
+})
+
+test_that("tt_widths .default overwrites unmentioned columns", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  tbl <- tt(df) |> tt_widths(b = 2, .default = "1fr")
+  expect_equal(tbl$col_widths, c("1fr", "2fr", "1fr"))
+})
+
+test_that("tt_widths custom .unit function", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  tbl <- tt(df) |> tt_widths(1, 2, 1, .unit = \(x) paste0(x, "pt"))
+  expect_equal(tbl$col_widths, c("1pt", "2pt", "1pt"))
+})
+
+test_that("tt_widths last-value-in-pipe wins", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  tbl <- tt(df) |> tt_widths(1, 1, 1) |> tt_widths(b = 2)
+  expect_equal(tbl$col_widths, c("1fr", "2fr", "1fr"))
+})
+
+test_that("tt_widths fails if given just one positional argument", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  expect_error(
+    tt(df) |> tt_widths(1),
+    "Expected 3 widths, got 1"
+  )
+})
+
+test_that("tt_widths works if given positional arguments", {
+  df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  tbl1 <- tt(df, rownames = TRUE) |>
+    tt_widths(1,2,3,4)
+  tbl2 <- tt(df)|>
+    tt_widths(1,2,3)
+  expect_equal(tbl1$col_widths, c("1fr", "2fr", "3fr", "4fr"))
+  expect_equal(tbl2$col_widths, c("1fr", "2fr", "3fr"))
+})
+
+# --- tt_widths validation tests ---
 test_that("tt_widths mixing named/unnamed error", {
   df <- data.frame(a = 1:3, b = 4:6, c = 7:9)
 
@@ -139,20 +200,6 @@ test_that("tt_widths requires at least one width", {
   expect_error(
     tt(df) |> tt_widths(),
     "At least one width must be provided"
-  )
-})
-
-test_that("tt_widths rejects non-positive widths", {
-  df <- data.frame(a = 1:3, b = 4:6)
-
-  expect_error(
-    tt(df) |> tt_widths(0, 1),
-    "must be positive numbers"
-  )
-
-  expect_error(
-    tt(df) |> tt_widths(-1, 1),
-    "must be positive numbers"
   )
 })
 

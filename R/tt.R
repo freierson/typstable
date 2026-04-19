@@ -163,7 +163,6 @@ tt <- function(data,
       row_gutter = NULL,
       column_gutter = NULL,
       position = NULL,
-      full_width = FALSE,
       # Style overrides (populated by tt_column, tt_row, tt_cell)
       col_styles = list(),
       row_styles = list(),
@@ -185,38 +184,53 @@ tt <- function(data,
   table
 }
 
-#' Set proportional column widths
+#' Set column widths
 #'
-#' Sets column widths as proportions that fill the page or container width.
-#' Numeric widths are converted to Typst `fr` (fractional) units. Use `"auto"`
-#' for columns that should size to fit their content.
+#' Sets column widths. Numeric values are converted to Typst units via `.unit`.
+#' String values are passed through directly to Typst (e.g. `"auto"`, `"1fr"`,
+#' `"100pt"`, `"50%"`). Validity of strings is not checked in R — Typst will
+#' error on invalid values.
 #'
 #' @param table A `typst_table` object.
-#' @param ... Width values as numbers or `"auto"`. Can be unnamed (applied in order)
-#'   or named by column. Numeric values represent relative proportions.
+#' @param ... Width values as numbers or strings. Can be unnamed (positional,
+#'   applied in column order) or named by column name. Positional mode requires
+#'   exactly one value per column.
+#' @param .unit Function applied to numeric values to produce a Typst length
+#'   string. Default appends `"fr"` (fractional units), so `1` becomes `"1fr"`.
+#' @param .default When using named columns, the width to apply to columns not
+#'   explicitly mentioned. `NULL` (default) leaves unmentioned columns unchanged.
+#'   Any other value (e.g. `"1fr"`, `"auto"`) is applied to all unmentioned columns.
 #'
 #' @return The modified `typst_table` object.
 #'
 #' @details
-#' Widths are relative proportions, not absolute values. For example,
-#' `tt_widths(tbl, 1, 2, 1)` creates columns at 25%, 50%, 25% of the container width.
-#' Use `"auto"` to let a column size to fit its content.
+#' Column widths follow last-value-in-pipe-wins logic: calling `tt_widths()` a
+#' second time with named columns only updates those columns.
+#'
+#' Fractional units (`fr`) distribute available space proportionally. For
+#' example, `tt_widths(tbl, 1, 2, 1)` creates columns at 25%, 50%, 25% of the
+#' container width.
 #'
 #' @examples
-#' # Equal widths
-#' tt(mtcars[1:5, 1:3]) |> tt_widths(1, 1, 1)
-#'
 #' # Proportional widths (25%, 50%, 25%)
 #' tt(mtcars[1:5, 1:3]) |> tt_widths(1, 2, 1)
 #'
-#' # Mix auto and proportional widths
-#' tt(mtcars[1:5, 1:3]) |> tt_widths("auto", 2, 1)
+#' # String widths passed through directly
+#' tt(mtcars[1:5, 1:3]) |> tt_widths("100pt", "auto", "50%")
 #'
-#' # Named columns
-#' tt(mtcars[1:5, 1:3]) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
+#' # Update only one column, leave others unchanged
+#' tt(mtcars[1:5, 1:3]) |> tt_widths(cyl = 2)
+#'
+#' # Set all unmentioned columns to auto
+#' tt(mtcars[1:5, 1:3]) |> tt_widths(cyl = 2, .default = "auto")
+#'
+#' # Custom numeric unit
+#' tt(mtcars[1:5, 1:3]) |> tt_widths(1, 2, 1, .unit = \(x) paste0(x, "pt"))
 #'
 #' @export
-tt_widths <- function(table, ...) {
+tt_widths <- function(table, ...,
+                      .unit = function(x) paste0(x, "fr"),
+                      .default = NULL) {
   .check_typst_table(table)
   table <- .copy_table(table)
 
@@ -226,47 +240,45 @@ tt_widths <- function(table, ...) {
     rlang::abort("At least one width must be provided")
   }
 
-  # Check if named or positional
-  width_names <- names(widths)
+  convert_width <- function(w) {
+    if (is.numeric(w)) .unit(w) else as.character(w)
+  }
 
-  if (is.null(width_names) || all(width_names == "")) {
-    # Positional: apply in order
+  width_names <- names(widths)
+  has_names   <- !is.null(width_names) && any(nzchar(width_names))
+  has_unnamed <- is.null(width_names)  || any(!nzchar(width_names))
+
+  if (has_names && has_unnamed) {
+    rlang::abort("Cannot mix named and unnamed widths")
+  }
+
+  if (!has_names) {
+    # Positional mode: must supply exactly ncol values
     if (length(widths) != table$ncol) {
       rlang::abort(paste0(
         "Expected ", table$ncol, " widths, got ", length(widths)
       ))
     }
-    width_values <- unlist(widths)
+    table$col_widths <- vapply(widths, convert_width, character(1))
   } else {
-    # Named: match to column names
-    width_values <- rep(1, table$ncol)  # Default to equal widths
-    names(width_values) <- table$display_cols
-
-    for (i in seq_along(widths)) {
-      name <- width_names[i]
-      if (name == "") {
-        rlang::abort("Cannot mix named and unnamed widths")
-      }
-      if (!name %in% table$display_cols) {
-        rlang::abort(paste0("Column '", name, "' not found in table"))
-      }
-      width_values[name] <- widths[[i]]
+    # Named mode: only update specified columns
+    invalid_cols <- setdiff(width_names, table$display_cols)
+    if (length(invalid_cols) > 0) {
+      rlang::abort(paste0("Column '", invalid_cols[1], "' not found in table"))
     }
-    width_values <- unname(width_values)
-  }
 
-  # Validate: each width must be "auto" or a positive number
-  is_auto <- width_values == "auto"
-  numeric_values <- suppressWarnings(as.numeric(width_values[!is_auto]))
-  if (any(is.na(numeric_values)) || any(numeric_values <= 0)) {
-    rlang::abort("All widths must be positive numbers or \"auto\"")
-  }
+    new_widths <- if (is.null(.default)) {
+      table$col_widths
+    } else {
+      rep(convert_width(.default), table$ncol)
+    }
 
-  # Convert to Typst units: numeric -> fr, "auto" -> auto
-  result <- character(length(width_values))
-  result[is_auto] <- "auto"
-  result[!is_auto] <- paste0(as.numeric(width_values[!is_auto]), "fr")
-  table$col_widths <- result
+    for (nm in width_names) {
+      new_widths[which(table$display_cols == nm)] <- convert_width(widths[[nm]])
+    }
+
+    table$col_widths <- new_widths
+  }
 
   table
 }

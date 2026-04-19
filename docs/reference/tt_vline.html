@@ -62,7 +62,8 @@
 
 
 <dt id="arg-stroke">stroke<a class="anchor" aria-label="anchor" href="#arg-stroke"></a></dt>
-<dd><p>Line style: <code>TRUE</code> for default, color name, or full stroke spec.</p></dd>
+<dd><p>Line style: <code>TRUE</code> for default, color name, full stroke spec,
+or <code>FALSE</code> to explicitly remove a line.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -73,15 +74,17 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Add line after first column</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_vline</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.vline(x: 1),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [mpg], [cyl], [disp],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [22.8], [4], [108],</span>
@@ -91,15 +94,17 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add partial vertical line (data rows only)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_vline</span><span class="op">(</span><span class="fl">1</span>, start <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.vline(x: 1, start: 1),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [mpg], [cyl], [disp],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [22.8], [4], [108],</span>

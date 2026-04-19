@@ -222,22 +222,22 @@ tt(mt) |>
   tt_style(stroke = TRUE, column_gutter = "4pt")
 ```
 
-## position="center" with full_width=FALSE
+## position="center"
 
-Center a non-full-width table on the page.
+Center the table on the page.
 
 ```{r}
 tt(mt) |>
-  tt_style(position = "center", full_width = FALSE)
+  tt_style(position = "center")
 ```
 
-## full_width=TRUE
+## Full width with fractional units
 
-Force the table to span the full page width.
+Achieve full-width layout using fractional units in `tt_widths()`.
 
 ```{r}
 tt(mt) |>
-  tt_style(full_width = TRUE)
+  tt_widths(1, 1, 1)
 ```
 
 

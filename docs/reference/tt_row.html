@@ -110,11 +110,13 @@ Typst dictionary like <code>"(bottom: 1pt)"</code>.</p></dd>
 
 <dt id="arg-hline-above">hline_above<a class="anchor" aria-label="anchor" href="#arg-hline-above"></a></dt>
 <dd><p>Add horizontal line above the row. Can be <code>TRUE</code> for default
-line or a stroke specification.</p></dd>
+line, a stroke specification, or <code>FALSE</code> to explicitly remove a line
+(e.g., suppress a booktabs rule).</p></dd>
 
 
 <dt id="arg-hline-below">hline_below<a class="anchor" aria-label="anchor" href="#arg-hline-below"></a></dt>
-<dd><p>Add horizontal line below the row.</p></dd>
+<dd><p>Add horizontal line below the row. Can be <code>TRUE</code> for default
+line, a stroke specification, or <code>FALSE</code> to explicitly remove a line.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -125,14 +127,16 @@ line or a stroke specification.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Style header row</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_row</span><span class="op">(</span><span class="fl">0</span>, bold <span class="op">=</span> <span class="cn">TRUE</span>, fill <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.cell(fill: gray)[*mpg*], table.cell(fill: gray)[*cyl*], table.cell(fill: gray)[*disp*],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.cell(fill: gray)[*mpg*], table.cell(fill: gray)[*cyl*], table.cell(fill: gray)[*disp*],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [22.8], [4], [108],</span>
@@ -142,14 +146,16 @@ line or a stroke specification.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Highlight specific rows</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_row</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"#ffffcc"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [mpg], [cyl], [disp],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.cell(fill: rgb("#ffffcc"))[21], table.cell(fill: rgb("#ffffcc"))[6], table.cell(fill: rgb("#ffffcc"))[160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.cell(fill: rgb("#ffffcc"))[22.8], table.cell(fill: rgb("#ffffcc"))[4], table.cell(fill: rgb("#ffffcc"))[108],</span>
@@ -159,14 +165,16 @@ line or a stroke specification.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add horizontal lines</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="tt.html">tt</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_row</span><span class="op">(</span><span class="fl">3</span>, hline_above <span class="op">=</span> <span class="cn">TRUE</span>, hline_below <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [mpg], [cyl], [disp],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(),</span>

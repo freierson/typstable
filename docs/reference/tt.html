@@ -54,9 +54,12 @@ the table appearance.</p>
 <span>  col_widths <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  align <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  preamble <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  epilogue <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  escape <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  rownames <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  na_string <span class="op">=</span> <span class="st">"-"</span></span>
+<span>  rownames <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  na_string <span class="op">=</span> <span class="st">"-"</span>,</span>
+<span>  booktabs <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  repeat_header <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -80,8 +83,9 @@ Must match the number of selected columns. If NULL, uses column names from data.
 
 
 <dt id="arg-col-widths">col_widths<a class="anchor" aria-label="anchor" href="#arg-col-widths"></a></dt>
-<dd><p>Column width specification: "auto" (default) creates equal-width
-columns that fill the container. Use <code><a href="tt_widths.html">tt_widths()</a></code> for custom proportions.</p></dd>
+<dd><p>Column width specification. A single value is recycled to all
+columns. Defaults to "auto" which sizes columns to fit content. Use <code><a href="tt_widths.html">tt_widths()</a></code>
+for proportional widths that fill the container.</p></dd>
 
 
 <dt id="arg-align">align<a class="anchor" aria-label="anchor" href="#arg-align"></a></dt>
@@ -95,17 +99,33 @@ table. Useful for <code>#set</code> rules, <code>#let</code> bindings, or other 
 should apply to the table (e.g., <code>'#set text(font: "Arial")'</code>).</p></dd>
 
 
+<dt id="arg-epilogue">epilogue<a class="anchor" aria-label="anchor" href="#arg-epilogue"></a></dt>
+<dd><p>Optional character string of raw Typst code to insert after the
+table. Useful for notes, captions, or other content that should follow the table.</p></dd>
+
+
 <dt id="arg-escape">escape<a class="anchor" aria-label="anchor" href="#arg-escape"></a></dt>
 <dd><p>Logical. If TRUE (default), escapes Typst special characters.</p></dd>
 
 
 <dt id="arg-rownames">rownames<a class="anchor" aria-label="anchor" href="#arg-rownames"></a></dt>
-<dd><p>Logical. TRUE (default) includes row names as the first column
-with an empty header, FALSE excludes them.</p></dd>
+<dd><p>Logical. TRUE includes row names as the first column
+with an empty header, FALSE (default) excludes them.</p></dd>
 
 
 <dt id="arg-na-string">na_string<a class="anchor" aria-label="anchor" href="#arg-na-string"></a></dt>
 <dd><p>Character. How NA values are displayed in the table (default "-").</p></dd>
+
+
+<dt id="arg-booktabs">booktabs<a class="anchor" aria-label="anchor" href="#arg-booktabs"></a></dt>
+<dd><p>Logical. If TRUE (default), renders with booktabs-style rules
+(no cell borders, three horizontal rules: top, mid, bottom). If FALSE,
+renders a grid-style table with <code>0.5pt + black</code> borders on all cells.</p></dd>
+
+
+<dt id="arg-repeat-header">repeat_header<a class="anchor" aria-label="anchor" href="#arg-repeat-header"></a></dt>
+<dd><p>Logical. If TRUE (default), wraps header rows in
+<code>table.header()</code> so they repeat on each page in multi-page tables.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -115,30 +135,34 @@ with an empty header, FALSE excludes them.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Basic table (includes row names by default)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Basic table</span></span></span>
 <span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [], [mpg], [cyl], [disp],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Mazda RX4], [21], [6], [160],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Mazda RX4 Wag], [21], [6], [160],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Datsun 710], [22.8], [4], [108],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Hornet 4 Drive], [21.4], [6], [258],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Hornet Sportabout], [18.7], [8], [360],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [22.8], [4], [108],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [21.4], [6], [258],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [18.7], [8], [360],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Select specific columns (excludes row names)</span></span></span>
-<span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">cyl</span>, <span class="va">hp</span><span class="op">)</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Select specific columns</span></span></span>
+<span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">cyl</span>, <span class="va">hp</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [mpg], [cyl], [hp],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [hp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [110],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [110],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [22.8], [4], [93],</span>
@@ -175,13 +199,15 @@ with an empty header, FALSE excludes them.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Custom column names</span></span></span>
-<span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Miles/Gallon"</span>, <span class="st">"Cylinders"</span>, <span class="st">"Horsepower"</span><span class="op">)</span>, rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, col_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Miles/Gallon"</span>, <span class="st">"Cylinders"</span>, <span class="st">"Horsepower"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Miles/Gallon], [Cylinders], [Horsepower],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [Miles/Gallon], [Cylinders], [Horsepower],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [22.8], [4], [108],</span>
@@ -193,17 +219,19 @@ with an empty header, FALSE excludes them.</p></dd>
 <span class="r-in"><span><span class="co"># Right-align numeric columns</span></span></span>
 <span class="r-in"><span><span class="fu">tt</span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, align <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #table(</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (1fr, 1fr, 1fr, 1fr),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   columns: (auto, auto, auto),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   align: right,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stroke: none,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [], [mpg], [cyl], [disp],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 0.5pt),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Mazda RX4], [21], [6], [160],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Mazda RX4 Wag], [21], [6], [160],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Datsun 710], [22.8], [4], [108],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Hornet 4 Drive], [21.4], [6], [258],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [Hornet Sportabout], [18.7], [8], [360],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   table.header(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 1pt),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [mpg], [cyl], [disp],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table.hline(stroke: 0.5pt)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [21], [6], [160],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [22.8], [4], [108],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [21.4], [6], [258],</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [18.7], [8], [360],</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   table.hline(stroke: 1pt)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ) </span>
 <span class="r-in"><span></span></span>

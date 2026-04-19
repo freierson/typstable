@@ -513,12 +513,6 @@ test_that("tt_style row_gutter and column_gutter parameters", {
   expect_equal(tbl$column_gutter, "10pt")
 })
 
-test_that("tt_style full_width = TRUE", {
-  df <- data.frame(a = 1:3, b = 4:6)
-
-  tbl <- tt(df) |> tt_style(full_width = TRUE)
-  expect_true(tbl$full_width)
-})
 
 # --- tt_cell additional tests ---
 

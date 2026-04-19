@@ -15,7 +15,6 @@
 #' @param row_gutter Vertical spacing between rows.
 #' @param column_gutter Horizontal spacing between columns.
 #' @param position Table position on page: `"auto"`, `"left"`, `"center"`, `"right"`.
-#' @param full_width Logical. If `TRUE`, table spans full page width.
 #' @return The modified `typst_table` object.
 #'
 #' @examples
@@ -35,8 +34,7 @@ tt_style <- function(table,
                      inset = NULL,
                      row_gutter = NULL,
                      column_gutter = NULL,
-                     position = NULL,
-                     full_width = FALSE) {
+                     position = NULL) {
   .check_typst_table(table)
   table <- .copy_table(table)
 
@@ -73,10 +71,6 @@ tt_style <- function(table,
     } else {
       table$position <- position
     }
-  }
-
-  if (!is.null(full_width)) {
-    table$full_width <- full_width
   }
 
   table

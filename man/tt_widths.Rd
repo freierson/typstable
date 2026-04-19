@@ -2,40 +2,55 @@
 % Please edit documentation in R/tt.R
 \name{tt_widths}
 \alias{tt_widths}
-\title{Set proportional column widths}
+\title{Set column widths}
 \usage{
-tt_widths(table, ...)
+tt_widths(table, ..., .unit = function(x) paste0(x, "fr"), .default = NULL)
 }
 \arguments{
 \item{table}{A \code{typst_table} object.}
 
-\item{...}{Width values as numbers or \code{"auto"}. Can be unnamed (applied in order)
-or named by column. Numeric values represent relative proportions.}
+\item{...}{Width values as numbers or strings. Can be unnamed (positional,
+applied in column order) or named by column name. Positional mode requires
+exactly one value per column.}
+
+\item{.unit}{Function applied to numeric values to produce a Typst length
+string. Default appends \code{"fr"} (fractional units), so \code{1} becomes \code{"1fr"}.}
+
+\item{.default}{When using named columns, the width to apply to columns not
+explicitly mentioned. \code{NULL} (default) leaves unmentioned columns unchanged.
+Any other value (e.g. \code{"1fr"}, \code{"auto"}) is applied to all unmentioned columns.}
 }
 \value{
 The modified \code{typst_table} object.
 }
 \description{
-Sets column widths as proportions that fill the page or container width.
-Numeric widths are converted to Typst \code{fr} (fractional) units. Use \code{"auto"}
-for columns that should size to fit their content.
+Sets column widths. Numeric values are converted to Typst units via \code{.unit}.
+String values are passed through directly to Typst (e.g. \code{"auto"}, \code{"1fr"},
+\code{"100pt"}, \code{"50\%"}). Validity of strings is not checked in R — Typst will
+error on invalid values.
 }
 \details{
-Widths are relative proportions, not absolute values. For example,
-\code{tt_widths(tbl, 1, 2, 1)} creates columns at 25\%, 50\%, 25\% of the container width.
-Use \code{"auto"} to let a column size to fit its content.
+Column widths follow last-value-in-pipe-wins logic: calling \code{tt_widths()} a
+second time with named columns only updates those columns.
+
+Fractional units (\code{fr}) distribute available space proportionally. For
+example, \code{tt_widths(tbl, 1, 2, 1)} creates columns at 25\%, 50\%, 25\% of the
+container width.
 }
 \examples{
-# Equal widths
-tt(mtcars[1:5, 1:3]) |> tt_widths(1, 1, 1)
-
 # Proportional widths (25\%, 50\%, 25\%)
 tt(mtcars[1:5, 1:3]) |> tt_widths(1, 2, 1)
 
-# Mix auto and proportional widths
-tt(mtcars[1:5, 1:3]) |> tt_widths("auto", 2, 1)
+# String widths passed through directly
+tt(mtcars[1:5, 1:3]) |> tt_widths("100pt", "auto", "50\%")
 
-# Named columns
-tt(mtcars[1:5, 1:3]) |> tt_widths(mpg = 1, cyl = 2, disp = 1)
+# Update only one column, leave others unchanged
+tt(mtcars[1:5, 1:3]) |> tt_widths(cyl = 2)
+
+# Set all unmentioned columns to auto
+tt(mtcars[1:5, 1:3]) |> tt_widths(cyl = 2, .default = "auto")
+
+# Custom numeric unit
+tt(mtcars[1:5, 1:3]) |> tt_widths(1, 2, 1, .unit = \(x) paste0(x, "pt"))
 
 }
