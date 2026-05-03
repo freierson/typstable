@@ -97,8 +97,7 @@ test_that("tt_hline adds horizontal lines", {
   df <- data.frame(a = 1:3, b = 4:6)
 
   tbl <- tt(df) |> tt_hline(1, stroke = "red")
-  expect_length(tbl$hlines, 1)
-  expect_equal(tbl$hlines[[1]]$y, 1L)
+  expect_equal(tbl$hlines[[length(tbl$hlines)]]$y, 1L)
 })
 
 test_that("tt_vline adds vertical lines", {

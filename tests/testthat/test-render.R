@@ -537,8 +537,10 @@ test_that("hline_above = FALSE suppresses booktabs mid rule", {
     tt_row(1, hline_above = FALSE) |>
     tt_render()
 
-  # Mid rule should be suppressed (stroke: none)
-  expect_true(grepl("table\\.hline\\(stroke: none\\)", code))
+  # Mid rule (0.5pt) should be absent; top and bottom (1pt) remain
+  expect_false(grepl("stroke: 0\\.5pt", code))
+  n_hlines <- lengths(regmatches(code, gregexpr("table\\.hline", code)))
+  expect_equal(n_hlines, 2)
 })
 
 test_that("tt_hline(stroke = FALSE) suppresses a booktabs rule", {
@@ -547,8 +549,9 @@ test_that("tt_hline(stroke = FALSE) suppresses a booktabs rule", {
     tt_hline(0, stroke = FALSE) |>
     tt_render()
 
-  # Top rule should be suppressed (stroke: none)
-  expect_true(grepl("table\\.hline\\(stroke: none\\)", code))
+  # Top rule should be absent; mid and bottom remain
+  n_hlines <- lengths(regmatches(code, gregexpr("table\\.hline", code)))
+  expect_equal(n_hlines, 2)
 })
 
 test_that("tt_style(stroke = ...) with booktabs = TRUE suppresses booktabs defaults", {

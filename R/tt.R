@@ -172,7 +172,11 @@ tt <- function(data,
       # Additional features
       headers_above = list(),
       row_groups = list(),
-      hlines = list(),
+      hlines = if (isTRUE(booktabs)) list(
+        list(y = 0L,                      start = NULL, end = NULL, stroke = "1pt"),
+        list(y = 1L,                      start = NULL, end = NULL, stroke = "0.5pt"),
+        list(y = nrow(display_data) + 1L, start = NULL, end = NULL, stroke = "1pt")
+      ) else list(),
       vlines = list(),
 
       # Header repeating

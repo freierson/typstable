@@ -40,6 +40,13 @@ tt_style <- function(table,
 
   if (!is.null(stroke)) {
     table$stroke <- stroke
+    if (isTRUE(table$booktabs)) {
+      table$hlines <- c(table$hlines, list(
+        list(y = 0L,              start = NULL, end = NULL, stroke = FALSE),
+        list(y = 1L,              start = NULL, end = NULL, stroke = FALSE),
+        list(y = table$nrow + 1L, start = NULL, end = NULL, stroke = FALSE)
+      ))
+    }
   }
 
   if (!is.null(fill)) {

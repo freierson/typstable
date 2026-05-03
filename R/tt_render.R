@@ -18,11 +18,10 @@ tt_render <- function(table) {
   # Build table arguments
   args <- .render_table_args(table)
 
-  # Resolve boundary hlines (booktabs or user overrides)
-  booktabs_flag <- isTRUE(table$booktabs) && is.null(table$stroke)
-  top_rule <- .resolve_boundary_hline(table, 0, if (booktabs_flag) "1pt" else NULL)
-  mid_rule <- .resolve_boundary_hline(table, 1, if (booktabs_flag) "0.5pt" else NULL)
-  bottom_rule <- .resolve_boundary_hline(table, table$nrow + 1, if (booktabs_flag) "1pt" else NULL)
+  # Resolve boundary hlines (pre-added at init or user overrides)
+  top_rule    <- .resolve_boundary_hline(table, 0)
+  mid_rule    <- .resolve_boundary_hline(table, 1)
+  bottom_rule <- .resolve_boundary_hline(table, table$nrow + 1)
 
   # Build header content (returns vector of lines)
   header_lines <- .render_all_headers(table)
@@ -135,38 +134,22 @@ tt_render <- function(table) {
 
 #' Resolve a boundary hline (top/mid/bottom rule)
 #'
-#' Searches user hlines for an override at position y. If found, renders it
-#' (including stroke: none for suppression). If not found, uses the default
-#' stroke if provided and table$stroke is NULL.
+#' Searches hlines in reverse for the last spec at position y. Returns the
+#' rendered string, or "" if none found.
 #' @noRd
-.resolve_boundary_hline <- function(table, y, default_stroke) {
-  # Search hlines in reverse (last match wins)
+.resolve_boundary_hline <- function(table, y) {
   for (i in rev(seq_along(table$hlines))) {
     hline <- table$hlines[[i]]
     if (hline$y == y) {
+      if (isFALSE(hline$stroke)) return("")
       args <- character()
-      if (!is.null(hline$start)) {
-        args <- c(args, paste0("start: ", hline$start))
-      }
-      if (!is.null(hline$end)) {
-        args <- c(args, paste0("end: ", hline$end + 1))
-      }
-      if (!is.null(hline$stroke)) {
-        args <- c(args, paste0("stroke: ", .to_typst_stroke(hline$stroke)))
-      }
-      if (length(args) > 0) {
-        return(paste0("table.hline(", paste(args, collapse = ", "), ")"))
-      } else {
-        return("table.hline()")
-      }
+      if (!is.null(hline$start)) args <- c(args, paste0("start: ", hline$start))
+      if (!is.null(hline$end))   args <- c(args, paste0("end: ", hline$end + 1))
+      if (!is.null(hline$stroke)) args <- c(args, paste0("stroke: ", .to_typst_stroke(hline$stroke)))
+      if (length(args) > 0) return(paste0("table.hline(", paste(args, collapse = ", "), ")"))
+      else return("table.hline()")
     }
   }
-
-  # No user hline found — use default if applicable
-  if (!is.null(default_stroke) && is.null(table$stroke)) {
-    return(paste0("table.hline(stroke: ", default_stroke, ")"))
-  }
-
   ""
 }
 
