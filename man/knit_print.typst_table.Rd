@@ -16,5 +16,7 @@ A \code{knitr::asis_output} object containing the Typst markup.
 }
 \description{
 Renders a \code{typst_table} for use in Quarto/knitr documents with Typst output.
+When knitting an \code{.Rtyp} document directly to \code{.typ} (no Pandoc step), the
+raw Typst markup is emitted; otherwise it is wrapped in a Pandoc raw block.
 }
 \keyword{internal}

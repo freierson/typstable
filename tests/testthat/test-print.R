@@ -50,6 +50,46 @@ test_that("knit_print.typst_table returns knitr::asis_output with raw Typst bloc
   expect_true(grepl("```\n$", result_str))
 })
 
+test_that("knit_print.typst_table emits unwrapped Typst when knitting to typst", {
+  skip_if_not_installed("knitr")
+
+  old <- knitr::opts_knit$get("out.format")
+  knitr::opts_knit$set(out.format = "typst")
+  on.exit(knitr::opts_knit$set(out.format = old), add = TRUE)
+
+  tbl <- tt(data.frame(a = 1:2, b = 3:4))
+  result_str <- as.character(knit_print.typst_table(tbl))
+
+  # No Pandoc raw block fence: typst compiles the .typ directly
+  expect_false(grepl("```", result_str, fixed = TRUE))
+  expect_true(grepl("\n#table\\(", result_str))
+})
+
+test_that("knitting an .Rtyp document produces a raw #table, not a fenced block", {
+  skip_if_not_installed("knitr", minimum_version = "1.50")
+
+  dir <- tempfile()
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+  input <- file.path(dir, "doc.Rtyp")
+  writeLines(c(
+    "Text.",
+    "",
+    "```{r}",
+    "#| echo: false",
+    "#| results: asis",
+    "tt(data.frame(col1 = c(1, 2), col2 = c(\"a\", \"b\")), rownames = FALSE)",
+    "```"
+  ), input)
+
+  output <- knitr::knit(input, output = file.path(dir, "doc.typ"),
+                        quiet = TRUE, envir = environment())
+  out <- readLines(output)
+
+  expect_false(any(grepl("{=typst}", out, fixed = TRUE)))
+  expect_true(any(grepl("^#table\\(", out)))
+})
+
 test_that("knit_print.typst_table includes all table content", {
   skip_if_not_installed("knitr")
 

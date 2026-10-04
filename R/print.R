@@ -17,6 +17,8 @@ print.typst_table <- function(x, ...) {
 #' Knit print method for typst_table
 #'
 #' Renders a `typst_table` for use in Quarto/knitr documents with Typst output.
+#' When knitting an `.Rtyp` document directly to `.typ` (no Pandoc step), the
+#' raw Typst markup is emitted; otherwise it is wrapped in a Pandoc raw block.
 #'
 #' @param x A `typst_table` object.
 #' @param ... Additional arguments (ignored).
@@ -27,10 +29,15 @@ print.typst_table <- function(x, ...) {
 knit_print.typst_table <- function(x, ...) {
   code <- tt_render(x)
 
- # Wrap in raw Typst block for Quarto/Pandoc
-  raw_block <- paste0("\n```{=typst}\n", code, "\n```\n")
+  if (identical(knitr::opts_knit$get("out.format"), "typst")) {
+    # .Rtyp knit by knitr: typst compiles the .typ directly, no Pandoc
+    out <- paste0("\n", code, "\n")
+  } else {
+    # Markdown (Quarto, rmarkdown, knit + pandoc): wrap in raw Typst block
+    out <- paste0("\n```{=typst}\n", code, "\n```\n")
+  }
 
-  knitr::asis_output(raw_block)
+  knitr::asis_output(out)
 }
 
 # Register S3 methods for knitr
