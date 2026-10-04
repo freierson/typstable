@@ -9,8 +9,8 @@
   if (!is.character(x)) {
     x <- as.character(x)
   }
-  # Escape all Typst special characters: \ * _ ` # @ < >
-  gsub("([\\\\*_`#@<>])", "\\\\\\1", x, perl = TRUE)
+  # Escape all Typst special characters: \ * _ ` # @ < > [ ] ( )
+  gsub("([\\\\*_`#@<>\\[\\]\\(\\)])", "\\\\\\1", x, perl = TRUE)
 }
 
 #' Convert color specification to Typst format

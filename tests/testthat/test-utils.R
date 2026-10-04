@@ -206,3 +206,8 @@ test_that(".format_text skips 0deg rotation", {
   result <- .format_text("hello", rotate = "0deg")
   expect_false(grepl("rotate", result))
 })
+
+test_that(".escape_typst escapes square and round brackets", {
+  expect_equal(.escape_typst("(70.6,163]"), "\\(70.6,163\\]")
+  expect_equal(.escape_typst("[a]"), "\\[a\\]")
+})

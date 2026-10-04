@@ -1,10 +1,6 @@
 ---
-format:
-  typst:
-    mainfont: "Arial"
+format: typst
 ---
-
-# 
 
 ```{=typst}
 #align(center, text(20pt, weight: "bold")[
@@ -1493,7 +1489,17 @@ dat |>
   tt_widths(1,1)
 ```
 
+## special characters
 
-
-
-
+```{r}
+brackets <- data.frame(
+  `range [a,b)` = c("[0,1)", "(f(x))", "a_b*c"),
+  val = c(1.5, 2, 3),
+  check.names = FALSE
+)
+tt(brackets) |>
+  tt_header_above(c("Group (1)" = 1, "Stats [x]" = 1)) |>
+  tt_column(1, bold = TRUE, color = "blue") |>
+  tt_row(2, italic = TRUE, fill = "luma(230)") |>
+  tt_pack_rows("Pack [1]", 1, 2)
+```
